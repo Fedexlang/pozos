@@ -383,7 +383,7 @@ body { max-width: 720px; margin: 0 auto; }
         <div class="field"><label>Fecha</label><input type="date" id="fecha" required></div>
         <div class="field"><label>Categoría</label><input type="text" id="categoria" placeholder="ej: 5ta, B" required></div>
       </div>
-      <div class="field"><label>Club</label><input type="text" id="club" placeholder="opcional"></div>
+      <div class="field"><label>Club</label><input type="text" id="club" placeholder="opcional" autocomplete="off" list="clubList"><datalist id="clubList"></datalist></div>
       <div class="field">
         <label>Tipo</label>
         <div class="seg">
@@ -988,6 +988,10 @@ function openModal(pozo = null) {
   $('#costo').value = pozo && pozo.costo !== null ? (pozo.costo || '') : '';
   $('#premio').value = pozo && pozo.premio !== null ? (pozo.premio || '') : '';
   $('#notas').value = pozo ? (pozo.notas || '') : '';
+  // Poblar clubs usados anteriormente
+  const clubs = [...new Set(pozos.map(p => p.club).filter(Boolean))].sort();
+  $('#clubList').innerHTML = clubs.map(c => `<option value="${escapeHtml(c)}">`).join('');
+
   togglePartner();
   $('#modalBg').classList.add('open');
   document.body.style.overflow = 'hidden';
