@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a100c">
-<title>Pozos · Control de Torneos</title>
+<title>Padel · Pozos & Retos</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 100 130' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='5' width='80' height='85' rx='40' fill='%234ade80'/%3E%3Ccircle cx='50' cy='25' r='7' fill='%230a100c'/%3E%3Ccircle cx='32' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='68' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='32' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='68' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='77' r='7' fill='%230a100c'/%3E%3Crect x='40' y='88' width='20' height='36' rx='8' fill='%234ade80'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -269,6 +270,45 @@ body { max-width: 720px; margin: 0 auto; }
   .modal-bg { align-items: center; }
   .modal { border-radius: 24px; max-height: 88vh; }
 }
+
+/* Tabs */
+.tab-bar { display: flex; gap: 4px; padding: 12px 20px 0; }
+.tab { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-muted); padding: 10px; border-radius: 10px; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.06em; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.tab svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+.tab:hover { color: var(--ink); border-color: var(--border-strong); }
+.tab.active { background: var(--court); border-color: var(--court); color: white; }
+
+/* Reto cards */
+.reto-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; transition: border-color .2s; cursor: pointer; }
+.reto-card:hover { border-color: var(--border-strong); }
+.reto-card.victory { border-left: 3px solid var(--court-bright); }
+.reto-card.tie { border-left: 3px solid var(--amber); }
+.reto-card.defeat { border-left: 3px solid var(--crimson); }
+.reto-card.neutral { border-left: 3px solid var(--surface-3); }
+.reto-vs { font-size: 15px; font-weight: 700; margin-top: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.reto-vs .vs-sep { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim); letter-spacing: 0.1em; }
+.reto-vs .rivals { color: var(--ink-muted); font-weight: 500; }
+.sets-display { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.set-score { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; }
+.set-score.won { color: var(--court-bright); border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.05); }
+.set-score.lost { color: var(--crimson); border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.05); }
+.set-score.draw { color: var(--amber); border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.05); }
+.reto-detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.reto-card.expanded .reto-detail { display: block; }
+.retos-stats { padding: 20px 20px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 600px) { .retos-stats { grid-template-columns: repeat(4, 1fr); } }
+
+/* Sets form */
+.sets-form-wrap { display: flex; flex-direction: column; gap: 8px; }
+.set-row { display: flex; align-items: center; gap: 8px; }
+.set-row .set-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim); letter-spacing: 0.1em; text-transform: uppercase; min-width: 38px; }
+.set-row input { flex: 1; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 4px; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--ink); text-align: center; -webkit-appearance: none; appearance: none; min-width: 0; }
+.set-row input:focus { outline: none; border-color: var(--court-bright); background: var(--surface-3); }
+.set-row .set-dash { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--ink-dim); flex-shrink: 0; }
+.set-row .set-del { background: transparent; border: 1px solid var(--border); color: var(--ink-dim); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 16px; display: grid; place-items: center; flex-shrink: 0; }
+.set-row .set-del:hover { color: var(--crimson); border-color: rgba(239,68,68,0.3); }
+.add-set-btn { background: transparent; border: 1px dashed var(--border); color: var(--ink-muted); padding: 9px; border-radius: 8px; width: 100%; cursor: pointer; font-family: inherit; font-size: 13px; margin-top: 4px; }
+.add-set-btn:hover { color: var(--ink); border-color: var(--court-bright); }
 </style>
 </head>
 <body>
@@ -335,6 +375,19 @@ body { max-width: 720px; margin: 0 auto; }
     <span class="status-extra" id="statusExtra"></span>
   </div>
 
+  <div class="tab-bar">
+    <button class="tab active" id="tabPozos">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+      Pozos
+    </button>
+    <button class="tab" id="tabRetos">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
+      Retos
+    </button>
+  </div>
+
+  <!-- Vista pozos -->
+  <div id="pozosView">
   <section class="stats" id="stats"></section>
   <div class="stats-note" id="statsNote" hidden></div>
 
@@ -366,12 +419,22 @@ body { max-width: 720px; margin: 0 auto; }
   </div>
 
   <div id="chart"></div>
-
   <div id="listWrap"></div>
+  </div><!-- /pozosView -->
+
+  <!-- Vista retos -->
+  <div id="retosView" hidden>
+    <section class="retos-stats" id="retosStats"></section>
+    <div class="section-title">
+      <h2>Retos</h2>
+      <span class="count" id="retosCount">0 retos</span>
+    </div>
+    <div id="retosWrap"></div>
+  </div><!-- /retosView -->
 
   <button class="fab" id="addBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    Nuevo pozo
+    <span id="fabLabel">Nuevo pozo</span>
   </button>
 </div>
 
@@ -461,6 +524,43 @@ body { max-width: 720px; margin: 0 auto; }
 <div class="toast" id="toast"></div>
 <input type="file" id="fileInput" accept="application/json" style="display:none">
 
+<!-- Modal de reto -->
+<div class="modal-bg" id="retoModalBg">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="retoModalTitle">Nuevo reto</h3>
+      <button class="icon-btn" id="closeRetoModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="retoForm">
+      <div class="field-row">
+        <div class="field"><label>Fecha</label><input type="date" id="retoFecha" required></div>
+        <div class="field"><label>Club</label><input type="text" id="retoClub" placeholder="opcional" autocomplete="off" list="retoClubList"><datalist id="retoClubList"></datalist></div>
+      </div>
+      <div class="field"><label>Compañero</label><input type="text" id="retoCompanero" placeholder="Nombre del compañero"></div>
+      <div class="field-row">
+        <div class="field"><label>Rival 1</label><input type="text" id="retoRival1" placeholder="Nombre" required></div>
+        <div class="field"><label>Rival 2</label><input type="text" id="retoRival2" placeholder="Nombre"></div>
+      </div>
+      <div class="field">
+        <label>Sets</label>
+        <div class="sets-form-wrap" id="setsContainer"></div>
+        <button type="button" class="add-set-btn" id="addSetBtn">+ Agregar set</button>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Calorías (kcal)</label><input type="number" id="retoCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
+        <div class="field"><label>Precio ($)</label><input type="number" id="retoPrecio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      </div>
+      <div class="field"><label>Notas</label><textarea id="retoNotas" rows="2" placeholder="Opcional"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelRetoBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -469,7 +569,10 @@ const CACHE_KEY = 'pozos_cache_v1';
 const GIST_FILENAME = 'pozos.json';
 
 let pozos = [];
+let retos = [];
 let editingId = null;
+let editingRetoId = null;
+let activeTab = 'pozos';
 let settings = null; // { gistId }
 let syncing = false;
 let lastSyncedAt = null;
@@ -504,6 +607,100 @@ function migrate(p) {
   return { ...p, victorias: Number(p.victorias) || 0, empates: Number(p.empates) || 0, derrotas: Number(p.derrotas) || 0, club: p.club || null, calorias: p.calorias || null };
 }
 
+function migrateReto(r) {
+  return { ...r, sets: Array.isArray(r.sets) ? r.sets : [], calorias: r.calorias || null, precio: r.precio || null, club: r.club || null, companero: r.companero || null, rival2: r.rival2 || null, notas: r.notas || null };
+}
+
+function calcRetoResultado(sets) {
+  if (!sets || sets.length === 0) return null;
+  let mine = 0, rival = 0;
+  sets.forEach(s => { if (Number(s.mine) > Number(s.rival)) mine++; else if (Number(s.rival) > Number(s.mine)) rival++; });
+  if (mine > rival) return 'V';
+  if (rival > mine) return 'D';
+  return 'E';
+}
+
+function retoOutcome(r) {
+  const res = calcRetoResultado(r.sets);
+  return !res ? 'neutral' : res === 'V' ? 'victory' : res === 'D' ? 'defeat' : 'tie';
+}
+
+function renderRetosStats() {
+  const total = retos.length;
+  let v = 0, e = 0, d = 0, cals = 0, gasto = 0;
+  retos.forEach(r => {
+    const res = calcRetoResultado(r.sets);
+    if (res === 'V') v++; else if (res === 'D') d++; else if (res === 'E') e++;
+    cals += Number(r.calorias) || 0;
+    gasto += Number(r.precio) || 0;
+  });
+  const partidos = v + e + d;
+  const wr = partidos ? Math.round(v / partidos * 100) : 0;
+  $('#retosStats').innerHTML = `
+    <div class="stat"><div class="stat-label">Retos</div><div class="stat-value">${total}</div><div class="stat-extra">${partidos} jugados</div></div>
+    <div class="stat"><div class="stat-label">Win rate</div><div class="stat-value green">${wr}<span style="font-size:18px">%</span></div><div class="stat-extra">${v}V · ${e}E · ${d}D</div></div>
+    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${cals ? cals.toLocaleString() : '—'}</div><div class="stat-extra">kcal</div></div>
+    <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(gasto)}</div><div class="stat-extra">acumulado</div></div>
+  `;
+}
+
+function renderRetos() {
+  $('#retosCount').textContent = `${retos.length} ${retos.length === 1 ? 'reto' : 'retos'}`;
+  const wrap = $('#retosWrap');
+  if (!retos.length) {
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— vacío —</div><p>Agregá tu primer reto con el botón verde</p></div>`;
+    return;
+  }
+  const sorted = [...retos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  wrap.innerHTML = `<div class="list">${sorted.map(r => {
+    const res = calcRetoResultado(r.sets);
+    const outcome = retoOutcome(r);
+    const resLabel = res === 'V' ? 'Victoria' : res === 'D' ? 'Derrota' : res === 'E' ? 'Empate' : null;
+    const resChipClass = res === 'V' ? 'wr-good' : res === 'D' ? 'wr-bad' : 'wr-mid';
+    const rivals = [r.rival1, r.rival2].filter(Boolean).join(' / ');
+    const setsHtml = (r.sets || []).map(s => {
+      const mn = Number(s.mine), rv = Number(s.rival);
+      const cls = mn > rv ? 'won' : rv > mn ? 'lost' : 'draw';
+      return `<span class="set-score ${cls}">${mn}–${rv}</span>`;
+    }).join('');
+    return `
+    <div class="reto-card ${outcome}" data-reto-id="${r.id}">
+      <div class="pozo-head">
+        <div>
+          <div class="pozo-meta">${fmtDate(r.fecha)}${r.club ? ' · ' + escapeHtml(r.club) : ''}</div>
+          <div class="reto-vs">
+            <span class="team">${r.companero ? escapeHtml(r.companero) : 'Yo'}</span>
+            <span class="vs-sep">vs</span>
+            <span class="rivals">${escapeHtml(rivals || '—')}</span>
+          </div>
+        </div>
+        <button class="pozo-edit-btn" data-action="editReto" data-id="${r.id}" aria-label="Editar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+      </div>
+      <div class="sets-display" style="margin-top:10px">${setsHtml || '<span style="font-size:12px;color:var(--ink-dim)">Sin sets</span>'}</div>
+      <div class="pozo-row" style="margin-top:8px">
+        ${resLabel ? `<span class="chip ${resChipClass}"><strong>${resLabel}</strong></span>` : ''}
+        ${r.calorias ? `<span class="chip"><strong>${Number(r.calorias).toLocaleString()}</strong> kcal</span>` : ''}
+        ${r.precio ? `<span class="chip gold"><strong>${fmtMoney(r.precio)}</strong></span>` : ''}
+      </div>
+      <div class="reto-detail">
+        <div class="detail-grid">
+          <div class="detail-item"><div class="label">Compañero</div><div class="value">${escapeHtml(r.companero || '—')}</div></div>
+          <div class="detail-item"><div class="label">Rival 1</div><div class="value">${escapeHtml(r.rival1 || '—')}</div></div>
+          ${r.rival2 ? `<div class="detail-item"><div class="label">Rival 2</div><div class="value">${escapeHtml(r.rival2)}</div></div>` : ''}
+          <div class="detail-item"><div class="label">Precio</div><div class="value mono">${fmtMoney(r.precio)}</div></div>
+          ${r.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(r.notas)}</div></div>` : ''}
+        </div>
+        <div class="detail-actions">
+          <button data-action="editReto" data-id="${r.id}">Editar</button>
+          <button class="danger" data-action="deleteReto" data-id="${r.id}">Eliminar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
 // ---------- LocalStorage (settings + cache) ----------
 function loadSettings() {
   try {
@@ -521,11 +718,14 @@ function clearSettings() {
 function loadCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (e) { return []; }
+    if (!raw) return { pozos: [], retos: [] };
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return { pozos: parsed, retos: [] }; // migración
+    return { pozos: parsed.pozos || [], retos: parsed.retos || [] };
+  } catch (e) { return { pozos: [], retos: [] }; }
 }
-function saveCache(arr) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(arr)); } catch (e) {}
+function saveCache(pArr, rArr) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ pozos: pArr, retos: rArr })); } catch (e) {}
 }
 
 // ---------- GitHub Gist API ----------
@@ -540,14 +740,16 @@ async function workerFetch(gistId) {
     throw err;
   }
   const body = await res.json();
-  return Array.isArray(body.data) ? body.data : [];
+  const data = body.data;
+  if (Array.isArray(data)) return { pozos: data, retos: [] }; // migración formato viejo
+  return { pozos: data?.pozos || [], retos: data?.retos || [] };
 }
 
-async function workerUpdate(gistId, arr) {
+async function workerUpdate(gistId, pArr, rArr) {
   const res = await fetch(`${WORKER_URL}/gist/${gistId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: arr })
+    body: JSON.stringify({ data: { pozos: pArr, retos: rArr } })
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -594,8 +796,9 @@ async function syncDown() {
   setStatus('syncing');
   try {
     const remote = await workerFetch(settings.gistId);
-    pozos = remote.map(migrate);
-    saveCache(pozos);
+    pozos = remote.pozos.map(migrate);
+    retos = (remote.retos || []).map(migrateReto);
+    saveCache(pozos, retos);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
@@ -611,8 +814,8 @@ async function syncUp() {
   syncing = true;
   setStatus('syncing');
   try {
-    await workerUpdate(settings.gistId, pozos);
-    saveCache(pozos);
+    await workerUpdate(settings.gistId, pozos, retos);
+    saveCache(pozos, retos);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
@@ -942,7 +1145,7 @@ function renderList() {
   }).join('')}</div>`;
 }
 
-function render() { renderStats(); renderChart(); renderList(); }
+function render() { renderStats(); renderChart(); renderList(); renderRetosStats(); renderRetos(); }
 
 // ---------- Pozo modal ----------
 function openModal(pozo = null) {
@@ -995,8 +1198,9 @@ async function doSetup(gistId) {
     const remote = await workerFetch(gistId);
     settings = { gistId };
     saveSettingsLocal(settings);
-    pozos = remote.map(migrate);
-    saveCache(pozos);
+    pozos = remote.pozos.map(migrate);
+    retos = (remote.retos || []).map(migrateReto);
+    saveCache(pozos, retos);
     lastSyncedAt = new Date();
     $('#setupScreen').hidden = true;
     $('#app').hidden = false;
@@ -1025,7 +1229,9 @@ async function init() {
     return;
   }
   // Mostrar primero datos cacheados, después intentar sync
-  pozos = loadCache().map(migrate);
+  const cached = loadCache();
+  pozos = cached.pozos.map(migrate);
+  retos = cached.retos.map(migrateReto);
   $('#loadingOverlay').hidden = true;
   $('#app').hidden = false;
   render();
@@ -1041,7 +1247,6 @@ $('#setupForm').addEventListener('submit', (e) => {
   doSetup(gistId);
 });
 
-$('#addBtn').addEventListener('click', () => openModal());
 $('#cancelBtn').addEventListener('click', closeModal);
 $('#closeModal').addEventListener('click', closeModal);
 $('#modalBg').addEventListener('click', (e) => { if (e.target === $('#modalBg')) closeModal(); });
@@ -1071,7 +1276,7 @@ $('#pozoForm').addEventListener('submit', async (e) => {
   };
   if (editingId) pozos = pozos.map(p => p.id === editingId ? data : p);
   else pozos.push(data);
-  saveCache(pozos);
+  saveCache(pozos, retos);
   render();
   closeModal();
   await syncUp();
@@ -1080,13 +1285,15 @@ $('#pozoForm').addEventListener('submit', async (e) => {
 document.addEventListener('click', async (e) => {
   const action = e.target.closest('[data-action]');
   if (action) {
+    const act = action.dataset.action;
+    if (act === 'editReto' || act === 'deleteReto') return; // manejado por el otro listener
     e.stopPropagation();
     const id = action.dataset.id;
-    if (action.dataset.action === 'edit') { const p = pozos.find(x => x.id === id); if (p) openModal(p); }
-    else if (action.dataset.action === 'delete') {
+    if (act === 'edit') { const p = pozos.find(x => x.id === id); if (p) openModal(p); }
+    else if (act === 'delete') {
       if (confirm('¿Eliminar este pozo?')) {
         pozos = pozos.filter(x => x.id !== id);
-        saveCache(pozos);
+        saveCache(pozos, retos);
         render();
         await syncUp();
       }
@@ -1188,6 +1395,142 @@ $('#searchClear').addEventListener('click', () => {
   renderList();
   $('#searchInput').focus();
 });
+
+// ---------- Tabs ----------
+function switchTab(tab) {
+  activeTab = tab;
+  $('#tabPozos').classList.toggle('active', tab === 'pozos');
+  $('#tabRetos').classList.toggle('active', tab === 'retos');
+  $('#pozosView').hidden = tab !== 'pozos';
+  $('#retosView').hidden = tab !== 'retos';
+  $('#fabLabel').textContent = tab === 'pozos' ? 'Nuevo pozo' : 'Nuevo reto';
+}
+
+$('#tabPozos').addEventListener('click', () => switchTab('pozos'));
+$('#tabRetos').addEventListener('click', () => switchTab('retos'));
+
+$('#addBtn').addEventListener('click', () => {
+  if (activeTab === 'pozos') openModal();
+  else openRetoModal();
+});
+
+// ---------- Reto modal ----------
+let setCount = 0;
+
+function addSetRow(mine = '', rival = '') {
+  setCount++;
+  const row = document.createElement('div');
+  row.className = 'set-row';
+  row.dataset.set = setCount;
+  row.innerHTML = `
+    <span class="set-num">Set ${$('#setsContainer').children.length + 1}</span>
+    <input type="number" class="set-mine" min="0" inputmode="numeric" placeholder="0" value="${mine}">
+    <span class="set-dash">–</span>
+    <input type="number" class="set-rival" min="0" inputmode="numeric" placeholder="0" value="${rival}">
+    <button type="button" class="set-del" aria-label="Quitar set">×</button>
+  `;
+  row.querySelector('.set-del').addEventListener('click', () => {
+    row.remove();
+    reNumberSets();
+  });
+  $('#setsContainer').appendChild(row);
+}
+
+function reNumberSets() {
+  [...$('#setsContainer').children].forEach((row, i) => {
+    row.querySelector('.set-num').textContent = `Set ${i + 1}`;
+  });
+}
+
+function getSets() {
+  return [...$('#setsContainer').children].map(row => ({
+    mine: Number(row.querySelector('.set-mine').value) || 0,
+    rival: Number(row.querySelector('.set-rival').value) || 0
+  }));
+}
+
+function openRetoModal(reto = null) {
+  editingRetoId = reto ? reto.id : null;
+  $('#retoModalTitle').textContent = reto ? 'Editar reto' : 'Nuevo reto';
+  $('#retoFecha').value = reto ? reto.fecha : todayISO();
+  $('#retoClub').value = reto ? (reto.club || '') : '';
+  $('#retoCompanero').value = reto ? (reto.companero || '') : '';
+  $('#retoRival1').value = reto ? (reto.rival1 || '') : '';
+  $('#retoRival2').value = reto ? (reto.rival2 || '') : '';
+  $('#retoCalorias').value = reto && reto.calorias ? reto.calorias : '';
+  $('#retoPrecio').value = reto && reto.precio ? reto.precio : '';
+  $('#retoNotas').value = reto ? (reto.notas || '') : '';
+  // Sets
+  $('#setsContainer').innerHTML = '';
+  setCount = 0;
+  const initialSets = reto?.sets?.length ? reto.sets : [{ mine: '', rival: '' }];
+  initialSets.forEach(s => addSetRow(s.mine, s.rival));
+  // Populate club datalist
+  const clubs = [...new Set([...pozos.map(p => p.club), ...retos.map(r => r.club)].filter(Boolean))].sort();
+  $('#retoClubList').innerHTML = clubs.map(c => `<option value="${escapeHtml(c)}">`).join('');
+  $('#retoModalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRetoModal() {
+  $('#retoModalBg').classList.remove('open');
+  document.body.style.overflow = '';
+  editingRetoId = null;
+}
+
+$('#addSetBtn').addEventListener('click', () => addSetRow());
+$('#cancelRetoBtn').addEventListener('click', closeRetoModal);
+$('#closeRetoModal').addEventListener('click', closeRetoModal);
+$('#retoModalBg').addEventListener('click', (e) => { if (e.target === $('#retoModalBg')) closeRetoModal(); });
+
+$('#retoForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = {
+    id: editingRetoId || uid(),
+    tipo: 'reto',
+    fecha: $('#retoFecha').value,
+    club: $('#retoClub').value.trim() || null,
+    companero: $('#retoCompanero').value.trim() || null,
+    rival1: $('#retoRival1').value.trim(),
+    rival2: $('#retoRival2').value.trim() || null,
+    sets: getSets(),
+    calorias: $('#retoCalorias').value === '' ? null : Number($('#retoCalorias').value),
+    precio: $('#retoPrecio').value === '' ? null : Number($('#retoPrecio').value),
+    notas: $('#retoNotas').value.trim() || null,
+    creado: editingRetoId ? (retos.find(r => r.id === editingRetoId)?.creado || new Date().toISOString()) : new Date().toISOString()
+  };
+  if (editingRetoId) retos = retos.map(r => r.id === editingRetoId ? data : r);
+  else retos.push(data);
+  renderRetosStats();
+  renderRetos();
+  closeRetoModal();
+  await syncUp();
+});
+
+// Click en reto cards (expand / edit / delete)
+document.addEventListener('click', async (e) => {
+  const action = e.target.closest('[data-action]');
+  if (action) {
+    const act = action.dataset.action;
+    if (act === 'editReto') {
+      e.stopPropagation();
+      const r = retos.find(x => x.id === action.dataset.id);
+      if (r) openRetoModal(r);
+      return;
+    }
+    if (act === 'deleteReto') {
+      e.stopPropagation();
+      if (confirm('¿Eliminar este reto?')) {
+        retos = retos.filter(x => x.id !== action.dataset.id);
+        renderRetosStats(); renderRetos();
+        await syncUp();
+      }
+      return;
+    }
+  }
+  const retoCard = e.target.closest('.reto-card');
+  if (retoCard && !e.target.closest('[data-action]')) retoCard.classList.toggle('expanded');
+}, true);
 
 init();
 </script>
