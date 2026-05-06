@@ -284,18 +284,13 @@ body { max-width: 720px; margin: 0 auto; }
   <div class="setup-card">
     <h1>POZOS<span class="accent">.</span></h1>
     <div class="tagline">Control de torneos · pádel</div>
-    <p class="intro">Conectá tu app a un <strong>Gist privado de GitHub</strong> para que tus pozos se sincronicen entre el celu y la PC.</p>
+    <p class="intro">Ingresá tu <strong>Gist ID</strong> para conectar y sincronizar tus datos entre dispositivos.</p>
 
     <form id="setupForm">
       <div class="field">
-        <label>Personal access token</label>
-        <input type="password" id="setupToken" placeholder="github_pat_… o ghp_…" autocomplete="off" required>
-        <div class="hint">Solo con permiso "gist". Queda guardado en este dispositivo.</div>
-      </div>
-      <div class="field">
         <label>Gist ID</label>
         <input type="text" id="setupGist" class="mono" placeholder="abc123def456…" autocomplete="off" required>
-        <div class="hint">Lo encontrás en la URL del Gist, después de tu usuario.</div>
+        <div class="hint">Lo encontrás en la URL de tu Gist, después de tu usuario de GitHub.</div>
       </div>
       <div id="setupError" class="setup-error" hidden></div>
       <div class="modal-actions">
@@ -304,11 +299,11 @@ body { max-width: 720px; margin: 0 auto; }
     </form>
 
     <details class="help">
-      <summary>¿Cómo obtener el token y el Gist ID?</summary>
+      <summary>¿Cómo obtengo mi Gist ID?</summary>
       <ol>
-        <li>Crear el <strong>token</strong>: ir a <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens/new</a>, ponerle un nombre (ej. "pozos"), marcar el scope <code>gist</code>, generar y copiar el token (se ve una sola vez).</li>
-        <li>Crear el <strong>Gist</strong>: ir a <a href="https://gist.github.com" target="_blank" rel="noopener">gist.github.com</a>. Filename: <code>pozos.json</code>. Contenido: <code>[]</code>. Click en "Create secret gist".</li>
-        <li>Copiar el <strong>Gist ID</strong> de la URL (la cadena de letras y números después de tu usuario).</li>
+        <li>Crear cuenta en <a href="https://github.com" target="_blank" rel="noopener">github.com</a> si no tenés.</li>
+        <li>Ir a <a href="https://gist.github.com" target="_blank" rel="noopener">gist.github.com</a>. Filename: <code>pozos.json</code>. Contenido: <code>[]</code>. Click en "Create secret gist".</li>
+        <li>Copiar el <strong>Gist ID</strong> de la URL — la cadena de letras y números al final, ej: <code>4b3a2c1d…</code></li>
       </ol>
     </details>
   </div>
@@ -447,13 +442,8 @@ body { max-width: 720px; margin: 0 auto; }
     </div>
     <form id="settingsForm">
       <div class="field">
-        <label>Personal access token</label>
-        <input type="password" id="settingsToken" autocomplete="off">
-        <div class="hint">Dejá igual si no querés cambiarlo.</div>
-      </div>
-      <div class="field">
         <label>Gist ID</label>
-        <input type="text" id="settingsGist" class="mono" autocomplete="off">
+        <input type="text" id="settingsGist" class="mono" autocomplete="off" placeholder="abc123def456…">
       </div>
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="settingsCancelBtn">Cancelar</button>
@@ -480,7 +470,7 @@ const GIST_FILENAME = 'pozos.json';
 
 let pozos = [];
 let editingId = null;
-let settings = null; // { token, gistId }
+let settings = null; // { gistId }
 let syncing = false;
 let lastSyncedAt = null;
 let lastError = null;
@@ -539,62 +529,32 @@ function saveCache(arr) {
 }
 
 // ---------- GitHub Gist API ----------
-async function gistFetch(token, gistId) {
-  const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28'
-    }
-  });
+const WORKER_URL = 'https://padel.fedexlang.workers.dev';
+
+async function workerFetch(gistId) {
+  const res = await fetch(`${WORKER_URL}/gist/${gistId}`);
   if (!res.ok) {
-    const err = new Error(`HTTP ${res.status}`);
+    const body = await res.json().catch(() => ({}));
+    const err = new Error(body.error || `HTTP ${res.status}`);
     err.status = res.status;
     throw err;
   }
-  const data = await res.json();
-  // Buscar el archivo pozos.json o el primer .json
-  let file = data.files?.[GIST_FILENAME];
-  if (!file) {
-    const jsonFile = Object.values(data.files || {}).find(f => f.filename.endsWith('.json'));
-    file = jsonFile;
-  }
-  if (!file) return [];
-  let content = file.content;
-  if (file.truncated) {
-    const raw = await fetch(file.raw_url, { headers: { 'Authorization': `Bearer ${token}` } });
-    content = await raw.text();
-  }
-  if (!content || !content.trim()) return [];
-  try {
-    const parsed = JSON.parse(content);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
-    throw new Error('El archivo en el Gist no es JSON válido');
-  }
+  const body = await res.json();
+  return Array.isArray(body.data) ? body.data : [];
 }
 
-async function gistUpdate(token, gistId, arr) {
-  const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-    method: 'PATCH',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      files: {
-        [GIST_FILENAME]: { content: JSON.stringify(arr, null, 2) }
-      }
-    })
+async function workerUpdate(gistId, arr) {
+  const res = await fetch(`${WORKER_URL}/gist/${gistId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ data: arr })
   });
   if (!res.ok) {
-    const err = new Error(`HTTP ${res.status}`);
+    const body = await res.json().catch(() => ({}));
+    const err = new Error(body.error || `HTTP ${res.status}`);
     err.status = res.status;
     throw err;
   }
-  return res.json();
 }
 
 // ---------- Sync status UI ----------
@@ -633,7 +593,7 @@ async function syncDown() {
   if (!settings) return;
   setStatus('syncing');
   try {
-    const remote = await gistFetch(settings.token, settings.gistId);
+    const remote = await workerFetch(settings.gistId);
     pozos = remote.map(migrate);
     saveCache(pozos);
     lastSyncedAt = new Date();
@@ -651,7 +611,7 @@ async function syncUp() {
   syncing = true;
   setStatus('syncing');
   try {
-    await gistUpdate(settings.token, settings.gistId, pozos);
+    await workerUpdate(settings.gistId, pozos);
     saveCache(pozos);
     lastSyncedAt = new Date();
     lastError = null;
@@ -1018,8 +978,6 @@ function togglePartner() { const tipo = document.querySelector('input[name="tipo
 
 // ---------- Settings modal ----------
 function openSettings() {
-  $('#settingsToken').value = '';
-  $('#settingsToken').placeholder = '(sin cambios)';
   $('#settingsGist').value = settings ? settings.gistId : '';
   $('#settingsModalBg').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1027,15 +985,15 @@ function openSettings() {
 function closeSettings() { $('#settingsModalBg').classList.remove('open'); document.body.style.overflow = ''; }
 
 // ---------- Setup flow ----------
-async function doSetup(token, gistId) {
+async function doSetup(gistId) {
   const errBox = $('#setupError');
   const btn = $('#setupBtn');
   errBox.hidden = true;
   btn.disabled = true;
   btn.textContent = 'Conectando…';
   try {
-    const remote = await gistFetch(token, gistId);
-    settings = { token, gistId };
+    const remote = await workerFetch(gistId);
+    settings = { gistId };
     saveSettingsLocal(settings);
     pozos = remote.map(migrate);
     saveCache(pozos);
@@ -1047,8 +1005,7 @@ async function doSetup(token, gistId) {
     showToast('¡Conectado!');
   } catch (e) {
     let msg;
-    if (e.status === 401) msg = 'Token inválido. Asegurate de copiarlo bien y que tenga el scope "gist".';
-    else if (e.status === 404) msg = 'Gist no encontrado. Verificá que el ID sea correcto y que el Gist exista en tu cuenta.';
+    if (e.status === 404) msg = 'Gist no encontrado. Verificá que el ID sea correcto.';
     else if (!navigator.onLine) msg = 'Sin conexión a internet.';
     else msg = 'Error: ' + (e.message || 'desconocido');
     errBox.textContent = msg;
@@ -1079,10 +1036,9 @@ async function init() {
 // ---------- Event wiring ----------
 $('#setupForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  const token = $('#setupToken').value.trim();
   const gistId = $('#setupGist').value.trim();
-  if (!token || !gistId) return;
-  doSetup(token, gistId);
+  if (!gistId) return;
+  doSetup(gistId);
 });
 
 $('#addBtn').addEventListener('click', () => openModal());
@@ -1158,34 +1114,27 @@ $('#settingsModalBg').addEventListener('click', (e) => { if (e.target === $('#se
 
 $('#settingsForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const newToken = $('#settingsToken').value.trim();
-  const newGist = $('#settingsGist').value.trim();
-  const updated = {
-    token: newToken || settings.token,
-    gistId: newGist || settings.gistId
-  };
-  // Probar la nueva config
+  const newGist = $('#settingsGist').value.trim() || settings.gistId;
   try {
-    await gistFetch(updated.token, updated.gistId);
-    settings = updated;
+    await workerFetch(newGist);
+    settings = { gistId: newGist };
     saveSettingsLocal(settings);
     closeSettings();
     showToast('Ajustes actualizados');
     await syncDown();
   } catch (err) {
-    showToast('No se pudo conectar con esos datos', 'error', 3500);
+    showToast('Gist no encontrado. Verificá el ID.', 'error', 3500);
   }
 });
 
 $('#disconnectBtn').addEventListener('click', () => {
-  if (!confirm('¿Desconectar? Se borran token y caché de este dispositivo. Los datos del Gist quedan intactos.')) return;
+  if (!confirm('¿Desconectar? Se borra el caché de este dispositivo. Los datos del Gist quedan intactos.')) return;
   clearSettings();
   settings = null;
   pozos = [];
   closeSettings();
   $('#app').hidden = true;
   $('#setupScreen').hidden = false;
-  $('#setupToken').value = '';
   $('#setupGist').value = '';
 });
 
