@@ -123,6 +123,21 @@ body { max-width: 720px; margin: 0 auto; }
 .filter-clear { display: block; width: 100%; background: transparent; border: 1px solid var(--border); color: var(--ink-muted); padding: 9px; border-radius: 8px; font-family: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 12px; }
 .filter-clear:hover { color: var(--ink); border-color: var(--border-strong); }
 
+/* Sort pills */
+.sort-options { display: flex; flex-wrap: wrap; gap: 6px; }
+.sort-pill { background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-muted); padding: 9px 12px; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all .15s; letter-spacing: 0.02em; }
+.sort-pill:hover { color: var(--ink); border-color: var(--border-strong); }
+.sort-pill.active { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.4); color: var(--court-bright); }
+.sort-pill .arrow { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; min-width: 8px; }
+
+/* Win rate chip variants */
+.chip.wr-good { color: var(--court-bright); border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.05); }
+.chip.wr-good strong { color: var(--court-bright); }
+.chip.wr-mid { color: var(--amber); border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.05); }
+.chip.wr-mid strong { color: var(--amber); }
+.chip.wr-bad { color: var(--crimson); border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.05); }
+.chip.wr-bad strong { color: var(--crimson); }
+
 .empty { margin: 16px 20px; padding: 50px 20px; text-align: center; border: 1px dashed var(--border); border-radius: 16px; color: var(--ink-muted); }
 .empty-art { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--surface-3); letter-spacing: 0.15em; line-height: 1; }
 .empty p { margin-top: 14px; font-size: 14px; }
@@ -303,36 +318,23 @@ body { max-width: 720px; margin: 0 auto; }
 
   <div class="section-title">
     <h2>Historial</h2>
-    <button class="filter-toggle" id="filterToggle">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-      <span id="filterLabel">Filtrar</span>
+    <button class="filter-toggle" id="sortToggle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+      <span id="sortLabel">Ordenar</span>
       <span class="count" id="count" style="margin-left: 4px;">0 pozos</span>
     </button>
   </div>
 
-  <div class="filters-panel hidden" id="filtersPanel">
+  <div class="filters-panel hidden" id="sortPanel">
     <div class="filter-group">
-      <div class="filter-group-label">Fecha</div>
-      <div class="filter-row">
-        <input type="date" id="filterDateFrom" placeholder="Desde">
-        <input type="date" id="filterDateTo" placeholder="Hasta">
+      <div class="filter-group-label">Ordenar por</div>
+      <div class="sort-options">
+        <button type="button" class="sort-pill" data-sort="fecha">Fecha <span class="arrow"></span></button>
+        <button type="button" class="sort-pill" data-sort="posicion">Posición <span class="arrow"></span></button>
+        <button type="button" class="sort-pill" data-sort="puntaje">Puntaje <span class="arrow"></span></button>
+        <button type="button" class="sort-pill" data-sort="winRate">Win rate <span class="arrow"></span></button>
       </div>
     </div>
-    <div class="filter-group">
-      <div class="filter-group-label">Posición</div>
-      <div class="filter-row">
-        <input type="number" id="filterPosMin" min="1" placeholder="Mínima">
-        <input type="number" id="filterPosMax" min="1" placeholder="Máxima">
-      </div>
-    </div>
-    <div class="filter-group">
-      <div class="filter-group-label">Puntaje</div>
-      <div class="filter-row">
-        <input type="number" id="filterPtsMin" step="any" placeholder="Mínimo">
-        <input type="number" id="filterPtsMax" step="any" placeholder="Máximo">
-      </div>
-    </div>
-    <button type="button" class="filter-clear" id="filterClear">Limpiar filtros</button>
   </div>
 
   <div id="listWrap"></div>
@@ -667,40 +669,52 @@ function renderStats() {
   `;
 }
 
-// ---------- Filtros ----------
-let filters = { dateFrom: '', dateTo: '', posMin: '', posMax: '', ptsMin: '', ptsMax: '' };
+// ---------- Ordenamiento ----------
+let sortBy = { field: 'fecha', dir: 'desc' };
+const SORT_DEFAULT_DIR = { fecha: 'desc', posicion: 'asc', puntaje: 'desc', winRate: 'desc' };
+const SORT_LABELS = { fecha: 'Fecha', posicion: 'Posición', puntaje: 'Puntaje', winRate: 'Win rate' };
 
-function activeFilterCount() {
-  return Object.values(filters).filter(v => v !== '' && v !== null && v !== undefined).length;
+function pozoWinRate(p) {
+  const v = p.victorias || 0, e = p.empates || 0, d = p.derrotas || 0;
+  const total = v + e + d;
+  if (total === 0) return null;
+  return Math.round(v / total * 100);
 }
 
-function applyFilters(arr) {
-  return arr.filter(p => {
-    if (filters.dateFrom && (p.fecha || '') < filters.dateFrom) return false;
-    if (filters.dateTo && (p.fecha || '') > filters.dateTo) return false;
-    if (filters.posMin !== '' && p.posicion < Number(filters.posMin)) return false;
-    if (filters.posMax !== '' && p.posicion > Number(filters.posMax)) return false;
-    if (filters.ptsMin !== '') {
-      if (p.puntaje === null || p.puntaje === undefined || Number(p.puntaje) < Number(filters.ptsMin)) return false;
+function sortPozos(arr) {
+  const sorted = [...arr];
+  const dir = sortBy.dir === 'asc' ? 1 : -1;
+  const getValue = (p) => {
+    switch (sortBy.field) {
+      case 'fecha': return p.fecha || '';
+      case 'posicion': return p.posicion;
+      case 'puntaje': return (p.puntaje === null || p.puntaje === undefined || p.puntaje === '') ? null : Number(p.puntaje);
+      case 'winRate': return pozoWinRate(p);
+      default: return null;
     }
-    if (filters.ptsMax !== '') {
-      if (p.puntaje === null || p.puntaje === undefined || Number(p.puntaje) > Number(filters.ptsMax)) return false;
-    }
-    return true;
+  };
+  sorted.sort((a, b) => {
+    const va = getValue(a), vb = getValue(b);
+    const aNull = va === null || va === undefined || va === '';
+    const bNull = vb === null || vb === undefined || vb === '';
+    if (aNull && bNull) return 0;
+    if (aNull) return 1;
+    if (bNull) return -1;
+    if (va < vb) return -1 * dir;
+    if (va > vb) return 1 * dir;
+    return 0;
   });
+  return sorted;
 }
 
-function updateFilterToggleUI() {
-  const n = activeFilterCount();
-  const btn = $('#filterToggle');
-  const lbl = $('#filterLabel');
-  if (n > 0) {
-    btn.classList.add('active');
-    lbl.innerHTML = `Filtros <span class="badge">${n}</span>`;
-  } else {
-    btn.classList.remove('active');
-    lbl.textContent = 'Filtrar';
-  }
+function updateSortUI() {
+  document.querySelectorAll('.sort-pill').forEach(pill => {
+    const isActive = pill.dataset.sort === sortBy.field;
+    pill.classList.toggle('active', isActive);
+    const arrow = pill.querySelector('.arrow');
+    if (arrow) arrow.textContent = isActive ? (sortBy.dir === 'asc' ? '↑' : '↓') : '';
+  });
+  $('#sortLabel').textContent = `${SORT_LABELS[sortBy.field]} ${sortBy.dir === 'asc' ? '↑' : '↓'}`;
 }
 
 // ---------- Chart ----------
@@ -810,31 +824,22 @@ function pozoOutcome(p) {
 }
 
 function renderList() {
-  const filtered = applyFilters(pozos);
   const total = pozos.length;
-  const shown = filtered.length;
-  const countEl = $('#count');
-  if (activeFilterCount() > 0) {
-    countEl.textContent = `${shown} de ${total}`;
-  } else {
-    countEl.textContent = `${total} ${total === 1 ? 'pozo' : 'pozos'}`;
-  }
-  updateFilterToggleUI();
+  $('#count').textContent = `${total} ${total === 1 ? 'pozo' : 'pozos'}`;
+  updateSortUI();
 
   const wrap = $('#listWrap');
   if (!total) {
     wrap.innerHTML = `<div class="empty"><div class="empty-art">— vacío —</div><p>Agregá tu primer pozo con el botón verde</p></div>`;
     return;
   }
-  if (!shown) {
-    wrap.innerHTML = `<div class="empty"><div class="empty-art">— sin resultados —</div><p>Ningún pozo coincide con los filtros</p></div>`;
-    return;
-  }
-  const sorted = [...filtered].sort((a,b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  const sorted = sortPozos(pozos);
   wrap.innerHTML = `<div class="list">${sorted.map(p => {
     const balance = (Number(p.premio)||0) - (Number(p.costo)||0);
     const balClass = balance > 0 ? 'green' : balance < 0 ? 'red' : '';
     const v = p.victorias || 0, e = p.empates || 0, d = p.derrotas || 0;
+    const wr = pozoWinRate(p);
+    const wrClass = wr === null ? '' : wr >= 60 ? 'wr-good' : wr >= 40 ? 'wr-mid' : 'wr-bad';
     return `
     <div class="pozo-card ${pozoOutcome(p)}" data-id="${p.id}">
       <div class="pozo-head">
@@ -846,6 +851,7 @@ function renderList() {
       </div>
       <div class="pozo-row">
         <span class="chip record"><span class="rec-v">${v}V</span><span class="sep">·</span><span class="rec-e">${e}E</span><span class="sep">·</span><span class="rec-d">${d}D</span></span>
+        ${wr !== null ? `<span class="chip ${wrClass}"><strong>${wr}%</strong> WR</span>` : ''}
         ${p.puntaje !== '' && p.puntaje !== null && p.puntaje !== undefined ? `<span class="chip"><strong>${p.puntaje}</strong> pts</span>` : ''}
         ${p.premio ? `<span class="chip gold"><strong>${fmtMoney(p.premio)}</strong></span>` : ''}
         ${p.tipo === 'pareja' && p.companero ? `<span class="chip">c/ <strong>${escapeHtml(p.companero)}</strong></span>` : ''}
@@ -1078,30 +1084,22 @@ $('#exportBtn').addEventListener('click', () => {
 
 window.addEventListener('online', () => { if (settings) syncDown(); });
 
-// ---------- Filter event handlers ----------
-$('#filterToggle').addEventListener('click', () => {
-  $('#filtersPanel').classList.toggle('hidden');
+// ---------- Sort event handlers ----------
+$('#sortToggle').addEventListener('click', () => {
+  $('#sortPanel').classList.toggle('hidden');
 });
 
-const filterInputs = [
-  ['#filterDateFrom', 'dateFrom'],
-  ['#filterDateTo', 'dateTo'],
-  ['#filterPosMin', 'posMin'],
-  ['#filterPosMax', 'posMax'],
-  ['#filterPtsMin', 'ptsMin'],
-  ['#filterPtsMax', 'ptsMax']
-];
-filterInputs.forEach(([sel, key]) => {
-  $(sel).addEventListener('input', (e) => {
-    filters[key] = e.target.value;
+document.querySelectorAll('.sort-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    const field = pill.dataset.sort;
+    if (sortBy.field === field) {
+      sortBy.dir = sortBy.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortBy.field = field;
+      sortBy.dir = SORT_DEFAULT_DIR[field];
+    }
     renderList();
   });
-});
-
-$('#filterClear').addEventListener('click', () => {
-  Object.keys(filters).forEach(k => filters[k] = '');
-  filterInputs.forEach(([sel]) => { $(sel).value = ''; });
-  renderList();
 });
 
 init();
