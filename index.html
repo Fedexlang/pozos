@@ -75,7 +75,8 @@ body { max-width: 720px; margin: 0 auto; }
 .status-extra { margin-left: auto; opacity: 0.65; font-size: 10px; text-transform: none; letter-spacing: 0.05em; }
 
 /* Stats */
-.stats { padding: 20px 20px 8px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.stats { padding: 20px 20px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.stats-note { padding: 6px 20px 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--court-bright); letter-spacing: 0.12em; text-transform: uppercase; }
 .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
 .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-muted); margin-bottom: 6px; }
 .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1; }
@@ -253,7 +254,7 @@ body { max-width: 720px; margin: 0 auto; }
 .loading-overlay span { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); letter-spacing: 0.15em; text-transform: uppercase; }
 
 @media (min-width: 600px) {
-  .stats { grid-template-columns: repeat(4, 1fr); }
+  .stats { grid-template-columns: repeat(5, 1fr); }
   .modal-bg { align-items: center; }
   .modal { border-radius: 24px; max-height: 88vh; }
 }
@@ -329,6 +330,7 @@ body { max-width: 720px; margin: 0 auto; }
   </div>
 
   <section class="stats" id="stats"></section>
+  <div class="stats-note" id="statsNote" hidden></div>
 
   <div class="section-title">
     <h2>Historial</h2>
@@ -408,9 +410,12 @@ body { max-width: 720px; margin: 0 auto; }
       </div>
       <div class="field-row">
         <div class="field"><label>Puntaje</label><input type="number" id="puntaje" step="any" inputmode="decimal" placeholder="opcional"></div>
-        <div class="field"><label>Costo ($)</label><input type="number" id="costo" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+        <div class="field"><label>Calorías (kcal)</label><input type="number" id="calorias" min="0" inputmode="numeric" placeholder="opcional"></div>
       </div>
-      <div class="field"><label>Premio ($)</label><input type="number" id="premio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      <div class="field-row">
+        <div class="field"><label>Costo ($)</label><input type="number" id="costo" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+        <div class="field"><label>Premio ($)</label><input type="number" id="premio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      </div>
       <div class="field"><label>Notas</label><textarea id="notas" rows="2" placeholder="Opcional"></textarea></div>
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
@@ -495,7 +500,7 @@ function migrate(p) {
     delete out.resultado;
     return out;
   }
-  return { ...p, victorias: Number(p.victorias) || 0, empates: Number(p.empates) || 0, derrotas: Number(p.derrotas) || 0, club: p.club || null };
+  return { ...p, victorias: Number(p.victorias) || 0, empates: Number(p.empates) || 0, derrotas: Number(p.derrotas) || 0, club: p.club || null, calorias: p.calorias || null };
 }
 
 // ---------- LocalStorage (settings + cache) ----------
@@ -665,40 +670,53 @@ function handleSyncError(e, dir) {
 }
 
 // ---------- Stats & rendering ----------
-function calcStats() {
-  const total = pozos.length;
+function calcStats(arr) {
+  const total = arr.length;
   let v = 0, e = 0, d = 0;
-  const perPozoRates = [];
-  pozos.forEach(p => {
-    const pv = p.victorias || 0, pe = p.empates || 0, pd = p.derrotas || 0;
-    v += pv; e += pe; d += pd;
-    const m = pv + pe + pd;
-    if (m > 0) perPozoRates.push(pv / m);
+  arr.forEach(p => {
+    v += p.victorias || 0; e += p.empates || 0; d += p.derrotas || 0;
   });
   const partidos = v + e + d;
   const winRate = partidos ? Math.round(v / partidos * 100) : 0;
-  const avgWinRate = perPozoRates.length ? Math.round(perPozoRates.reduce((s, x) => s + x, 0) / perPozoRates.length * 100) : 0;
-  const totalPremio = pozos.reduce((s, p) => s + (Number(p.premio) || 0), 0);
-  return { total, v, e, d, partidos, winRate, avgWinRate, totalPremio, sampleSize: perPozoRates.length };
+  const totalPremio = arr.reduce((s, p) => s + (Number(p.premio) || 0), 0);
+  const totalCosto = arr.reduce((s, p) => s + (Number(p.costo) || 0), 0);
+  const totalCalorias = arr.reduce((s, p) => s + (Number(p.calorias) || 0), 0);
+  return { total, v, e, d, partidos, winRate, totalPremio, totalCosto, totalCalorias };
 }
 
 function renderStats() {
-  const s = calcStats();
+  const filtered = getFilteredPozos();
+  const isFiltered = filtered.length !== pozos.length;
+  const s = calcStats(filtered);
+  const note = $('#statsNote');
+  if (isFiltered) {
+    note.hidden = false;
+    note.textContent = `↑ mostrando ${filtered.length} de ${pozos.length} pozos`;
+  } else {
+    note.hidden = true;
+  }
   $('#stats').innerHTML = `
     <div class="stat"><div class="stat-label">Pozos</div><div class="stat-value">${s.total}</div><div class="stat-extra">${s.partidos} partidos</div></div>
     <div class="stat"><div class="stat-label">Win rate</div><div class="stat-value green">${s.winRate}<span style="font-size:18px">%</span></div><div class="stat-extra">${s.v}V · ${s.e}E · ${s.d}D</div></div>
-    <div class="stat"><div class="stat-label">Promedio</div><div class="stat-value green">${s.avgWinRate}<span style="font-size:18px">%</span></div><div class="stat-extra">avg de ${s.sampleSize} pozo${s.sampleSize===1?'':'s'}</div></div>
     <div class="stat"><div class="stat-label">Premios</div><div class="stat-value gold">${fmtMoney(s.totalPremio)}</div><div class="stat-extra">acumulado</div></div>
+    <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(s.totalCosto)}</div><div class="stat-extra">acumulado</div></div>
+    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${s.totalCalorias ? s.totalCalorias.toLocaleString() : '—'}</div><div class="stat-extra">kcal quemadas</div></div>
   `;
 }
 
 // ---------- Búsqueda ----------
 let searchQuery = '';
 
+function getSearchTerms() {
+  if (!searchQuery) return [];
+  return searchQuery.split('+').map(t => t.trim().toLowerCase()).filter(Boolean);
+}
+
 function pozoSearchText(p) {
   const parts = [
     p.categoria || '', p.club || '', p.companero || '',
-    p.notas || '', p.tipo || '', p.fecha || ''
+    p.notas || '', p.tipo || '', p.fecha || '',
+    String(p.posicion || ''), String(p.puntaje ?? ''),
   ];
   if (p.fecha) {
     try {
@@ -712,12 +730,16 @@ function pozoSearchText(p) {
 }
 
 function matchesSearch(p) {
-  if (!searchQuery) return true;
-  return pozoSearchText(p).includes(searchQuery.toLowerCase());
+  const terms = getSearchTerms();
+  if (!terms.length) return true;
+  const text = pozoSearchText(p);
+  return terms.some(term => text.includes(term)); // OR: match cualquier término
 }
 
 function getFilteredPozos() {
-  return searchQuery ? pozos.filter(matchesSearch) : pozos;
+  const terms = getSearchTerms();
+  if (!terms.length) return pozos;
+  return pozos.filter(matchesSearch);
 }
 
 // ---------- Ordenamiento ----------
@@ -920,6 +942,7 @@ function renderList() {
         <span class="chip record"><span class="rec-v">${v}V</span><span class="sep">·</span><span class="rec-e">${e}E</span><span class="sep">·</span><span class="rec-d">${d}D</span></span>
         ${wr !== null ? `<span class="chip ${wrClass}"><strong>${wr}%</strong> WR</span>` : ''}
         ${p.puntaje !== '' && p.puntaje !== null && p.puntaje !== undefined ? `<span class="chip"><strong>${p.puntaje}</strong> pts</span>` : ''}
+        ${p.calorias ? `<span class="chip"><strong>${Number(p.calorias).toLocaleString()}</strong> kcal</span>` : ''}
         ${p.premio ? `<span class="chip gold"><strong>${fmtMoney(p.premio)}</strong></span>` : ''}
         ${p.club ? `<span class="chip">${escapeHtml(p.club)}</span>` : ''}
         ${p.tipo === 'pareja' && p.companero ? `<span class="chip">c/ <strong>${escapeHtml(p.companero)}</strong></span>` : ''}
@@ -928,8 +951,8 @@ function renderList() {
         <div class="detail-grid">
           <div class="detail-item"><div class="label">Costo</div><div class="value mono">${fmtMoney(p.costo)}</div></div>
           <div class="detail-item"><div class="label">Premio</div><div class="value mono">${fmtMoney(p.premio)}</div></div>
-          <div class="detail-item"><div class="label">Balance</div><div class="value mono ${balClass}">${balance > 0 ? '+' : ''}${fmtMoney(balance)}</div></div>
           <div class="detail-item"><div class="label">Puntaje</div><div class="value mono">${p.puntaje ?? '—'}</div></div>
+          <div class="detail-item"><div class="label">Calorías</div><div class="value mono">${p.calorias ? Number(p.calorias).toLocaleString() + ' kcal' : '—'}</div></div>
           ${p.club ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Club</div><div class="value">${escapeHtml(p.club)}</div></div>` : ''}
           ${p.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(p.notas)}</div></div>` : ''}
         </div>
@@ -953,6 +976,7 @@ function openModal(pozo = null) {
   $('#fecha').value = pozo ? pozo.fecha : todayISO();
   $('#categoria').value = pozo ? pozo.categoria : '';
   $('#club').value = pozo ? (pozo.club || '') : '';
+  $('#calorias').value = pozo && pozo.calorias ? pozo.calorias : '';
   document.querySelector(`input[name="tipo"][value="${pozo ? pozo.tipo : 'pareja'}"]`).checked = true;
   $('#companero').value = pozo ? (pozo.companero || '') : '';
   $('#participantes').value = pozo ? pozo.participantes : '';
@@ -1062,6 +1086,7 @@ $('#pozoForm').addEventListener('submit', async (e) => {
     empates: Number($('#empates').value) || 0,
     derrotas: Number($('#derrotas').value) || 0,
     puntaje: $('#puntaje').value === '' ? null : Number($('#puntaje').value),
+    calorias: $('#calorias').value === '' ? null : Number($('#calorias').value),
     costo: $('#costo').value === '' ? null : Number($('#costo').value),
     premio: $('#premio').value === '' ? null : Number($('#premio').value),
     notas: $('#notas').value.trim() || null,
@@ -1179,6 +1204,7 @@ document.querySelectorAll('.sort-pill').forEach(pill => {
 $('#searchInput').addEventListener('input', (e) => {
   searchQuery = e.target.value.trim();
   $('#searchClear').hidden = !searchQuery;
+  renderStats();
   renderChart();
   renderList();
 });
@@ -1187,6 +1213,7 @@ $('#searchClear').addEventListener('click', () => {
   $('#searchInput').value = '';
   searchQuery = '';
   $('#searchClear').hidden = true;
+  renderStats();
   renderChart();
   renderList();
   $('#searchInput').focus();
