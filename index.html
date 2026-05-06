@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a100c">
+<title>Pozos · Control de Torneos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a100c; --surface: #131b16; --surface-2: #1c2620; --surface-3: #243029;
+  --court: #2d8659; --court-bright: #4ade80;
+  --ink: #f0f4ed; --ink-muted: #8a9690; --ink-dim: #5a655e;
+  --gold: #fbbf24; --crimson: #ef4444; --amber: #f59e0b;
+  --border: rgba(255,255,255,0.08); --border-strong: rgba(255,255,255,0.16);
+}
+html, body { background: var(--bg); color: var(--ink); font-family: 'Manrope', sans-serif; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+body { max-width: 720px; margin: 0 auto; }
+[hidden] { display: none !important; }
+.app-wrap { padding-bottom: 120px; }
+
+/* Setup */
+.setup { min-height: 100vh; padding: 40px 20px; display: flex; flex-direction: column; justify-content: center; }
+.setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 24px; position: relative; overflow: hidden; }
+.setup-card::before { content: ''; position: absolute; top: -80px; right: -80px; width: 240px; height: 240px; background: radial-gradient(circle, rgba(74,222,128,0.12) 0%, transparent 70%); pointer-events: none; }
+.setup h1 { font-family: 'Bebas Neue', sans-serif; font-size: 56px; line-height: 0.9; letter-spacing: 0.02em; position: relative; }
+.setup h1 .accent { color: var(--court-bright); }
+.setup .tagline { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.2em; text-transform: uppercase; margin: 6px 0 22px; position: relative; }
+.setup .intro { font-size: 14px; color: var(--ink-muted); line-height: 1.6; margin-bottom: 22px; position: relative; }
+.setup .intro strong { color: var(--ink); font-weight: 600; }
+
+.help { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-top: 18px; font-size: 13px; color: var(--ink-muted); line-height: 1.65; position: relative; }
+.help summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--court-bright); user-select: none; outline: none; }
+.help summary::-webkit-details-marker { display: none; }
+.help summary::before { content: '+ '; font-family: 'JetBrains Mono', monospace; }
+.help[open] summary::before { content: '− '; }
+.help ol { margin: 14px 0 4px 20px; }
+.help li { margin-bottom: 10px; }
+.help strong { color: var(--ink); font-weight: 600; }
+.help code { background: var(--surface-3); padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--court-bright); }
+.help a { color: var(--court-bright); text-decoration: none; word-break: break-all; }
+.help a:hover { text-decoration: underline; }
+
+.setup-error { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 12px 14px; border-radius: 10px; font-size: 13px; margin-top: 14px; line-height: 1.5; }
+
+/* App bar */
+.app-bar { padding: 24px 20px 14px; display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); position: relative; overflow: hidden; }
+.app-bar::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(74,222,128,0.08) 0%, transparent 70%); pointer-events: none; }
+.app-bar h1 { font-family: 'Bebas Neue', sans-serif; font-size: 42px; letter-spacing: 0.02em; line-height: 0.9; }
+.app-bar h1 .accent { color: var(--court-bright); }
+.app-bar .sub { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.2em; margin-top: 6px; text-transform: uppercase; }
+.bar-actions { display: flex; gap: 8px; position: relative; z-index: 1; }
+
+.icon-btn { width: 38px; height: 38px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer; transition: all .2s; flex-shrink: 0; }
+.icon-btn:hover, .icon-btn:active { color: var(--ink); border-color: var(--border-strong); }
+.icon-btn svg { width: 18px; height: 18px; }
+.icon-btn.spin svg { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Sync status */
+.status-bar { padding: 8px 20px; display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-dim); border-bottom: 1px solid var(--border); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-dim); flex-shrink: 0; }
+.status-bar.synced .status-dot { background: var(--court-bright); box-shadow: 0 0 6px rgba(74,222,128,0.6); }
+.status-bar.synced { color: var(--court-bright); }
+.status-bar.syncing .status-dot { background: var(--amber); animation: pulse 1s ease-in-out infinite; }
+.status-bar.syncing { color: var(--amber); }
+.status-bar.error .status-dot { background: var(--crimson); }
+.status-bar.error { color: var(--crimson); }
+.status-bar.offline .status-dot { background: var(--ink-muted); }
+.status-bar.offline { color: var(--ink-muted); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.status-extra { margin-left: auto; opacity: 0.65; font-size: 10px; text-transform: none; letter-spacing: 0.05em; }
+
+/* Stats */
+.stats { padding: 20px 20px 8px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+.stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-muted); margin-bottom: 6px; }
+.stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1; }
+.stat-value.gold { color: var(--gold); }
+.stat-value.green { color: var(--court-bright); }
+.stat-value.red { color: var(--crimson); }
+.stat-extra { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim); margin-top: 5px; letter-spacing: 0.05em; }
+
+.section-title { padding: 24px 20px 12px; display: flex; justify-content: space-between; align-items: baseline; }
+.section-title h2 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.04em; }
+.section-title .count { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+.empty { margin: 16px 20px; padding: 50px 20px; text-align: center; border: 1px dashed var(--border); border-radius: 16px; color: var(--ink-muted); }
+.empty-art { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--surface-3); letter-spacing: 0.15em; line-height: 1; }
+.empty p { margin-top: 14px; font-size: 14px; }
+
+.list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+.pozo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; transition: border-color .2s; cursor: pointer; }
+.pozo-card:hover { border-color: var(--border-strong); }
+.pozo-card.victory { border-left: 3px solid var(--court-bright); }
+.pozo-card.tie { border-left: 3px solid var(--amber); }
+.pozo-card.defeat { border-left: 3px solid var(--crimson); }
+.pozo-card.neutral { border-left: 3px solid var(--surface-3); }
+.pozo-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.pozo-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+.pozo-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.02em; line-height: 1; }
+.pozo-pos { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 0.85; color: var(--court-bright); text-align: right; white-space: nowrap; }
+.pozo-pos small { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--ink-dim); display: block; letter-spacing: 0.15em; margin-bottom: 3px; font-weight: 500; }
+.pozo-pos .total { font-size: 14px; color: var(--ink-muted); }
+.pozo-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: var(--surface-2); border: 1px solid var(--border); padding: 5px 9px; border-radius: 8px; color: var(--ink-muted); font-weight: 500; }
+.chip strong { color: var(--ink); font-weight: 700; }
+.chip.gold { color: var(--gold); border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.05); }
+.chip.gold strong { color: var(--gold); }
+.chip.record { display: inline-flex; gap: 6px; align-items: center; }
+.chip.record .rec-v { color: var(--court-bright); font-weight: 700; }
+.chip.record .rec-e { color: var(--amber); font-weight: 700; }
+.chip.record .rec-d { color: var(--crimson); font-weight: 700; }
+.chip.record .sep { color: var(--ink-dim); }
+
+.pozo-detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.pozo-card.expanded .pozo-detail { display: block; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; margin-bottom: 14px; }
+.detail-item .label { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-dim); margin-bottom: 4px; }
+.detail-item .value { font-size: 14px; font-weight: 500; }
+.detail-item .value.mono { font-family: 'JetBrains Mono', monospace; }
+.detail-item .value.green { color: var(--court-bright); }
+.detail-item .value.red { color: var(--crimson); }
+.detail-actions { display: flex; gap: 8px; }
+.detail-actions button { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--ink); padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: 0.05em; text-transform: uppercase; font-family: inherit; }
+.detail-actions button:hover, .detail-actions button:active { background: var(--surface-3); }
+.detail-actions button.danger { color: var(--crimson); }
+.detail-actions button.danger:hover, .detail-actions button.danger:active { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); }
+
+.fab { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--court-bright); color: var(--bg); border: none; padding: 14px 28px; border-radius: 999px; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.08em; cursor: pointer; box-shadow: 0 10px 30px rgba(74,222,128,0.35); z-index: 50; display: flex; align-items: center; gap: 8px; transition: transform .2s, box-shadow .2s; }
+.fab:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 14px 36px rgba(74,222,128,0.45); }
+.fab svg { width: 18px; height: 18px; stroke: currentColor; }
+
+/* Modals */
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--surface); width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; border-radius: 24px 24px 0 0; border-top: 1px solid var(--border-strong); padding: 24px 20px 32px; animation: slideUp .3s ease-out; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.modal-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.03em; }
+
+.field { margin-bottom: 14px; }
+.field label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-muted); margin-bottom: 6px; font-weight: 500; }
+.field input, .field select, .field textarea { width: 100%; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; color: var(--ink); -webkit-appearance: none; appearance: none; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--court-bright); background: var(--surface-3); }
+.field input.mono { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+.field textarea { resize: vertical; min-height: 60px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field .hint { font-size: 11px; color: var(--ink-dim); margin-top: 4px; line-height: 1.4; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em; }
+
+.seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 4px; gap: 4px; }
+.seg input { display: none; }
+.seg label { text-align: center; padding: 9px 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-muted); border-radius: 7px; cursor: pointer; text-transform: uppercase; margin: 0; transition: all .15s; }
+.seg input:checked + label { background: var(--surface-3); color: var(--ink); }
+
+.ved-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.ved-cell { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px 10px; text-align: center; }
+.ved-cell.v { border-top: 2px solid var(--court-bright); }
+.ved-cell.e { border-top: 2px solid var(--amber); }
+.ved-cell.d { border-top: 2px solid var(--crimson); }
+.ved-cell label { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 0.15em; margin-bottom: 4px; }
+.ved-cell.v label { color: var(--court-bright); }
+.ved-cell.e label { color: var(--amber); }
+.ved-cell.d label { color: var(--crimson); }
+.ved-cell input { width: 100%; background: transparent; border: none; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--ink); padding: 4px 0; }
+.ved-cell input:focus { outline: none; }
+.partner-wrap { transition: opacity .25s; }
+.partner-wrap.hidden { display: none; }
+
+.modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+.modal-actions.col { flex-direction: column; }
+.btn { flex: 1; padding: 14px; border-radius: 12px; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.08em; cursor: pointer; border: none; transition: opacity .2s; }
+.btn-primary { background: var(--court-bright); color: var(--bg); }
+.btn-secondary { background: var(--surface-2); border: 1px solid var(--border); color: var(--ink); }
+.btn-danger { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--crimson); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.divider { height: 1px; background: var(--border); margin: 18px 0; }
+.divider-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-dim); margin: 18px 0 10px; text-align: center; }
+
+.toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--surface-3); border: 1px solid var(--border-strong); color: var(--ink); padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 500; z-index: 200; opacity: 0; pointer-events: none; transition: opacity .25s; max-width: 90vw; text-align: center; }
+.toast.show { opacity: 1; }
+.toast.error { border-color: rgba(239,68,68,0.4); color: #fca5a5; }
+
+.loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 300; gap: 16px; }
+.loader { width: 32px; height: 32px; border: 3px solid var(--surface-3); border-top-color: var(--court-bright); border-radius: 50%; animation: spin .8s linear infinite; }
+.loading-overlay span { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+@media (min-width: 600px) {
+  .stats { grid-template-columns: repeat(4, 1fr); }
+  .modal-bg { align-items: center; }
+  .modal { border-radius: 24px; max-height: 88vh; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading inicial -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loader"></div>
+  <span>Cargando…</span>
+</div>
+
+<!-- Pantalla de setup (primera vez) -->
+<div class="setup" id="setupScreen" hidden>
+  <div class="setup-card">
+    <h1>POZOS<span class="accent">.</span></h1>
+    <div class="tagline">Control de torneos · pádel</div>
+    <p class="intro">Conectá tu app a un <strong>Gist privado de GitHub</strong> para que tus pozos se sincronicen entre el celu y la PC.</p>
+
+    <form id="setupForm">
+      <div class="field">
+        <label>Personal access token</label>
+        <input type="password" id="setupToken" placeholder="github_pat_… o ghp_…" autocomplete="off" required>
+        <div class="hint">Solo con permiso "gist". Queda guardado en este dispositivo.</div>
+      </div>
+      <div class="field">
+        <label>Gist ID</label>
+        <input type="text" id="setupGist" class="mono" placeholder="abc123def456…" autocomplete="off" required>
+        <div class="hint">Lo encontrás en la URL del Gist, después de tu usuario.</div>
+      </div>
+      <div id="setupError" class="setup-error" hidden></div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" id="setupBtn">Conectar</button>
+      </div>
+    </form>
+
+    <details class="help">
+      <summary>¿Cómo obtener el token y el Gist ID?</summary>
+      <ol>
+        <li>Crear el <strong>token</strong>: ir a <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens/new</a>, ponerle un nombre (ej. "pozos"), marcar el scope <code>gist</code>, generar y copiar el token (se ve una sola vez).</li>
+        <li>Crear el <strong>Gist</strong>: ir a <a href="https://gist.github.com" target="_blank" rel="noopener">gist.github.com</a>. Filename: <code>pozos.json</code>. Contenido: <code>[]</code>. Click en "Create secret gist".</li>
+        <li>Copiar el <strong>Gist ID</strong> de la URL (la cadena de letras y números después de tu usuario).</li>
+      </ol>
+    </details>
+  </div>
+</div>
+
+<!-- App principal -->
+<div class="app-wrap" id="app" hidden>
+  <header class="app-bar">
+    <div>
+      <h1>POZOS<span class="accent">.</span></h1>
+      <span class="sub">Control de torneos · pádel</span>
+    </div>
+    <div class="bar-actions">
+      <button class="icon-btn" id="refreshBtn" title="Recargar desde Gist" aria-label="Recargar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" title="Ajustes" aria-label="Ajustes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="status-bar" id="statusBar">
+    <span class="status-dot"></span>
+    <span id="statusText">Sincronizado</span>
+    <span class="status-extra" id="statusExtra"></span>
+  </div>
+
+  <section class="stats" id="stats"></section>
+
+  <div class="section-title">
+    <h2>Historial</h2>
+    <span class="count" id="count">0 pozos</span>
+  </div>
+
+  <div id="listWrap"></div>
+
+  <button class="fab" id="addBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Nuevo pozo
+  </button>
+</div>
+
+<!-- Modal de pozo -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Nuevo pozo</h3>
+      <button class="icon-btn" id="closeModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="pozoForm">
+      <div class="field-row">
+        <div class="field"><label>Fecha</label><input type="date" id="fecha" required></div>
+        <div class="field"><label>Categoría</label><input type="text" id="categoria" placeholder="ej: 5ta, B" required></div>
+      </div>
+      <div class="field">
+        <label>Tipo</label>
+        <div class="seg">
+          <input type="radio" name="tipo" id="t-ind" value="individual">
+          <label for="t-ind">Individual</label>
+          <input type="radio" name="tipo" id="t-par" value="pareja" checked>
+          <label for="t-par">Pareja</label>
+        </div>
+      </div>
+      <div class="partner-wrap" id="partnerWrap">
+        <div class="field"><label>Compañero</label><input type="text" id="companero" placeholder="Nombre del compañero"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Participantes</label><input type="number" id="participantes" min="2" inputmode="numeric" required></div>
+        <div class="field"><label>Posición final</label><input type="number" id="posicion" min="1" inputmode="numeric" required></div>
+      </div>
+      <div class="field">
+        <label>Resultados de partidos</label>
+        <div class="ved-grid">
+          <div class="ved-cell v"><label for="victorias">Victorias</label><input type="number" id="victorias" min="0" value="0" inputmode="numeric"></div>
+          <div class="ved-cell e"><label for="empates">Empates</label><input type="number" id="empates" min="0" value="0" inputmode="numeric"></div>
+          <div class="ved-cell d"><label for="derrotas">Derrotas</label><input type="number" id="derrotas" min="0" value="0" inputmode="numeric"></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Puntaje</label><input type="number" id="puntaje" step="any" inputmode="decimal" placeholder="opcional"></div>
+        <div class="field"><label>Costo (₡)</label><input type="number" id="costo" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      </div>
+      <div class="field"><label>Premio (₡)</label><input type="number" id="premio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      <div class="field"><label>Notas</label><textarea id="notas" rows="2" placeholder="Opcional"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal settings -->
+<div class="modal-bg" id="settingsModalBg">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Ajustes</h3>
+      <button class="icon-btn" id="closeSettings" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="settingsForm">
+      <div class="field">
+        <label>Personal access token</label>
+        <input type="password" id="settingsToken" autocomplete="off">
+        <div class="hint">Dejá igual si no querés cambiarlo.</div>
+      </div>
+      <div class="field">
+        <label>Gist ID</label>
+        <input type="text" id="settingsGist" class="mono" autocomplete="off">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="settingsCancelBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+      <div class="divider-label">Otros</div>
+      <div class="modal-actions col">
+        <button type="button" class="btn btn-secondary" id="exportBtn">Exportar JSON (backup)</button>
+        <button type="button" class="btn btn-danger" id="disconnectBtn">Desconectar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept="application/json" style="display:none">
+
+<script>
+'use strict';
+
+const SETTINGS_KEY = 'pozos_settings_v1';
+const CACHE_KEY = 'pozos_cache_v1';
+const GIST_FILENAME = 'pozos.json';
+
+let pozos = [];
+let editingId = null;
+let settings = null; // { token, gistId }
+let syncing = false;
+let lastSyncedAt = null;
+let lastError = null;
+
+const $ = (q) => document.querySelector(q);
+
+// ---------- Helpers ----------
+const todayISO = () => { const d = new Date(); const tz = d.getTimezoneOffset() * 60000; return new Date(d - tz).toISOString().split('T')[0]; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const fmtMoney = (n) => (n === null || n === undefined || n === '' || isNaN(n)) ? '—' : '₡' + Number(n).toLocaleString('es-CR', { maximumFractionDigits: 0 });
+const fmtDate = (iso) => { if (!iso) return ''; const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' }); };
+const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function showToast(msg, type = '', ms = 2500) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+function migrate(p) {
+  if (p.victorias === undefined && p.resultado) {
+    const out = { ...p };
+    out.victorias = p.resultado === 'V' ? 1 : 0;
+    out.empates = p.resultado === 'E' ? 1 : 0;
+    out.derrotas = p.resultado === 'D' ? 1 : 0;
+    delete out.resultado;
+    return out;
+  }
+  return { ...p, victorias: Number(p.victorias) || 0, empates: Number(p.empates) || 0, derrotas: Number(p.derrotas) || 0 };
+}
+
+// ---------- LocalStorage (settings + cache) ----------
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function saveSettingsLocal(s) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+}
+function clearSettings() {
+  localStorage.removeItem(SETTINGS_KEY);
+  localStorage.removeItem(CACHE_KEY);
+}
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) { return []; }
+}
+function saveCache(arr) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(arr)); } catch (e) {}
+}
+
+// ---------- GitHub Gist API ----------
+async function gistFetch(token, gistId) {
+  const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  });
+  if (!res.ok) {
+    const err = new Error(`HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+  const data = await res.json();
+  // Buscar el archivo pozos.json o el primer .json
+  let file = data.files?.[GIST_FILENAME];
+  if (!file) {
+    const jsonFile = Object.values(data.files || {}).find(f => f.filename.endsWith('.json'));
+    file = jsonFile;
+  }
+  if (!file) return [];
+  let content = file.content;
+  if (file.truncated) {
+    const raw = await fetch(file.raw_url, { headers: { 'Authorization': `Bearer ${token}` } });
+    content = await raw.text();
+  }
+  if (!content || !content.trim()) return [];
+  try {
+    const parsed = JSON.parse(content);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    throw new Error('El archivo en el Gist no es JSON válido');
+  }
+}
+
+async function gistUpdate(token, gistId, arr) {
+  const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      files: {
+        [GIST_FILENAME]: { content: JSON.stringify(arr, null, 2) }
+      }
+    })
+  });
+  if (!res.ok) {
+    const err = new Error(`HTTP ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+  return res.json();
+}
+
+// ---------- Sync status UI ----------
+function setStatus(state, extra = '') {
+  const bar = $('#statusBar');
+  const text = $('#statusText');
+  const ex = $('#statusExtra');
+  bar.classList.remove('synced', 'syncing', 'error', 'offline');
+  if (state === 'synced') { bar.classList.add('synced'); text.textContent = '● sincronizado'; }
+  else if (state === 'syncing') { bar.classList.add('syncing'); text.textContent = '● sincronizando…'; }
+  else if (state === 'error') { bar.classList.add('error'); text.textContent = '● error'; }
+  else if (state === 'offline') { bar.classList.add('offline'); text.textContent = '● sin conexión'; }
+  ex.textContent = extra;
+}
+
+function timeAgo(date) {
+  if (!date) return '';
+  const s = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (s < 5) return 'recién';
+  if (s < 60) return `hace ${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `hace ${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `hace ${h}h`;
+  return `hace ${Math.floor(h/24)}d`;
+}
+
+setInterval(() => {
+  if (lastSyncedAt && !syncing && !lastError) {
+    $('#statusExtra').textContent = timeAgo(lastSyncedAt);
+  }
+}, 30000);
+
+// ---------- Sync ----------
+async function syncDown() {
+  if (!settings) return;
+  setStatus('syncing');
+  try {
+    const remote = await gistFetch(settings.token, settings.gistId);
+    pozos = remote.map(migrate);
+    saveCache(pozos);
+    lastSyncedAt = new Date();
+    lastError = null;
+    setStatus('synced', timeAgo(lastSyncedAt));
+    render();
+  } catch (e) {
+    lastError = e;
+    handleSyncError(e, 'down');
+  }
+}
+
+async function syncUp() {
+  if (!settings || syncing) return;
+  syncing = true;
+  setStatus('syncing');
+  try {
+    await gistUpdate(settings.token, settings.gistId, pozos);
+    saveCache(pozos);
+    lastSyncedAt = new Date();
+    lastError = null;
+    setStatus('synced', timeAgo(lastSyncedAt));
+  } catch (e) {
+    lastError = e;
+    handleSyncError(e, 'up');
+  } finally {
+    syncing = false;
+  }
+}
+
+function handleSyncError(e, dir) {
+  if (e.status === 401) {
+    setStatus('error', 'token inválido');
+    showToast('Token inválido o sin permisos · revisá ajustes', 'error', 4000);
+  } else if (e.status === 404) {
+    setStatus('error', 'gist no encontrado');
+    showToast('Gist no encontrado · revisá el ID en ajustes', 'error', 4000);
+  } else if (!navigator.onLine) {
+    setStatus('offline', 'cambios locales sin guardar');
+    showToast('Sin conexión · cambios guardados localmente', '', 3000);
+  } else {
+    setStatus('error', e.message || 'falló');
+    showToast('Error de sincronización · ' + (e.message || ''), 'error', 3500);
+  }
+}
+
+// ---------- Stats & rendering ----------
+function calcStats() {
+  const total = pozos.length;
+  let v = 0, e = 0, d = 0;
+  pozos.forEach(p => { v += p.victorias || 0; e += p.empates || 0; d += p.derrotas || 0; });
+  const partidos = v + e + d;
+  const winRate = partidos ? Math.round(v / partidos * 100) : 0;
+  const totalPremio = pozos.reduce((s, p) => s + (Number(p.premio) || 0), 0);
+  const totalCosto = pozos.reduce((s, p) => s + (Number(p.costo) || 0), 0);
+  return { total, v, e, d, partidos, winRate, totalPremio, balance: totalPremio - totalCosto };
+}
+
+function renderStats() {
+  const s = calcStats();
+  $('#stats').innerHTML = `
+    <div class="stat"><div class="stat-label">Pozos</div><div class="stat-value">${s.total}</div><div class="stat-extra">${s.partidos} partidos</div></div>
+    <div class="stat"><div class="stat-label">Win rate</div><div class="stat-value green">${s.winRate}<span style="font-size:18px">%</span></div><div class="stat-extra">${s.v}V · ${s.e}E · ${s.d}D</div></div>
+    <div class="stat"><div class="stat-label">Premios</div><div class="stat-value gold">${fmtMoney(s.totalPremio)}</div><div class="stat-extra">acumulado</div></div>
+    <div class="stat"><div class="stat-label">Balance</div><div class="stat-value ${s.balance >= 0 ? 'green' : 'red'}">${s.balance > 0 ? '+' : ''}${fmtMoney(s.balance)}</div><div class="stat-extra">premios − costos</div></div>
+  `;
+}
+
+function pozoOutcome(p) {
+  const v = p.victorias || 0, d = p.derrotas || 0, e = p.empates || 0;
+  if (v + e + d === 0) return 'neutral';
+  if (v > d) return 'victory';
+  if (d > v) return 'defeat';
+  return 'tie';
+}
+
+function renderList() {
+  $('#count').textContent = `${pozos.length} ${pozos.length === 1 ? 'pozo' : 'pozos'}`;
+  const wrap = $('#listWrap');
+  if (!pozos.length) {
+    wrap.innerHTML = `<div class="empty"><div class="empty-art">— vacío —</div><p>Agregá tu primer pozo con el botón verde</p></div>`;
+    return;
+  }
+  const sorted = [...pozos].sort((a,b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  wrap.innerHTML = `<div class="list">${sorted.map(p => {
+    const balance = (Number(p.premio)||0) - (Number(p.costo)||0);
+    const balClass = balance > 0 ? 'green' : balance < 0 ? 'red' : '';
+    const v = p.victorias || 0, e = p.empates || 0, d = p.derrotas || 0;
+    return `
+    <div class="pozo-card ${pozoOutcome(p)}" data-id="${p.id}">
+      <div class="pozo-head">
+        <div>
+          <div class="pozo-meta">${fmtDate(p.fecha)} · ${p.tipo}</div>
+          <div class="pozo-title">CAT ${escapeHtml(p.categoria)}</div>
+        </div>
+        <div class="pozo-pos"><small>POSICIÓN</small>${p.posicion}<span class="total">/${p.participantes}</span></div>
+      </div>
+      <div class="pozo-row">
+        <span class="chip record"><span class="rec-v">${v}V</span><span class="sep">·</span><span class="rec-e">${e}E</span><span class="sep">·</span><span class="rec-d">${d}D</span></span>
+        ${p.puntaje !== '' && p.puntaje !== null && p.puntaje !== undefined ? `<span class="chip"><strong>${p.puntaje}</strong> pts</span>` : ''}
+        ${p.premio ? `<span class="chip gold"><strong>${fmtMoney(p.premio)}</strong></span>` : ''}
+        ${p.tipo === 'pareja' && p.companero ? `<span class="chip">c/ <strong>${escapeHtml(p.companero)}</strong></span>` : ''}
+      </div>
+      <div class="pozo-detail">
+        <div class="detail-grid">
+          <div class="detail-item"><div class="label">Costo</div><div class="value mono">${fmtMoney(p.costo)}</div></div>
+          <div class="detail-item"><div class="label">Premio</div><div class="value mono">${fmtMoney(p.premio)}</div></div>
+          <div class="detail-item"><div class="label">Balance</div><div class="value mono ${balClass}">${balance > 0 ? '+' : ''}${fmtMoney(balance)}</div></div>
+          <div class="detail-item"><div class="label">Puntaje</div><div class="value mono">${p.puntaje ?? '—'}</div></div>
+          ${p.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(p.notas)}</div></div>` : ''}
+        </div>
+        <div class="detail-actions">
+          <button data-action="edit" data-id="${p.id}">Editar</button>
+          <button class="danger" data-action="delete" data-id="${p.id}">Eliminar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function render() { renderStats(); renderList(); }
+
+// ---------- Pozo modal ----------
+function openModal(pozo = null) {
+  const form = $('#pozoForm');
+  form.reset();
+  editingId = pozo ? pozo.id : null;
+  $('#modalTitle').textContent = pozo ? 'Editar pozo' : 'Nuevo pozo';
+  $('#fecha').value = pozo ? pozo.fecha : todayISO();
+  $('#categoria').value = pozo ? pozo.categoria : '';
+  document.querySelector(`input[name="tipo"][value="${pozo ? pozo.tipo : 'pareja'}"]`).checked = true;
+  $('#companero').value = pozo ? (pozo.companero || '') : '';
+  $('#participantes').value = pozo ? pozo.participantes : '';
+  $('#posicion').value = pozo ? pozo.posicion : '';
+  $('#victorias').value = pozo ? (pozo.victorias || 0) : 0;
+  $('#empates').value = pozo ? (pozo.empates || 0) : 0;
+  $('#derrotas').value = pozo ? (pozo.derrotas || 0) : 0;
+  $('#puntaje').value = pozo && pozo.puntaje !== null && pozo.puntaje !== undefined ? pozo.puntaje : '';
+  $('#costo').value = pozo && pozo.costo !== null ? (pozo.costo || '') : '';
+  $('#premio').value = pozo && pozo.premio !== null ? (pozo.premio || '') : '';
+  $('#notas').value = pozo ? (pozo.notas || '') : '';
+  togglePartner();
+  $('#modalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() { $('#modalBg').classList.remove('open'); document.body.style.overflow = ''; editingId = null; }
+function togglePartner() { const tipo = document.querySelector('input[name="tipo"]:checked').value; $('#partnerWrap').classList.toggle('hidden', tipo !== 'pareja'); }
+
+// ---------- Settings modal ----------
+function openSettings() {
+  $('#settingsToken').value = '';
+  $('#settingsToken').placeholder = '(sin cambios)';
+  $('#settingsGist').value = settings ? settings.gistId : '';
+  $('#settingsModalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSettings() { $('#settingsModalBg').classList.remove('open'); document.body.style.overflow = ''; }
+
+// ---------- Setup flow ----------
+async function doSetup(token, gistId) {
+  const errBox = $('#setupError');
+  const btn = $('#setupBtn');
+  errBox.hidden = true;
+  btn.disabled = true;
+  btn.textContent = 'Conectando…';
+  try {
+    const remote = await gistFetch(token, gistId);
+    settings = { token, gistId };
+    saveSettingsLocal(settings);
+    pozos = remote.map(migrate);
+    saveCache(pozos);
+    lastSyncedAt = new Date();
+    $('#setupScreen').hidden = true;
+    $('#app').hidden = false;
+    setStatus('synced', timeAgo(lastSyncedAt));
+    render();
+    showToast('¡Conectado!');
+  } catch (e) {
+    let msg;
+    if (e.status === 401) msg = 'Token inválido. Asegurate de copiarlo bien y que tenga el scope "gist".';
+    else if (e.status === 404) msg = 'Gist no encontrado. Verificá que el ID sea correcto y que el Gist exista en tu cuenta.';
+    else if (!navigator.onLine) msg = 'Sin conexión a internet.';
+    else msg = 'Error: ' + (e.message || 'desconocido');
+    errBox.textContent = msg;
+    errBox.hidden = false;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Conectar';
+  }
+}
+
+// ---------- Init ----------
+async function init() {
+  settings = loadSettings();
+  if (!settings) {
+    $('#loadingOverlay').hidden = true;
+    $('#setupScreen').hidden = false;
+    return;
+  }
+  // Mostrar primero datos cacheados, después intentar sync
+  pozos = loadCache().map(migrate);
+  $('#loadingOverlay').hidden = true;
+  $('#app').hidden = false;
+  render();
+  if (pozos.length) setStatus('syncing', 'cargando…');
+  await syncDown();
+}
+
+// ---------- Event wiring ----------
+$('#setupForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const token = $('#setupToken').value.trim();
+  const gistId = $('#setupGist').value.trim();
+  if (!token || !gistId) return;
+  doSetup(token, gistId);
+});
+
+$('#addBtn').addEventListener('click', () => openModal());
+$('#cancelBtn').addEventListener('click', closeModal);
+$('#closeModal').addEventListener('click', closeModal);
+$('#modalBg').addEventListener('click', (e) => { if (e.target === $('#modalBg')) closeModal(); });
+document.querySelectorAll('input[name="tipo"]').forEach(r => r.addEventListener('change', togglePartner));
+
+$('#pozoForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const tipo = document.querySelector('input[name="tipo"]:checked').value;
+  const data = {
+    id: editingId || uid(),
+    fecha: $('#fecha').value,
+    categoria: $('#categoria').value.trim(),
+    tipo,
+    companero: tipo === 'pareja' ? ($('#companero').value.trim() || null) : null,
+    participantes: Number($('#participantes').value),
+    posicion: Number($('#posicion').value),
+    victorias: Number($('#victorias').value) || 0,
+    empates: Number($('#empates').value) || 0,
+    derrotas: Number($('#derrotas').value) || 0,
+    puntaje: $('#puntaje').value === '' ? null : Number($('#puntaje').value),
+    costo: $('#costo').value === '' ? null : Number($('#costo').value),
+    premio: $('#premio').value === '' ? null : Number($('#premio').value),
+    notas: $('#notas').value.trim() || null,
+    creado: editingId ? (pozos.find(p => p.id === editingId)?.creado || new Date().toISOString()) : new Date().toISOString()
+  };
+  if (editingId) pozos = pozos.map(p => p.id === editingId ? data : p);
+  else pozos.push(data);
+  saveCache(pozos);
+  render();
+  closeModal();
+  await syncUp();
+});
+
+document.addEventListener('click', async (e) => {
+  const action = e.target.closest('[data-action]');
+  if (action) {
+    e.stopPropagation();
+    const id = action.dataset.id;
+    if (action.dataset.action === 'edit') { const p = pozos.find(x => x.id === id); if (p) openModal(p); }
+    else if (action.dataset.action === 'delete') {
+      if (confirm('¿Eliminar este pozo?')) {
+        pozos = pozos.filter(x => x.id !== id);
+        saveCache(pozos);
+        render();
+        await syncUp();
+      }
+    }
+    return;
+  }
+  const card = e.target.closest('.pozo-card');
+  if (card) card.classList.toggle('expanded');
+});
+
+$('#refreshBtn').addEventListener('click', async (e) => {
+  e.currentTarget.classList.add('spin');
+  await syncDown();
+  setTimeout(() => e.currentTarget.classList.remove('spin'), 400);
+});
+
+$('#statusBar').addEventListener('click', () => {
+  if (lastError) syncDown();
+});
+
+$('#settingsBtn').addEventListener('click', openSettings);
+$('#closeSettings').addEventListener('click', closeSettings);
+$('#settingsCancelBtn').addEventListener('click', closeSettings);
+$('#settingsModalBg').addEventListener('click', (e) => { if (e.target === $('#settingsModalBg')) closeSettings(); });
+
+$('#settingsForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const newToken = $('#settingsToken').value.trim();
+  const newGist = $('#settingsGist').value.trim();
+  const updated = {
+    token: newToken || settings.token,
+    gistId: newGist || settings.gistId
+  };
+  // Probar la nueva config
+  try {
+    await gistFetch(updated.token, updated.gistId);
+    settings = updated;
+    saveSettingsLocal(settings);
+    closeSettings();
+    showToast('Ajustes actualizados');
+    await syncDown();
+  } catch (err) {
+    showToast('No se pudo conectar con esos datos', 'error', 3500);
+  }
+});
+
+$('#disconnectBtn').addEventListener('click', () => {
+  if (!confirm('¿Desconectar? Se borran token y caché de este dispositivo. Los datos del Gist quedan intactos.')) return;
+  clearSettings();
+  settings = null;
+  pozos = [];
+  closeSettings();
+  $('#app').hidden = true;
+  $('#setupScreen').hidden = false;
+  $('#setupToken').value = '';
+  $('#setupGist').value = '';
+});
+
+$('#exportBtn').addEventListener('click', () => {
+  if (!pozos.length) { showToast('No hay datos para exportar'); return; }
+  const blob = new Blob([JSON.stringify(pozos, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `pozos_${todayISO()}.json`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('JSON exportado');
+});
+
+window.addEventListener('online', () => { if (settings) syncDown(); });
+
+init();
+</script>
+</body>
+</html>
