@@ -88,6 +88,15 @@ body { max-width: 720px; margin: 0 auto; }
 .section-title h2 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.04em; }
 .section-title .count { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.15em; text-transform: uppercase; }
 
+/* Search bar */
+.search-bar { margin: 0 20px 12px; display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; transition: border-color .15s; }
+.search-bar:focus-within { border-color: var(--court-bright); }
+.search-bar .search-icon { width: 16px; height: 16px; color: var(--ink-dim); flex-shrink: 0; }
+.search-bar input { flex: 1; background: transparent; border: none; color: var(--ink); font-family: inherit; font-size: 14px; padding: 4px 0; outline: none; -webkit-appearance: none; appearance: none; min-width: 0; }
+.search-bar input::placeholder { color: var(--ink-dim); }
+.search-clear { background: var(--surface-3); border: none; color: var(--ink-muted); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; font-size: 16px; line-height: 1; padding: 0; flex-shrink: 0; }
+.search-clear:hover { color: var(--ink); background: var(--border-strong); }
+
 /* Chart */
 .chart-wrap { margin: 16px 20px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
 .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -155,6 +164,10 @@ body { max-width: 720px; margin: 0 auto; }
 .pozo-pos { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 0.85; color: var(--court-bright); text-align: right; white-space: nowrap; }
 .pozo-pos small { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--ink-dim); display: block; letter-spacing: 0.15em; margin-bottom: 3px; font-weight: 500; }
 .pozo-pos .total { font-size: 14px; color: var(--ink-muted); }
+.pozo-actions { display: flex; align-items: center; gap: 10px; }
+.pozo-edit-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-muted); width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; transition: all .15s; padding: 0; }
+.pozo-edit-btn:hover, .pozo-edit-btn:active { color: var(--court-bright); border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.05); }
+.pozo-edit-btn svg { width: 13px; height: 13px; }
 .pozo-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 .chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: var(--surface-2); border: 1px solid var(--border); padding: 5px 9px; border-radius: 8px; color: var(--ink-muted); font-weight: 500; }
 .chip strong { color: var(--ink); font-weight: 700; }
@@ -300,6 +313,9 @@ body { max-width: 720px; margin: 0 auto; }
       <button class="icon-btn" id="refreshBtn" title="Recargar desde Gist" aria-label="Recargar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       </button>
+      <button class="icon-btn" id="exportTopBtn" title="Exportar JSON" aria-label="Exportar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
       <button class="icon-btn" id="settingsBtn" title="Ajustes" aria-label="Ajustes">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
@@ -314,8 +330,6 @@ body { max-width: 720px; margin: 0 auto; }
 
   <section class="stats" id="stats"></section>
 
-  <div id="chart"></div>
-
   <div class="section-title">
     <h2>Historial</h2>
     <button class="filter-toggle" id="sortToggle">
@@ -323,6 +337,12 @@ body { max-width: 720px; margin: 0 auto; }
       <span id="sortLabel">Ordenar</span>
       <span class="count" id="count" style="margin-left: 4px;">0 pozos</span>
     </button>
+  </div>
+
+  <div class="search-bar">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Buscar club, compañero, mes…" autocomplete="off">
+    <button type="button" class="search-clear" id="searchClear" hidden aria-label="Limpiar">×</button>
   </div>
 
   <div class="filters-panel hidden" id="sortPanel">
@@ -336,6 +356,8 @@ body { max-width: 720px; margin: 0 auto; }
       </div>
     </div>
   </div>
+
+  <div id="chart"></div>
 
   <div id="listWrap"></div>
 
@@ -359,6 +381,7 @@ body { max-width: 720px; margin: 0 auto; }
         <div class="field"><label>Fecha</label><input type="date" id="fecha" required></div>
         <div class="field"><label>Categoría</label><input type="text" id="categoria" placeholder="ej: 5ta, B" required></div>
       </div>
+      <div class="field"><label>Club</label><input type="text" id="club" placeholder="opcional"></div>
       <div class="field">
         <label>Tipo</label>
         <div class="seg">
@@ -472,7 +495,7 @@ function migrate(p) {
     delete out.resultado;
     return out;
   }
-  return { ...p, victorias: Number(p.victorias) || 0, empates: Number(p.empates) || 0, derrotas: Number(p.derrotas) || 0 };
+  return { ...p, victorias: Number(p.victorias) || 0, empates: Number(p.empates) || 0, derrotas: Number(p.derrotas) || 0, club: p.club || null };
 }
 
 // ---------- LocalStorage (settings + cache) ----------
@@ -669,6 +692,34 @@ function renderStats() {
   `;
 }
 
+// ---------- Búsqueda ----------
+let searchQuery = '';
+
+function pozoSearchText(p) {
+  const parts = [
+    p.categoria || '', p.club || '', p.companero || '',
+    p.notas || '', p.tipo || '', p.fecha || ''
+  ];
+  if (p.fecha) {
+    try {
+      const d = new Date(p.fecha + 'T12:00:00');
+      parts.push(d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' }));
+      parts.push(d.toLocaleDateString('es-CR', { month: 'long' }));
+      parts.push(d.toLocaleDateString('es-CR', { month: 'long', year: 'numeric' }));
+    } catch (e) {}
+  }
+  return parts.join(' ').toLowerCase();
+}
+
+function matchesSearch(p) {
+  if (!searchQuery) return true;
+  return pozoSearchText(p).includes(searchQuery.toLowerCase());
+}
+
+function getFilteredPozos() {
+  return searchQuery ? pozos.filter(matchesSearch) : pozos;
+}
+
 // ---------- Ordenamiento ----------
 let sortBy = { field: 'fecha', dir: 'desc' };
 const SORT_DEFAULT_DIR = { fecha: 'desc', posicion: 'asc', puntaje: 'desc', winRate: 'desc' };
@@ -726,9 +777,10 @@ function fmtDateShort(iso) {
 
 function renderChart() {
   const container = $('#chart');
-  const dated = pozos.filter(p => p.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  const source = getFilteredPozos();
+  const dated = source.filter(p => p.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
   if (dated.length === 0) {
-    container.innerHTML = '';
+    container.innerHTML = searchQuery ? `<div class="chart-wrap"><div class="chart-header"><h3>Posiciones</h3><span class="chart-meta">sin resultados</span></div><div class="chart-empty">Ningún pozo coincide<br>con la búsqueda</div></div>` : '';
     return;
   }
   if (dated.length === 1) {
@@ -825,7 +877,13 @@ function pozoOutcome(p) {
 
 function renderList() {
   const total = pozos.length;
-  $('#count').textContent = `${total} ${total === 1 ? 'pozo' : 'pozos'}`;
+  const filtered = getFilteredPozos();
+  const shown = filtered.length;
+  if (searchQuery) {
+    $('#count').textContent = `${shown} de ${total}`;
+  } else {
+    $('#count').textContent = `${total} ${total === 1 ? 'pozo' : 'pozos'}`;
+  }
   updateSortUI();
 
   const wrap = $('#listWrap');
@@ -833,7 +891,11 @@ function renderList() {
     wrap.innerHTML = `<div class="empty"><div class="empty-art">— vacío —</div><p>Agregá tu primer pozo con el botón verde</p></div>`;
     return;
   }
-  const sorted = sortPozos(pozos);
+  if (!shown) {
+    wrap.innerHTML = `<div class="empty"><div class="empty-art">— sin match —</div><p>Ningún pozo coincide con "${escapeHtml(searchQuery)}"</p></div>`;
+    return;
+  }
+  const sorted = sortPozos(filtered);
   wrap.innerHTML = `<div class="list">${sorted.map(p => {
     const balance = (Number(p.premio)||0) - (Number(p.costo)||0);
     const balClass = balance > 0 ? 'green' : balance < 0 ? 'red' : '';
@@ -847,13 +909,19 @@ function renderList() {
           <div class="pozo-meta">${fmtDate(p.fecha)} · ${p.tipo}</div>
           <div class="pozo-title">CAT ${escapeHtml(p.categoria)}</div>
         </div>
-        <div class="pozo-pos"><small>POSICIÓN</small>${p.posicion}<span class="total">/${p.participantes}</span></div>
+        <div class="pozo-actions">
+          <button class="pozo-edit-btn" data-action="edit" data-id="${p.id}" aria-label="Editar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </button>
+          <div class="pozo-pos"><small>POSICIÓN</small>${p.posicion}<span class="total">/${p.participantes}</span></div>
+        </div>
       </div>
       <div class="pozo-row">
         <span class="chip record"><span class="rec-v">${v}V</span><span class="sep">·</span><span class="rec-e">${e}E</span><span class="sep">·</span><span class="rec-d">${d}D</span></span>
         ${wr !== null ? `<span class="chip ${wrClass}"><strong>${wr}%</strong> WR</span>` : ''}
         ${p.puntaje !== '' && p.puntaje !== null && p.puntaje !== undefined ? `<span class="chip"><strong>${p.puntaje}</strong> pts</span>` : ''}
         ${p.premio ? `<span class="chip gold"><strong>${fmtMoney(p.premio)}</strong></span>` : ''}
+        ${p.club ? `<span class="chip">${escapeHtml(p.club)}</span>` : ''}
         ${p.tipo === 'pareja' && p.companero ? `<span class="chip">c/ <strong>${escapeHtml(p.companero)}</strong></span>` : ''}
       </div>
       <div class="pozo-detail">
@@ -862,6 +930,7 @@ function renderList() {
           <div class="detail-item"><div class="label">Premio</div><div class="value mono">${fmtMoney(p.premio)}</div></div>
           <div class="detail-item"><div class="label">Balance</div><div class="value mono ${balClass}">${balance > 0 ? '+' : ''}${fmtMoney(balance)}</div></div>
           <div class="detail-item"><div class="label">Puntaje</div><div class="value mono">${p.puntaje ?? '—'}</div></div>
+          ${p.club ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Club</div><div class="value">${escapeHtml(p.club)}</div></div>` : ''}
           ${p.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(p.notas)}</div></div>` : ''}
         </div>
         <div class="detail-actions">
@@ -883,6 +952,7 @@ function openModal(pozo = null) {
   $('#modalTitle').textContent = pozo ? 'Editar pozo' : 'Nuevo pozo';
   $('#fecha').value = pozo ? pozo.fecha : todayISO();
   $('#categoria').value = pozo ? pozo.categoria : '';
+  $('#club').value = pozo ? (pozo.club || '') : '';
   document.querySelector(`input[name="tipo"][value="${pozo ? pozo.tipo : 'pareja'}"]`).checked = true;
   $('#companero').value = pozo ? (pozo.companero || '') : '';
   $('#participantes').value = pozo ? pozo.participantes : '';
@@ -983,6 +1053,7 @@ $('#pozoForm').addEventListener('submit', async (e) => {
     id: editingId || uid(),
     fecha: $('#fecha').value,
     categoria: $('#categoria').value.trim(),
+    club: $('#club').value.trim() || null,
     tipo,
     companero: tipo === 'pareja' ? ($('#companero').value.trim() || null) : null,
     participantes: Number($('#participantes').value),
@@ -1082,6 +1153,8 @@ $('#exportBtn').addEventListener('click', () => {
   showToast('JSON exportado');
 });
 
+$('#exportTopBtn').addEventListener('click', () => $('#exportBtn').click());
+
 window.addEventListener('online', () => { if (settings) syncDown(); });
 
 // ---------- Sort event handlers ----------
@@ -1100,6 +1173,23 @@ document.querySelectorAll('.sort-pill').forEach(pill => {
     }
     renderList();
   });
+});
+
+// ---------- Search event handlers ----------
+$('#searchInput').addEventListener('input', (e) => {
+  searchQuery = e.target.value.trim();
+  $('#searchClear').hidden = !searchQuery;
+  renderChart();
+  renderList();
+});
+
+$('#searchClear').addEventListener('click', () => {
+  $('#searchInput').value = '';
+  searchQuery = '';
+  $('#searchClear').hidden = true;
+  renderChart();
+  renderList();
+  $('#searchInput').focus();
 });
 
 init();
