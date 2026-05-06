@@ -88,6 +88,41 @@ body { max-width: 720px; margin: 0 auto; }
 .section-title h2 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.04em; }
 .section-title .count { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.15em; text-transform: uppercase; }
 
+/* Chart */
+.chart-wrap { margin: 16px 20px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+.chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.chart-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; }
+.chart-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.15em; text-transform: uppercase; }
+.chart-svg { width: 100%; aspect-ratio: 5 / 3; display: block; overflow: visible; }
+.chart-empty { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); text-align: center; padding: 30px 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+.chart-svg .axis-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--ink-dim); }
+.chart-svg .grid-line { stroke: var(--border); stroke-dasharray: 2,3; }
+.chart-svg .data-line { stroke: var(--ink-muted); stroke-width: 1.5; fill: none; opacity: 0.5; }
+.chart-svg .data-dot { stroke: var(--bg); stroke-width: 2; transition: r .15s; }
+.chart-svg .data-dot:hover { r: 6; }
+.chart-legend { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+.chart-legend .item { display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+.chart-legend .item .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* Filters */
+.filter-toggle { background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-muted); padding: 5px 10px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
+.filter-toggle:hover { color: var(--ink); border-color: var(--border-strong); }
+.filter-toggle.active { color: var(--court-bright); border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.05); }
+.filter-toggle svg { width: 11px; height: 11px; }
+.filter-toggle .badge { background: var(--court-bright); color: var(--bg); border-radius: 8px; padding: 1px 5px; font-size: 9px; font-weight: 700; min-width: 14px; text-align: center; }
+
+.filters-panel { margin: 0 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; overflow: hidden; }
+.filters-panel.hidden { display: none; }
+.filter-group { margin-bottom: 12px; }
+.filter-group:last-of-type { margin-bottom: 0; }
+.filter-group-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-dim); margin-bottom: 6px; }
+.filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.filter-row input { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-family: inherit; font-size: 13px; color: var(--ink); width: 100%; -webkit-appearance: none; appearance: none; }
+.filter-row input:focus { outline: none; border-color: var(--court-bright); background: var(--surface-3); }
+.filter-row input::placeholder { color: var(--ink-dim); }
+.filter-clear { display: block; width: 100%; background: transparent; border: 1px solid var(--border); color: var(--ink-muted); padding: 9px; border-radius: 8px; font-family: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; margin-top: 12px; }
+.filter-clear:hover { color: var(--ink); border-color: var(--border-strong); }
+
 .empty { margin: 16px 20px; padding: 50px 20px; text-align: center; border: 1px dashed var(--border); border-radius: 16px; color: var(--ink-muted); }
 .empty-art { font-family: 'Bebas Neue', sans-serif; font-size: 56px; color: var(--surface-3); letter-spacing: 0.15em; line-height: 1; }
 .empty p { margin-top: 14px; font-size: 14px; }
@@ -264,9 +299,40 @@ body { max-width: 720px; margin: 0 auto; }
 
   <section class="stats" id="stats"></section>
 
+  <div id="chart"></div>
+
   <div class="section-title">
     <h2>Historial</h2>
-    <span class="count" id="count">0 pozos</span>
+    <button class="filter-toggle" id="filterToggle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+      <span id="filterLabel">Filtrar</span>
+      <span class="count" id="count" style="margin-left: 4px;">0 pozos</span>
+    </button>
+  </div>
+
+  <div class="filters-panel hidden" id="filtersPanel">
+    <div class="filter-group">
+      <div class="filter-group-label">Fecha</div>
+      <div class="filter-row">
+        <input type="date" id="filterDateFrom" placeholder="Desde">
+        <input type="date" id="filterDateTo" placeholder="Hasta">
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group-label">Posición</div>
+      <div class="filter-row">
+        <input type="number" id="filterPosMin" min="1" placeholder="Mínima">
+        <input type="number" id="filterPosMax" min="1" placeholder="Máxima">
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-group-label">Puntaje</div>
+      <div class="filter-row">
+        <input type="number" id="filterPtsMin" step="any" placeholder="Mínimo">
+        <input type="number" id="filterPtsMax" step="any" placeholder="Máximo">
+      </div>
+    </div>
+    <button type="button" class="filter-clear" id="filterClear">Limpiar filtros</button>
   </div>
 
   <div id="listWrap"></div>
@@ -317,9 +383,9 @@ body { max-width: 720px; margin: 0 auto; }
       </div>
       <div class="field-row">
         <div class="field"><label>Puntaje</label><input type="number" id="puntaje" step="any" inputmode="decimal" placeholder="opcional"></div>
-        <div class="field"><label>Costo (₡)</label><input type="number" id="costo" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+        <div class="field"><label>Costo ($)</label><input type="number" id="costo" step="any" min="0" inputmode="decimal" placeholder="0"></div>
       </div>
-      <div class="field"><label>Premio (₡)</label><input type="number" id="premio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      <div class="field"><label>Premio ($)</label><input type="number" id="premio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
       <div class="field"><label>Notas</label><textarea id="notas" rows="2" placeholder="Opcional"></textarea></div>
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
@@ -383,7 +449,7 @@ const $ = (q) => document.querySelector(q);
 // ---------- Helpers ----------
 const todayISO = () => { const d = new Date(); const tz = d.getTimezoneOffset() * 60000; return new Date(d - tz).toISOString().split('T')[0]; };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-const fmtMoney = (n) => (n === null || n === undefined || n === '' || isNaN(n)) ? '—' : '₡' + Number(n).toLocaleString('es-CR', { maximumFractionDigits: 0 });
+const fmtMoney = (n) => (n === null || n === undefined || n === '' || isNaN(n)) ? '—' : '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
 const fmtDate = (iso) => { if (!iso) return ''; const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' }); };
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -577,12 +643,18 @@ function handleSyncError(e, dir) {
 function calcStats() {
   const total = pozos.length;
   let v = 0, e = 0, d = 0;
-  pozos.forEach(p => { v += p.victorias || 0; e += p.empates || 0; d += p.derrotas || 0; });
+  const perPozoRates = [];
+  pozos.forEach(p => {
+    const pv = p.victorias || 0, pe = p.empates || 0, pd = p.derrotas || 0;
+    v += pv; e += pe; d += pd;
+    const m = pv + pe + pd;
+    if (m > 0) perPozoRates.push(pv / m);
+  });
   const partidos = v + e + d;
   const winRate = partidos ? Math.round(v / partidos * 100) : 0;
+  const avgWinRate = perPozoRates.length ? Math.round(perPozoRates.reduce((s, x) => s + x, 0) / perPozoRates.length * 100) : 0;
   const totalPremio = pozos.reduce((s, p) => s + (Number(p.premio) || 0), 0);
-  const totalCosto = pozos.reduce((s, p) => s + (Number(p.costo) || 0), 0);
-  return { total, v, e, d, partidos, winRate, totalPremio, balance: totalPremio - totalCosto };
+  return { total, v, e, d, partidos, winRate, avgWinRate, totalPremio, sampleSize: perPozoRates.length };
 }
 
 function renderStats() {
@@ -590,8 +662,142 @@ function renderStats() {
   $('#stats').innerHTML = `
     <div class="stat"><div class="stat-label">Pozos</div><div class="stat-value">${s.total}</div><div class="stat-extra">${s.partidos} partidos</div></div>
     <div class="stat"><div class="stat-label">Win rate</div><div class="stat-value green">${s.winRate}<span style="font-size:18px">%</span></div><div class="stat-extra">${s.v}V · ${s.e}E · ${s.d}D</div></div>
+    <div class="stat"><div class="stat-label">Promedio</div><div class="stat-value green">${s.avgWinRate}<span style="font-size:18px">%</span></div><div class="stat-extra">avg de ${s.sampleSize} pozo${s.sampleSize===1?'':'s'}</div></div>
     <div class="stat"><div class="stat-label">Premios</div><div class="stat-value gold">${fmtMoney(s.totalPremio)}</div><div class="stat-extra">acumulado</div></div>
-    <div class="stat"><div class="stat-label">Balance</div><div class="stat-value ${s.balance >= 0 ? 'green' : 'red'}">${s.balance > 0 ? '+' : ''}${fmtMoney(s.balance)}</div><div class="stat-extra">premios − costos</div></div>
+  `;
+}
+
+// ---------- Filtros ----------
+let filters = { dateFrom: '', dateTo: '', posMin: '', posMax: '', ptsMin: '', ptsMax: '' };
+
+function activeFilterCount() {
+  return Object.values(filters).filter(v => v !== '' && v !== null && v !== undefined).length;
+}
+
+function applyFilters(arr) {
+  return arr.filter(p => {
+    if (filters.dateFrom && (p.fecha || '') < filters.dateFrom) return false;
+    if (filters.dateTo && (p.fecha || '') > filters.dateTo) return false;
+    if (filters.posMin !== '' && p.posicion < Number(filters.posMin)) return false;
+    if (filters.posMax !== '' && p.posicion > Number(filters.posMax)) return false;
+    if (filters.ptsMin !== '') {
+      if (p.puntaje === null || p.puntaje === undefined || Number(p.puntaje) < Number(filters.ptsMin)) return false;
+    }
+    if (filters.ptsMax !== '') {
+      if (p.puntaje === null || p.puntaje === undefined || Number(p.puntaje) > Number(filters.ptsMax)) return false;
+    }
+    return true;
+  });
+}
+
+function updateFilterToggleUI() {
+  const n = activeFilterCount();
+  const btn = $('#filterToggle');
+  const lbl = $('#filterLabel');
+  if (n > 0) {
+    btn.classList.add('active');
+    lbl.innerHTML = `Filtros <span class="badge">${n}</span>`;
+  } else {
+    btn.classList.remove('active');
+    lbl.textContent = 'Filtrar';
+  }
+}
+
+// ---------- Chart ----------
+function fmtDateShort(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short' });
+}
+
+function renderChart() {
+  const container = $('#chart');
+  const dated = pozos.filter(p => p.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  if (dated.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+  if (dated.length === 1) {
+    container.innerHTML = `<div class="chart-wrap"><div class="chart-header"><h3>Posiciones</h3><span class="chart-meta">1 pozo</span></div><div class="chart-empty">Necesitás al menos 2 pozos<br>para ver tendencia</div></div>`;
+    return;
+  }
+
+  const W = 500, H = 300;
+  const pad = { top: 18, right: 18, bottom: 32, left: 30 };
+  const innerW = W - pad.left - pad.right;
+  const innerH = H - pad.top - pad.bottom;
+
+  const minDate = new Date(dated[0].fecha + 'T12:00:00').getTime();
+  const maxDate = new Date(dated[dated.length - 1].fecha + 'T12:00:00').getTime();
+  const dateRange = maxDate - minDate || 86400000;
+  const positions = dated.map(p => p.posicion);
+  const maxPos = Math.max(...positions, 2);
+
+  const xScale = (iso) => {
+    const t = new Date(iso + 'T12:00:00').getTime();
+    return pad.left + ((t - minDate) / dateRange) * innerW;
+  };
+  // Y invertido: posición 1 arriba
+  const yScale = (pos) => pad.top + ((pos - 1) / (maxPos - 1 || 1)) * innerH;
+
+  // Y ticks
+  let yTicks = [];
+  if (maxPos <= 6) {
+    for (let i = 1; i <= maxPos; i++) yTicks.push(i);
+  } else {
+    yTicks = [1, Math.ceil(maxPos / 3), Math.ceil(2 * maxPos / 3), maxPos];
+    yTicks = [...new Set(yTicks)].sort((a, b) => a - b);
+  }
+
+  const linePath = dated.map((p, i) => {
+    const x = xScale(p.fecha).toFixed(1);
+    const y = yScale(p.posicion).toFixed(1);
+    return `${i === 0 ? 'M' : 'L'}${x},${y}`;
+  }).join(' ');
+
+  const colorFor = (p) => {
+    const o = pozoOutcome(p);
+    return o === 'victory' ? '#4ade80' : o === 'tie' ? '#f59e0b' : o === 'defeat' ? '#ef4444' : '#8a9690';
+  };
+
+  const dots = dated.map(p => {
+    const x = xScale(p.fecha).toFixed(1);
+    const y = yScale(p.posicion).toFixed(1);
+    return `<circle class="data-dot" cx="${x}" cy="${y}" r="4" fill="${colorFor(p)}"><title>${escapeHtml(fmtDate(p.fecha))} · pos ${p.posicion}/${p.participantes} · cat ${escapeHtml(p.categoria)}</title></circle>`;
+  }).join('');
+
+  const yLabels = yTicks.map(t => {
+    const y = yScale(t).toFixed(1);
+    return `<line class="grid-line" x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}"/>
+            <text class="axis-label" x="${pad.left - 6}" y="${y}" text-anchor="end" dominant-baseline="middle">${t}</text>`;
+  }).join('');
+
+  const firstLabel = `<text class="axis-label" x="${pad.left}" y="${H - 10}" text-anchor="start">${escapeHtml(fmtDateShort(dated[0].fecha))}</text>`;
+  const lastLabel = `<text class="axis-label" x="${W - pad.right}" y="${H - 10}" text-anchor="end">${escapeHtml(fmtDateShort(dated[dated.length - 1].fecha))}</text>`;
+  let midLabel = '';
+  if (dated.length >= 5) {
+    const mid = dated[Math.floor(dated.length / 2)];
+    midLabel = `<text class="axis-label" x="${xScale(mid.fecha).toFixed(1)}" y="${H - 10}" text-anchor="middle">${escapeHtml(fmtDateShort(mid.fecha))}</text>`;
+  }
+
+  container.innerHTML = `
+    <div class="chart-wrap">
+      <div class="chart-header">
+        <h3>Posiciones</h3>
+        <span class="chart-meta">${dated.length} pozos</span>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 ${W} ${H}">
+        ${yLabels}
+        <path class="data-line" d="${linePath}"/>
+        ${dots}
+        ${firstLabel}${midLabel}${lastLabel}
+      </svg>
+      <div class="chart-legend">
+        <div class="item"><span class="dot" style="background:#4ade80"></span>Victoria</div>
+        <div class="item"><span class="dot" style="background:#f59e0b"></span>Empate</div>
+        <div class="item"><span class="dot" style="background:#ef4444"></span>Derrota</div>
+      </div>
+    </div>
   `;
 }
 
@@ -604,13 +810,27 @@ function pozoOutcome(p) {
 }
 
 function renderList() {
-  $('#count').textContent = `${pozos.length} ${pozos.length === 1 ? 'pozo' : 'pozos'}`;
+  const filtered = applyFilters(pozos);
+  const total = pozos.length;
+  const shown = filtered.length;
+  const countEl = $('#count');
+  if (activeFilterCount() > 0) {
+    countEl.textContent = `${shown} de ${total}`;
+  } else {
+    countEl.textContent = `${total} ${total === 1 ? 'pozo' : 'pozos'}`;
+  }
+  updateFilterToggleUI();
+
   const wrap = $('#listWrap');
-  if (!pozos.length) {
+  if (!total) {
     wrap.innerHTML = `<div class="empty"><div class="empty-art">— vacío —</div><p>Agregá tu primer pozo con el botón verde</p></div>`;
     return;
   }
-  const sorted = [...pozos].sort((a,b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  if (!shown) {
+    wrap.innerHTML = `<div class="empty"><div class="empty-art">— sin resultados —</div><p>Ningún pozo coincide con los filtros</p></div>`;
+    return;
+  }
+  const sorted = [...filtered].sort((a,b) => (b.fecha || '').localeCompare(a.fecha || ''));
   wrap.innerHTML = `<div class="list">${sorted.map(p => {
     const balance = (Number(p.premio)||0) - (Number(p.costo)||0);
     const balClass = balance > 0 ? 'green' : balance < 0 ? 'red' : '';
@@ -647,7 +867,7 @@ function renderList() {
   }).join('')}</div>`;
 }
 
-function render() { renderStats(); renderList(); }
+function render() { renderStats(); renderChart(); renderList(); }
 
 // ---------- Pozo modal ----------
 function openModal(pozo = null) {
@@ -857,6 +1077,32 @@ $('#exportBtn').addEventListener('click', () => {
 });
 
 window.addEventListener('online', () => { if (settings) syncDown(); });
+
+// ---------- Filter event handlers ----------
+$('#filterToggle').addEventListener('click', () => {
+  $('#filtersPanel').classList.toggle('hidden');
+});
+
+const filterInputs = [
+  ['#filterDateFrom', 'dateFrom'],
+  ['#filterDateTo', 'dateTo'],
+  ['#filterPosMin', 'posMin'],
+  ['#filterPosMax', 'posMax'],
+  ['#filterPtsMin', 'ptsMin'],
+  ['#filterPtsMax', 'ptsMax']
+];
+filterInputs.forEach(([sel, key]) => {
+  $(sel).addEventListener('input', (e) => {
+    filters[key] = e.target.value;
+    renderList();
+  });
+});
+
+$('#filterClear').addEventListener('click', () => {
+  Object.keys(filters).forEach(k => filters[k] = '');
+  filterInputs.forEach(([sel]) => { $(sel).value = ''; });
+  renderList();
+});
 
 init();
 </script>
