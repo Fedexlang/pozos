@@ -103,6 +103,10 @@ body { max-width: 720px; margin: 0 auto; }
 .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .chart-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; }
 .chart-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.15em; text-transform: uppercase; }
+.chart-toggle { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; }
+.chart-toggle button { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: none; color: var(--ink-dim); padding: 5px 9px; border-radius: 5px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.chart-toggle button.active { background: var(--surface-3); color: var(--court-bright); }
+.chart-toggle button:hover:not(.active) { color: var(--ink); }
 .chart-svg { width: 100%; aspect-ratio: 5 / 3; display: block; overflow: visible; }
 .chart-empty { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); text-align: center; padding: 30px 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 .chart-svg .axis-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--ink-dim); }
@@ -139,6 +143,13 @@ body { max-width: 720px; margin: 0 auto; }
 .sort-pill:hover { color: var(--ink); border-color: var(--border-strong); }
 .sort-pill.active { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.4); color: var(--court-bright); }
 .sort-pill .arrow { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; min-width: 8px; }
+
+.chip.pct-good { color: var(--court-bright); border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.05); }
+.chip.pct-good strong { color: var(--court-bright); }
+.chip.pct-mid { color: var(--amber); border-color: rgba(245,158,11,0.25); background: rgba(245,158,11,0.05); }
+.chip.pct-mid strong { color: var(--amber); }
+.chip.pct-bad { color: var(--crimson); border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.05); }
+.chip.pct-bad strong { color: var(--crimson); }
 
 /* Win rate chip variants */
 .chip.wr-good { color: var(--court-bright); border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.05); }
@@ -790,7 +801,14 @@ function updateSortUI() {
   $('#sortLabel').textContent = `${SORT_LABELS[sortBy.field]} ${sortBy.dir === 'asc' ? '↑' : '↓'}`;
 }
 
-// ---------- Chart ----------
+function pozoPercentualPos(p) {
+  const pos = p.posicion, total = p.participantes;
+  if (!pos || !total || total <= 1) return total === 1 ? 100 : null;
+  return Math.round(((total - pos) / (total - 1)) * 100);
+}
+
+// ---------- Chart toggle ----------
+let chartMode = 'absolute'; // 'absolute' | 'percentual'
 function fmtDateShort(iso) {
   if (!iso) return '';
   const d = new Date(iso + 'T12:00:00');
@@ -801,92 +819,87 @@ function renderChart() {
   const container = $('#chart');
   const source = getFilteredPozos();
   const dated = source.filter(p => p.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
+
   if (dated.length === 0) {
-    container.innerHTML = searchQuery ? `<div class="chart-wrap"><div class="chart-header"><h3>Posiciones</h3><span class="chart-meta">sin resultados</span></div><div class="chart-empty">Ningún pozo coincide<br>con la búsqueda</div></div>` : '';
+    container.innerHTML = searchQuery ? `<div class="chart-wrap"><div class="chart-header"><h3>Posiciones</h3><span class="chart-meta">sin resultados</span></div><div class="chart-empty">Ningún pozo coincide con la búsqueda</div></div>` : '';
     return;
   }
   if (dated.length === 1) {
-    container.innerHTML = `<div class="chart-wrap"><div class="chart-header"><h3>Posiciones</h3><span class="chart-meta">1 pozo</span></div><div class="chart-empty">Necesitás al menos 2 pozos<br>para ver tendencia</div></div>`;
+    container.innerHTML = `<div class="chart-wrap"><div class="chart-header"><h3>Posiciones</h3><span class="chart-meta">1 pozo</span></div><div class="chart-empty">Necesitás al menos 2 pozos para ver tendencia</div></div>`;
     return;
   }
 
+  const isPercentual = chartMode === 'percentual';
   const W = 500, H = 300;
-  const pad = { top: 18, right: 18, bottom: 32, left: 30 };
+  const pad = { top: 18, right: 18, bottom: 32, left: 36 };
   const innerW = W - pad.left - pad.right;
   const innerH = H - pad.top - pad.bottom;
 
   const minDate = new Date(dated[0].fecha + 'T12:00:00').getTime();
   const maxDate = new Date(dated[dated.length - 1].fecha + 'T12:00:00').getTime();
   const dateRange = maxDate - minDate || 86400000;
-  const positions = dated.map(p => p.posicion);
-  const maxPos = Math.max(...positions, 2);
+  const xScale = (iso) => pad.left + ((new Date(iso + 'T12:00:00').getTime() - minDate) / dateRange) * innerW;
 
-  const xScale = (iso) => {
-    const t = new Date(iso + 'T12:00:00').getTime();
-    return pad.left + ((t - minDate) / dateRange) * innerW;
-  };
-  // Y invertido: posición 1 arriba
-  const yScale = (pos) => pad.top + ((pos - 1) / (maxPos - 1 || 1)) * innerH;
-
-  // Y ticks
-  let yTicks = [];
-  if (maxPos <= 6) {
-    for (let i = 1; i <= maxPos; i++) yTicks.push(i);
+  let yScale, yTicks, yFmt;
+  if (isPercentual) {
+    yScale = (pct) => pad.top + ((100 - pct) / 100) * innerH;
+    yTicks = [100, 75, 50, 25, 0];
+    yFmt = (t) => t + '%';
   } else {
-    yTicks = [1, Math.ceil(maxPos / 3), Math.ceil(2 * maxPos / 3), maxPos];
-    yTicks = [...new Set(yTicks)].sort((a, b) => a - b);
+    const maxPos = Math.max(...dated.map(p => p.posicion), 2);
+    yScale = (pos) => pad.top + ((pos - 1) / (maxPos - 1 || 1)) * innerH;
+    yTicks = maxPos <= 6
+      ? Array.from({ length: maxPos }, (_, i) => i + 1)
+      : [...new Set([1, Math.ceil(maxPos / 3), Math.ceil(2 * maxPos / 3), maxPos])].sort((a,b) => a-b);
+    yFmt = (t) => t;
   }
 
-  const linePath = dated.map((p, i) => {
-    const x = xScale(p.fecha).toFixed(1);
-    const y = yScale(p.posicion).toFixed(1);
-    return `${i === 0 ? 'M' : 'L'}${x},${y}`;
-  }).join(' ');
+  const getValue = (p) => isPercentual ? pozoPercentualPos(p) : p.posicion;
+  const validDated = isPercentual ? dated.filter(p => pozoPercentualPos(p) !== null) : dated;
+  const colorFor = (p) => ({ victory:'#4ade80', tie:'#f59e0b', defeat:'#ef4444', neutral:'#8a9690' }[pozoOutcome(p)]);
 
-  const colorFor = (p) => {
-    const o = pozoOutcome(p);
-    return o === 'victory' ? '#4ade80' : o === 'tie' ? '#f59e0b' : o === 'defeat' ? '#ef4444' : '#8a9690';
-  };
+  const linePath = validDated.map((p, i) => `${i===0?'M':'L'}${xScale(p.fecha).toFixed(1)},${yScale(getValue(p)).toFixed(1)}`).join(' ');
 
-  const dots = dated.map(p => {
-    const x = xScale(p.fecha).toFixed(1);
-    const y = yScale(p.posicion).toFixed(1);
-    return `<circle class="data-dot" cx="${x}" cy="${y}" r="4" fill="${colorFor(p)}"><title>${escapeHtml(fmtDate(p.fecha))} · pos ${p.posicion}/${p.participantes} · cat ${escapeHtml(p.categoria)}</title></circle>`;
+  const dots = validDated.map(p => {
+    const val = isPercentual ? `${getValue(p)}%` : `pos ${getValue(p)}/${p.participantes}`;
+    return `<circle class="data-dot" cx="${xScale(p.fecha).toFixed(1)}" cy="${yScale(getValue(p)).toFixed(1)}" r="4" fill="${colorFor(p)}"><title>${escapeHtml(fmtDate(p.fecha))} · ${val} · cat ${escapeHtml(p.categoria)}</title></circle>`;
   }).join('');
 
-  const yLabels = yTicks.map(t => {
+  const gridLines = yTicks.map(t => {
     const y = yScale(t).toFixed(1);
-    return `<line class="grid-line" x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}"/>
-            <text class="axis-label" x="${pad.left - 6}" y="${y}" text-anchor="end" dominant-baseline="middle">${t}</text>`;
+    return `<line class="grid-line" x1="${pad.left}" y1="${y}" x2="${W-pad.right}" y2="${y}"/>
+            <text class="axis-label" x="${pad.left-6}" y="${y}" text-anchor="end" dominant-baseline="middle">${yFmt(t)}</text>`;
   }).join('');
 
-  const firstLabel = `<text class="axis-label" x="${pad.left}" y="${H - 10}" text-anchor="start">${escapeHtml(fmtDateShort(dated[0].fecha))}</text>`;
-  const lastLabel = `<text class="axis-label" x="${W - pad.right}" y="${H - 10}" text-anchor="end">${escapeHtml(fmtDateShort(dated[dated.length - 1].fecha))}</text>`;
-  let midLabel = '';
-  if (dated.length >= 5) {
-    const mid = dated[Math.floor(dated.length / 2)];
-    midLabel = `<text class="axis-label" x="${xScale(mid.fecha).toFixed(1)}" y="${H - 10}" text-anchor="middle">${escapeHtml(fmtDateShort(mid.fecha))}</text>`;
-  }
+  const xFirst = `<text class="axis-label" x="${pad.left}" y="${H-10}" text-anchor="start">${escapeHtml(fmtDateShort(dated[0].fecha))}</text>`;
+  const xLast = `<text class="axis-label" x="${W-pad.right}" y="${H-10}" text-anchor="end">${escapeHtml(fmtDateShort(dated[dated.length-1].fecha))}</text>`;
+  const xMid = dated.length >= 5 ? `<text class="axis-label" x="${xScale(dated[Math.floor(dated.length/2)].fecha).toFixed(1)}" y="${H-10}" text-anchor="middle">${escapeHtml(fmtDateShort(dated[Math.floor(dated.length/2)].fecha))}</text>` : '';
 
   container.innerHTML = `
     <div class="chart-wrap">
       <div class="chart-header">
         <h3>Posiciones</h3>
-        <span class="chart-meta">${dated.length} pozos</span>
+        <div class="chart-toggle">
+          <button id="chartModeAbs" class="${!isPercentual?'active':''}">Absoluta</button>
+          <button id="chartModePct" class="${isPercentual?'active':''}">% Relativa</button>
+        </div>
       </div>
       <svg class="chart-svg" viewBox="0 0 ${W} ${H}">
-        ${yLabels}
+        ${gridLines}
         <path class="data-line" d="${linePath}"/>
         ${dots}
-        ${firstLabel}${midLabel}${lastLabel}
+        ${xFirst}${xMid}${xLast}
       </svg>
       <div class="chart-legend">
         <div class="item"><span class="dot" style="background:#4ade80"></span>Victoria</div>
         <div class="item"><span class="dot" style="background:#f59e0b"></span>Empate</div>
         <div class="item"><span class="dot" style="background:#ef4444"></span>Derrota</div>
+        ${isPercentual ? '<div class="item" style="margin-left:auto;color:var(--ink-dim)">100% = 1er lugar</div>' : ''}
       </div>
     </div>
   `;
+  $('#chartModeAbs').addEventListener('click', () => { chartMode = 'absolute'; renderChart(); });
+  $('#chartModePct').addEventListener('click', () => { chartMode = 'percentual'; renderChart(); });
 }
 
 function pozoOutcome(p) {
@@ -924,6 +937,8 @@ function renderList() {
     const v = p.victorias || 0, e = p.empates || 0, d = p.derrotas || 0;
     const wr = pozoWinRate(p);
     const wrClass = wr === null ? '' : wr >= 60 ? 'wr-good' : wr >= 40 ? 'wr-mid' : 'wr-bad';
+    const pct = pozoPercentualPos(p);
+    const pctClass = pct === null ? '' : pct >= 75 ? 'pct-good' : pct >= 50 ? 'pct-mid' : 'pct-bad';
     return `
     <div class="pozo-card ${pozoOutcome(p)}" data-id="${p.id}">
       <div class="pozo-head">
@@ -941,6 +956,7 @@ function renderList() {
       <div class="pozo-row">
         <span class="chip record"><span class="rec-v">${v}V</span><span class="sep">·</span><span class="rec-e">${e}E</span><span class="sep">·</span><span class="rec-d">${d}D</span></span>
         ${wr !== null ? `<span class="chip ${wrClass}"><strong>${wr}%</strong> WR</span>` : ''}
+        ${pct !== null ? `<span class="chip ${pctClass}"><strong>${pct}%</strong> top</span>` : ''}
         ${p.puntaje !== '' && p.puntaje !== null && p.puntaje !== undefined ? `<span class="chip"><strong>${p.puntaje}</strong> pts</span>` : ''}
         ${p.calorias ? `<span class="chip"><strong>${Number(p.calorias).toLocaleString()}</strong> kcal</span>` : ''}
         ${p.premio ? `<span class="chip gold"><strong>${fmtMoney(p.premio)}</strong></span>` : ''}
@@ -952,6 +968,7 @@ function renderList() {
           <div class="detail-item"><div class="label">Costo</div><div class="value mono">${fmtMoney(p.costo)}</div></div>
           <div class="detail-item"><div class="label">Premio</div><div class="value mono">${fmtMoney(p.premio)}</div></div>
           <div class="detail-item"><div class="label">Puntaje</div><div class="value mono">${p.puntaje ?? '—'}</div></div>
+          <div class="detail-item"><div class="label">Pos. relativa</div><div class="value mono ${pctClass}">${pct !== null ? pct + '%' : '—'}</div></div>
           <div class="detail-item"><div class="label">Calorías</div><div class="value mono">${p.calorias ? Number(p.calorias).toLocaleString() + ' kcal' : '—'}</div></div>
           ${p.club ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Club</div><div class="value">${escapeHtml(p.club)}</div></div>` : ''}
           ${p.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(p.notas)}</div></div>` : ''}
