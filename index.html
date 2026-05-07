@@ -1035,7 +1035,7 @@ function renderChart() {
 
   const getValue = (p) => isPercentual ? pozoPercentualPos(p) : p.posicion;
   const validDated = isPercentual ? dated.filter(p => pozoPercentualPos(p) !== null) : dated;
-  const colorFor = (p) => p.tipo === 'individual' ? '#a78bfa' : '#fbbf24';
+  const colorFor = (p) => p.tipo === 'individual' ? '#4ade80' : '#fbbf24';
 
   const linePath = validDated.map((p, i) => `${i===0?'M':'L'}${xScale(p.fecha).toFixed(1)},${yScale(getValue(p)).toFixed(1)}`).join(' ');
 
@@ -1071,7 +1071,7 @@ function renderChart() {
       </svg>
       <div class="chart-legend">
         <div class="item"><span class="dot" style="background:#fbbf24"></span>Pareja</div>
-        <div class="item"><span class="dot" style="background:#a78bfa"></span>Individual</div>
+        <div class="item"><span class="dot" style="background:#4ade80"></span>Individual</div>
       </div>
     </div>
   `;
