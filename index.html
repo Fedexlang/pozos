@@ -338,6 +338,21 @@ body { max-width: 720px; margin: 0 auto; }
 .clase-checklist-preview { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
 .ejercicio-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; border: 1px solid var(--border); color: var(--ink-dim); background: var(--surface-2); }
 .ejercicio-chip.done { color: var(--court-bright); border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.06); }
+
+/* Clases chart */
+.clases-chart-wrap { margin: 16px 20px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+.clases-chart-wrap .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.clases-chart-wrap h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; }
+.clases-chart-tabs { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; }
+.clases-chart-tabs button { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: none; color: var(--ink-dim); padding: 5px 9px; border-radius: 5px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.clases-chart-tabs button.active { background: var(--surface-3); color: var(--court-bright); }
+.clases-chart-tabs button:hover:not(.active) { color: var(--ink); }
+.freq-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.freq-bar-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-muted); letter-spacing: 0.05em; min-width: 110px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.freq-bar-track { flex: 1; height: 14px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.freq-bar-fill { height: 100%; background: var(--court-bright); border-radius: 4px; transition: width .4s; opacity: 0.85; }
+.freq-bar-count { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); min-width: 22px; }
+.timeline-empty { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); text-align: center; padding: 30px 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 </style>
 </head>
 <body>
@@ -468,9 +483,15 @@ body { max-width: 720px; margin: 0 auto; }
   <!-- Vista clases -->
   <div id="clasesView" hidden>
     <section class="clases-stats" id="clasesStats"></section>
+    <div id="clasesChart"></div>
     <div class="section-title">
       <h2>Clases</h2>
       <span class="count" id="clasesCount">0 clases</span>
+    </div>
+    <div class="search-bar" style="margin: 0 20px 12px;">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="claseSearchInput" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
+      <button type="button" class="search-clear" id="claseSearchClear" hidden aria-label="Limpiar">×</button>
     </div>
     <div id="clasesWrap"></div>
   </div><!-- /clasesView -->
@@ -624,7 +645,10 @@ body { max-width: 720px; margin: 0 auto; }
         <div class="field"><label>Duración (min)</label><input type="number" id="claseDuracion" min="1" inputmode="numeric" placeholder="60"></div>
       </div>
       <div class="field"><label>Club / lugar</label><input type="text" id="claseClub" placeholder="opcional" autocomplete="off" list="claseClubList"><datalist id="claseClubList"></datalist></div>
-      <div class="field"><label>Profesor / coach</label><input type="text" id="claseProfesor" placeholder="opcional"></div>
+      <div class="field-row">
+        <div class="field"><label>Profesor / coach</label><input type="text" id="claseProfesor" placeholder="opcional"></div>
+        <div class="field"><label>Participantes</label><input type="number" id="claseParticipantes" min="1" inputmode="numeric" placeholder="opcional"></div>
+      </div>
       <div class="field-row">
         <div class="field"><label>Calorías (kcal)</label><input type="number" id="claseCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
         <div class="field"><label>Costo ($)</label><input type="number" id="claseCosto" step="any" min="0" inputmode="decimal" placeholder="0"></div>
@@ -632,10 +656,6 @@ body { max-width: 720px; margin: 0 auto; }
       <div class="field">
         <label>Ejercicios</label>
         <div class="checklist-field" id="claseChecklist"></div>
-        <div class="checklist-progress" id="claseChecklistProgress">
-          <div class="checklist-bar-wrap"><div class="checklist-bar" id="claseChecklistBar" style="width:0%"></div></div>
-          <span class="checklist-pct" id="claseChecklistPct">0%</span>
-        </div>
       </div>
       <div class="field"><label>Notas</label><textarea id="claseNotas" rows="2" placeholder="Opcional"></textarea></div>
       <div class="modal-actions">
@@ -1242,7 +1262,7 @@ function renderList() {
   }).join('')}</div>`;
 }
 
-function render() { renderStats(); renderChart(); renderList(); renderRetosStats(); renderRetos(); renderClasesStats(); renderClases(); }
+function render() { renderStats(); renderChart(); renderList(); renderRetosStats(); renderRetos(); renderClasesAll(); }
 
 // ---------- Pozo modal ----------
 function openModal(pozo = null) {
@@ -1649,7 +1669,6 @@ const EJERCICIOS = [
   'Rulo',
   'Remate x3',
   'Smash',
-  'Remate al vidrio',
   'Doble vidrio en defensa',
   'Saque',
   'Recepción de saque',
@@ -1658,43 +1677,199 @@ const EJERCICIOS = [
 ];
 
 function migrateClase(c) {
+  // Remap ejercicios if they were saved with old 13-item array (had 'Remate al vidrio' at index 7)
+  let ejercicios = Array.isArray(c.ejercicios) ? c.ejercicios : [];
+  if (ejercicios.length === 13) {
+    // Old format: remove index 7 (Remate al vidrio)
+    ejercicios = [...ejercicios.slice(0, 7), ...ejercicios.slice(8)];
+  }
   return {
     ...c,
     club: c.club || null,
     profesor: c.profesor || null,
     duracion: c.duracion || null,
+    participantes: c.participantes || null,
     calorias: c.calorias || null,
     costo: c.costo || null,
-    ejercicios: Array.isArray(c.ejercicios) ? c.ejercicios : [],
+    ejercicios,
     notas: c.notas || null,
   };
 }
 
+// ---------- Clases search ----------
+let claseSearchQuery = '';
+
+function getClaseSearchTerms() {
+  if (!claseSearchQuery) return [];
+  return claseSearchQuery
+    .split('+')
+    .map(group => group.split('&').map(t => t.trim().toLowerCase()).filter(Boolean))
+    .filter(g => g.length > 0);
+}
+
+function claseSearchText(c) {
+  const parts = [
+    c.club || '', c.profesor || '', c.notas || '', c.fecha || '',
+    String(c.participantes || ''), String(c.duracion || ''),
+    ...(c.ejercicios || []).map((v, i) => v ? EJERCICIOS[i] : ''),
+  ];
+  if (c.fecha) {
+    try {
+      const d = new Date(c.fecha + 'T12:00:00');
+      parts.push(d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' }));
+      parts.push(d.toLocaleDateString('es-CR', { month: 'long' }));
+    } catch (e) {}
+  }
+  return parts.join(' ').toLowerCase();
+}
+
+function matchesClaseSearch(c) {
+  const groups = getClaseSearchTerms();
+  if (!groups.length) return true;
+  const text = claseSearchText(c);
+  return groups.some(andTerms => andTerms.every(term => text.includes(term)));
+}
+
+function getFilteredClases() {
+  const groups = getClaseSearchTerms();
+  if (!groups.length) return clases;
+  return clases.filter(matchesClaseSearch);
+}
+
+// ---------- Clases chart ----------
+let clasesChartMode = 'freq'; // 'freq' | 'timeline'
+
+function renderClasesChart() {
+  const container = $('#clasesChart');
+  const source = getFilteredClases();
+  const sorted = [...source].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
+
+  if (source.length === 0) { container.innerHTML = ''; return; }
+
+  const isTimeline = clasesChartMode === 'timeline';
+
+  const toggleHtml = `
+    <div class="clases-chart-wrap">
+      <div class="chart-header">
+        <h3>Ejercicios</h3>
+        <div class="clases-chart-tabs">
+          <button id="clChartFreq" class="${!isTimeline ? 'active' : ''}">Frecuencia</button>
+          <button id="clChartTime" class="${isTimeline ? 'active' : ''}">Evolución</button>
+        </div>
+      </div>
+      <div id="clChartBody"></div>
+    </div>`;
+  container.innerHTML = toggleHtml;
+
+  $('#clChartFreq').addEventListener('click', () => { clasesChartMode = 'freq'; renderClasesChart(); });
+  $('#clChartTime').addEventListener('click', () => { clasesChartMode = 'timeline'; renderClasesChart(); });
+
+  const body = $('#clChartBody');
+
+  if (!isTimeline) {
+    // ── Barras de frecuencia ──────────────────────────────────────
+    const counts = EJERCICIOS.map((_, i) =>
+      source.filter(c => c.ejercicios && c.ejercicios[i]).length
+    );
+    const max = Math.max(...counts, 1);
+    body.innerHTML = `<div style="padding:4px 0">` +
+      EJERCICIOS.map((ej, i) => `
+        <div class="freq-bar-row">
+          <span class="freq-bar-label" title="${escapeHtml(ej)}">${escapeHtml(ej)}</span>
+          <div class="freq-bar-track">
+            <div class="freq-bar-fill" style="width:${(counts[i]/max*100).toFixed(1)}%"></div>
+          </div>
+          <span class="freq-bar-count">${counts[i]}</span>
+        </div>`).join('') + `</div>`;
+  } else {
+    // ── Evolución temporal (SVG grid) ─────────────────────────────
+    if (sorted.length < 2) {
+      body.innerHTML = `<div class="timeline-empty">Necesitás al menos 2 clases para ver evolución</div>`;
+      return;
+    }
+    const n = sorted.length;
+    const m = EJERCICIOS.length;
+    const cellW = 22, cellH = 18, labelW = 112, padTop = 8, dotR = 5;
+    const W = labelW + n * cellW + 16;
+    const H = padTop + m * cellH + 28;
+
+    // Column headers: short dates
+    const headers = sorted.map(c => {
+      const d = new Date((c.fecha || '') + 'T12:00:00');
+      return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short' });
+    });
+
+    const headerSvg = headers.map((h, ci) => {
+      const x = labelW + ci * cellW + cellW / 2;
+      return `<text x="${x}" y="${padTop - 2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--ink-dim)">${escapeHtml(h)}</text>`;
+    }).join('');
+
+    const rows = EJERCICIOS.map((ej, ri) => {
+      const y = padTop + ri * cellH + cellH / 2;
+      const label = `<text x="${labelW - 6}" y="${y + 1}" text-anchor="end" dominant-baseline="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--ink-muted)">${escapeHtml(ej)}</text>`;
+      const dots = sorted.map((c, ci) => {
+        const x = labelW + ci * cellW + cellW / 2;
+        const done = c.ejercicios && c.ejercicios[ri];
+        return `<circle cx="${x}" cy="${y}" r="${dotR}" fill="${done ? 'var(--court-bright)' : 'var(--surface-3)'}" opacity="${done ? '0.9' : '0.5'}"><title>${escapeHtml(ej)} · ${escapeHtml(fmtDate(c.fecha))}${done ? ' ✓' : ' —'}</title></circle>`;
+      }).join('');
+      // Horizontal separator line
+      const sep = ri < m - 1 ? `<line x1="${labelW}" y1="${padTop + (ri+1)*cellH}" x2="${W}" y2="${padTop + (ri+1)*cellH}" stroke="var(--border)" stroke-width="0.5"/>` : '';
+      return label + dots + sep;
+    }).join('');
+
+    body.innerHTML = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block">
+        ${headerSvg}
+        ${rows}
+      </svg>
+      <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em">
+          <svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="var(--court-bright)" opacity=".9"/></svg>Practicado
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em">
+          <svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="var(--surface-3)" opacity=".5"/></svg>No practicado
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
 function renderClasesStats() {
+  const filtered = getFilteredClases();
   const total = clases.length;
-  const totalCals = clases.reduce((s, c) => s + (Number(c.calorias) || 0), 0);
-  const totalCosto = clases.reduce((s, c) => s + (Number(c.costo) || 0), 0);
-  const totalMin = clases.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
+  const shown = filtered.length;
+  const totalCals = filtered.reduce((s, c) => s + (Number(c.calorias) || 0), 0);
+  const totalCosto = filtered.reduce((s, c) => s + (Number(c.costo) || 0), 0);
+  const totalMin = filtered.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
   $('#clasesStats').innerHTML = `
-    <div class="stat"><div class="stat-label">Clases</div><div class="stat-value">${total}</div><div class="stat-extra">registradas</div></div>
-    <div class="stat"><div class="stat-label">Tiempo</div><div class="stat-value">${totalMin ? Math.round(totalMin / 60) + '<span style="font-size:18px">h</span>' : '—'}</div><div class="stat-extra">${totalMin} minutos</div></div>
-    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${totalCals ? totalCals.toLocaleString() : '—'}</div><div class="stat-extra">kcal quemadas</div></div>
+    <div class="stat"><div class="stat-label">Clases</div><div class="stat-value">${shown === total ? total : shown + '<span style="font-size:14px"> / ' + total + '</span>'}</div><div class="stat-extra">registradas</div></div>
+    <div class="stat"><div class="stat-label">Tiempo</div><div class="stat-value">${totalMin ? Math.round(totalMin / 60) + '<span style="font-size:18px">h</span>' : '—'}</div><div class="stat-extra">${totalMin} min</div></div>
+    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${totalCals ? totalCals.toLocaleString() : '—'}</div><div class="stat-extra">kcal</div></div>
     <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(totalCosto)}</div><div class="stat-extra">acumulado</div></div>
   `;
 }
 
 function renderClases() {
-  $('#clasesCount').textContent = `${clases.length} ${clases.length === 1 ? 'clase' : 'clases'}`;
+  const filtered = getFilteredClases();
+  const total = clases.length;
+  const shown = filtered.length;
+  $('#clasesCount').textContent = claseSearchQuery
+    ? `${shown} de ${total}`
+    : `${total} ${total === 1 ? 'clase' : 'clases'}`;
+
   const wrap = $('#clasesWrap');
-  if (!clases.length) {
+  if (!total) {
     wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— vacío —</div><p>Agregá tu primera clase con el botón verde</p></div>`;
     return;
   }
-  const sorted = [...clases].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  if (!shown) {
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— sin match —</div><p>Ninguna clase coincide con "${escapeHtml(claseSearchQuery)}"</p></div>`;
+    return;
+  }
+  const sorted = [...filtered].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
   wrap.innerHTML = `<div class="list">${sorted.map(c => {
     const done = (c.ejercicios || []).filter(Boolean).length;
-    const total = EJERCICIOS.length;
-    const pct = total ? Math.round(done / total * 100) : 0;
+    const totalEj = EJERCICIOS.length;
     const chipsHtml = EJERCICIOS.map((ej, i) => {
       const checked = c.ejercicios && c.ejercicios[i];
       return `<span class="ejercicio-chip ${checked ? 'done' : ''}">${escapeHtml(ej)}</span>`;
@@ -1711,14 +1886,11 @@ function renderClases() {
         </button>
       </div>
       <div class="pozo-row" style="margin-top:8px">
-        <span class="chip"><strong>${done}/${total}</strong> ejercicios</span>
+        <span class="chip"><strong>${done}/${totalEj}</strong> ejercicios</span>
+        ${c.participantes ? `<span class="chip"><strong>${c.participantes}</strong> participantes</span>` : ''}
         ${c.duracion ? `<span class="chip"><strong>${c.duracion}</strong> min</span>` : ''}
         ${c.calorias ? `<span class="chip"><strong>${Number(c.calorias).toLocaleString()}</strong> kcal</span>` : ''}
         ${c.costo ? `<span class="chip gold"><strong>${fmtMoney(c.costo)}</strong></span>` : ''}
-      </div>
-      <div class="checklist-progress" style="margin-top:10px">
-        <div class="checklist-bar-wrap"><div class="checklist-bar" style="width:${pct}%"></div></div>
-        <span class="checklist-pct">${pct}%</span>
       </div>
       <div class="clase-detail">
         <div class="clase-checklist-preview">${chipsHtml}</div>
@@ -1732,9 +1904,13 @@ function renderClases() {
   }).join('')}</div>`;
 }
 
-// ---------- Clase modal ----------
-const CHECKLIST_KEY = 'claseChecklistState';
+function renderClasesAll() {
+  renderClasesStats();
+  renderClasesChart();
+  renderClases();
+}
 
+// ---------- Clase modal ----------
 function buildChecklist(ejerciciosGuardados) {
   const container = $('#claseChecklist');
   container.innerHTML = '';
@@ -1751,20 +1927,9 @@ function buildChecklist(ejerciciosGuardados) {
       item.classList.toggle('checked');
       const cb = item.querySelector('input[type="checkbox"]');
       cb.checked = !cb.checked;
-      updateChecklistProgress();
     });
     container.appendChild(item);
   });
-  updateChecklistProgress();
-}
-
-function updateChecklistProgress() {
-  const items = [...document.querySelectorAll('#claseChecklist .checklist-item')];
-  const done = items.filter(i => i.classList.contains('checked')).length;
-  const total = items.length;
-  const pct = total ? Math.round(done / total * 100) : 0;
-  $('#claseChecklistBar').style.width = pct + '%';
-  $('#claseChecklistPct').textContent = pct + '%';
 }
 
 function getChecklistValues() {
@@ -1778,10 +1943,10 @@ function openClaseModal(clase = null) {
   $('#claseDuracion').value = clase && clase.duracion ? clase.duracion : '';
   $('#claseClub').value = clase ? (clase.club || '') : '';
   $('#claseProfesor').value = clase ? (clase.profesor || '') : '';
+  $('#claseParticipantes').value = clase && clase.participantes ? clase.participantes : '';
   $('#claseCalorias').value = clase && clase.calorias ? clase.calorias : '';
   $('#claseCosto').value = clase && clase.costo ? clase.costo : '';
   $('#claseNotas').value = clase ? (clase.notas || '') : '';
-  // Populate club datalist
   const clubs = [...new Set([...pozos.map(p => p.club), ...retos.map(r => r.club), ...clases.map(c => c.club)].filter(Boolean))].sort();
   $('#claseClubList').innerHTML = clubs.map(c => `<option value="${escapeHtml(c)}">`).join('');
   buildChecklist(clase ? clase.ejercicios : null);
@@ -1808,6 +1973,7 @@ $('#claseForm').addEventListener('submit', async (e) => {
     club: $('#claseClub').value.trim() || null,
     profesor: $('#claseProfesor').value.trim() || null,
     duracion: $('#claseDuracion').value === '' ? null : Number($('#claseDuracion').value),
+    participantes: $('#claseParticipantes').value === '' ? null : Number($('#claseParticipantes').value),
     calorias: $('#claseCalorias').value === '' ? null : Number($('#claseCalorias').value),
     costo: $('#claseCosto').value === '' ? null : Number($('#claseCosto').value),
     ejercicios: getChecklistValues(),
@@ -1816,10 +1982,23 @@ $('#claseForm').addEventListener('submit', async (e) => {
   };
   if (editingClaseId) clases = clases.map(c => c.id === editingClaseId ? data : c);
   else clases.push(data);
-  renderClasesStats();
-  renderClases();
+  renderClasesAll();
   closeClaseModal();
   await syncUp();
+});
+
+// Search handlers
+$('#claseSearchInput').addEventListener('input', (e) => {
+  claseSearchQuery = e.target.value.trim();
+  $('#claseSearchClear').hidden = !claseSearchQuery;
+  renderClasesAll();
+});
+$('#claseSearchClear').addEventListener('click', () => {
+  $('#claseSearchInput').value = '';
+  claseSearchQuery = '';
+  $('#claseSearchClear').hidden = true;
+  renderClasesAll();
+  $('#claseSearchInput').focus();
 });
 
 // Click en clase cards (expand / edit / delete)
@@ -1837,7 +2016,7 @@ document.addEventListener('click', async (e) => {
       e.stopPropagation();
       if (confirm('¿Eliminar esta clase?')) {
         clases = clases.filter(x => x.id !== action.dataset.id);
-        renderClasesStats(); renderClases();
+        renderClasesAll();
         await syncUp();
       }
       return;
