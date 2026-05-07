@@ -1026,7 +1026,7 @@ function renderChart() {
 
   const getValue = (p) => isPercentual ? pozoPercentualPos(p) : p.posicion;
   const validDated = isPercentual ? dated.filter(p => pozoPercentualPos(p) !== null) : dated;
-  const colorFor = (p) => ({ victory:'#4ade80', tie:'#f59e0b', defeat:'#ef4444', neutral:'#8a9690' }[pozoOutcome(p)]);
+  const colorFor = (p) => p.tipo === 'individual' ? '#fbbf24' : '#4ade80';
 
   const linePath = validDated.map((p, i) => `${i===0?'M':'L'}${xScale(p.fecha).toFixed(1)},${yScale(getValue(p)).toFixed(1)}`).join(' ');
 
@@ -1061,10 +1061,8 @@ function renderChart() {
         ${xFirst}${xMid}${xLast}
       </svg>
       <div class="chart-legend">
-        <div class="item"><span class="dot" style="background:#4ade80"></span>Victoria</div>
-        <div class="item"><span class="dot" style="background:#f59e0b"></span>Empate</div>
-        <div class="item"><span class="dot" style="background:#ef4444"></span>Derrota</div>
-        ${isPercentual ? '<div class="item" style="margin-left:auto;color:var(--ink-dim)">100% = 1er lugar</div>' : ''}
+        <div class="item"><span class="dot" style="background:#4ade80"></span>Pareja</div>
+        <div class="item"><span class="dot" style="background:#fbbf24"></span>Individual</div>
       </div>
     </div>
   `;
