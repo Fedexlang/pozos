@@ -309,6 +309,35 @@ body { max-width: 720px; margin: 0 auto; }
 .set-row .set-del:hover { color: var(--crimson); border-color: rgba(239,68,68,0.3); }
 .add-set-btn { background: transparent; border: 1px dashed var(--border); color: var(--ink-muted); padding: 9px; border-radius: 8px; width: 100%; cursor: pointer; font-family: inherit; font-size: 13px; margin-top: 4px; }
 .add-set-btn:hover { color: var(--ink); border-color: var(--court-bright); }
+
+/* Clases */
+.clases-stats { padding: 20px 20px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 600px) { .clases-stats { grid-template-columns: repeat(4, 1fr); } }
+
+.clase-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--court); border-radius: 16px; padding: 16px; transition: border-color .2s; cursor: pointer; }
+.clase-card:hover { border-color: var(--border-strong); border-left-color: var(--court-bright); }
+.clase-card.expanded .clase-detail { display: block; }
+.clase-detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+/* Checklist */
+.checklist-field { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 4px; }
+.checklist-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; transition: background .1s; user-select: none; }
+.checklist-item:hover { background: var(--surface-3); }
+.checklist-item input[type="checkbox"] { display: none; }
+.check-box { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--border-strong); flex-shrink: 0; display: grid; place-items: center; transition: all .15s; }
+.checklist-item.checked .check-box { background: var(--court-bright); border-color: var(--court-bright); }
+.checklist-item.checked .check-box::after { content: ''; display: block; width: 10px; height: 6px; border-left: 2px solid var(--bg); border-bottom: 2px solid var(--bg); transform: rotate(-45deg) translate(1px, -1px); }
+.checklist-item .check-label { font-size: 14px; color: var(--ink-muted); transition: color .15s; font-family: 'Manrope', sans-serif; }
+.checklist-item.checked .check-label { color: var(--ink); }
+.checklist-progress { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.checklist-bar-wrap { flex: 1; height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+.checklist-bar { height: 100%; background: var(--court-bright); border-radius: 2px; transition: width .3s; }
+.checklist-pct { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--court-bright); letter-spacing: 0.08em; min-width: 32px; text-align: right; }
+
+/* Clase card checklist preview (read-only) */
+.clase-checklist-preview { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+.ejercicio-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; border: 1px solid var(--border); color: var(--ink-dim); background: var(--surface-2); }
+.ejercicio-chip.done { color: var(--court-bright); border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.06); }
 </style>
 </head>
 <body>
@@ -384,6 +413,10 @@ body { max-width: 720px; margin: 0 auto; }
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
       Retos
     </button>
+    <button class="tab" id="tabClases">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Clases
+    </button>
   </div>
 
   <!-- Vista pozos -->
@@ -431,6 +464,16 @@ body { max-width: 720px; margin: 0 auto; }
     </div>
     <div id="retosWrap"></div>
   </div><!-- /retosView -->
+
+  <!-- Vista clases -->
+  <div id="clasesView" hidden>
+    <section class="clases-stats" id="clasesStats"></section>
+    <div class="section-title">
+      <h2>Clases</h2>
+      <span class="count" id="clasesCount">0 clases</span>
+    </div>
+    <div id="clasesWrap"></div>
+  </div><!-- /clasesView -->
 
   <button class="fab" id="addBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -566,6 +609,43 @@ body { max-width: 720px; margin: 0 auto; }
   </div>
 </div>
 
+<!-- Modal de clase -->
+<div class="modal-bg" id="claseModalBg">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="claseModalTitle">Nueva clase</h3>
+      <button class="icon-btn" id="closeClaseModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="claseForm">
+      <div class="field-row">
+        <div class="field"><label>Fecha</label><input type="date" id="claseFecha" required></div>
+        <div class="field"><label>Duración (min)</label><input type="number" id="claseDuracion" min="1" inputmode="numeric" placeholder="60"></div>
+      </div>
+      <div class="field"><label>Club / lugar</label><input type="text" id="claseClub" placeholder="opcional" autocomplete="off" list="claseClubList"><datalist id="claseClubList"></datalist></div>
+      <div class="field"><label>Profesor / coach</label><input type="text" id="claseProfesor" placeholder="opcional"></div>
+      <div class="field-row">
+        <div class="field"><label>Calorías (kcal)</label><input type="number" id="claseCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
+        <div class="field"><label>Costo ($)</label><input type="number" id="claseCosto" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      </div>
+      <div class="field">
+        <label>Ejercicios</label>
+        <div class="checklist-field" id="claseChecklist"></div>
+        <div class="checklist-progress" id="claseChecklistProgress">
+          <div class="checklist-bar-wrap"><div class="checklist-bar" id="claseChecklistBar" style="width:0%"></div></div>
+          <span class="checklist-pct" id="claseChecklistPct">0%</span>
+        </div>
+      </div>
+      <div class="field"><label>Notas</label><textarea id="claseNotas" rows="2" placeholder="Opcional"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelClaseBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -575,10 +655,12 @@ const GIST_FILENAME = 'pozos.json';
 
 let pozos = [];
 let retos = [];
+let clases = [];
 let nombre = '';
 let editingId = null;
 let editingRetoId = null;
-let activeTab = 'pozos';
+let editingClaseId = null;
+let activeTab = 'pozos'; // 'pozos' | 'retos' | 'clases'
 let settings = null; // { gistId }
 let syncing = false;
 let lastSyncedAt = null;
@@ -724,14 +806,14 @@ function clearSettings() {
 function loadCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    if (!raw) return { pozos: [], retos: [] };
+    if (!raw) return { pozos: [], retos: [], clases: [] };
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return { pozos: parsed, retos: [] }; // migración
-    return { pozos: parsed.pozos || [], retos: parsed.retos || [] };
-  } catch (e) { return { pozos: [], retos: [] }; }
+    if (Array.isArray(parsed)) return { pozos: parsed, retos: [], clases: [] }; // migración
+    return { pozos: parsed.pozos || [], retos: parsed.retos || [], clases: parsed.clases || [] };
+  } catch (e) { return { pozos: [], retos: [], clases: [] }; }
 }
-function saveCache(pArr, rArr) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ pozos: pArr, retos: rArr })); } catch (e) {}
+function saveCache(pArr, rArr, cArr) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ pozos: pArr, retos: rArr, clases: cArr || [] })); } catch (e) {}
 }
 
 // ---------- GitHub Gist API ----------
@@ -747,15 +829,15 @@ async function workerFetch(gistId) {
   }
   const body = await res.json();
   const data = body.data;
-  if (Array.isArray(data)) return { pozos: data, retos: [], nombre: '' };
-  return { pozos: data?.pozos || [], retos: data?.retos || [], nombre: data?.nombre || '' };
+  if (Array.isArray(data)) return { pozos: data, retos: [], clases: [], nombre: '' };
+  return { pozos: data?.pozos || [], retos: data?.retos || [], clases: data?.clases || [], nombre: data?.nombre || '' };
 }
 
-async function workerUpdate(gistId, pArr, rArr, nom) {
+async function workerUpdate(gistId, pArr, rArr, cArr, nom) {
   const res = await fetch(`${WORKER_URL}/gist/${gistId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: { pozos: pArr, retos: rArr, nombre: nom || '' } })
+    body: JSON.stringify({ data: { pozos: pArr, retos: rArr, clases: cArr || [], nombre: nom || '' } })
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -804,8 +886,9 @@ async function syncDown() {
     const remote = await workerFetch(settings.gistId);
     pozos = remote.pozos.map(migrate);
     retos = (remote.retos || []).map(migrateReto);
+    clases = (remote.clases || []).map(migrateClase);
     nombre = remote.nombre || '';
-    saveCache(pozos, retos);
+    saveCache(pozos, retos, clases);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
@@ -821,8 +904,8 @@ async function syncUp() {
   syncing = true;
   setStatus('syncing');
   try {
-    await workerUpdate(settings.gistId, pozos, retos, nombre);
-    saveCache(pozos, retos);
+    await workerUpdate(settings.gistId, pozos, retos, clases, nombre);
+    saveCache(pozos, retos, clases);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
@@ -1159,7 +1242,7 @@ function renderList() {
   }).join('')}</div>`;
 }
 
-function render() { renderStats(); renderChart(); renderList(); renderRetosStats(); renderRetos(); }
+function render() { renderStats(); renderChart(); renderList(); renderRetosStats(); renderRetos(); renderClasesStats(); renderClases(); }
 
 // ---------- Pozo modal ----------
 function openModal(pozo = null) {
@@ -1215,8 +1298,9 @@ async function doSetup(gistId) {
     saveSettingsLocal(settings);
     pozos = remote.pozos.map(migrate);
     retos = (remote.retos || []).map(migrateReto);
+    clases = (remote.clases || []).map(migrateClase);
     nombre = remote.nombre || '';
-    saveCache(pozos, retos);
+    saveCache(pozos, retos, clases);
     lastSyncedAt = new Date();
     $('#setupScreen').hidden = true;
     $('#app').hidden = false;
@@ -1248,6 +1332,7 @@ async function init() {
   const cached = loadCache();
   pozos = cached.pozos.map(migrate);
   retos = cached.retos.map(migrateReto);
+  clases = (cached.clases || []).map(migrateClase);
   $('#loadingOverlay').hidden = true;
   $('#app').hidden = false;
   render();
@@ -1292,7 +1377,7 @@ $('#pozoForm').addEventListener('submit', async (e) => {
   };
   if (editingId) pozos = pozos.map(p => p.id === editingId ? data : p);
   else pozos.push(data);
-  saveCache(pozos, retos);
+  saveCache(pozos, retos, clases);
   render();
   closeModal();
   await syncUp();
@@ -1302,14 +1387,14 @@ document.addEventListener('click', async (e) => {
   const action = e.target.closest('[data-action]');
   if (action) {
     const act = action.dataset.action;
-    if (act === 'editReto' || act === 'deleteReto') return; // manejado por el otro listener
+    if (act === 'editReto' || act === 'deleteReto' || act === 'editClase' || act === 'deleteClase') return;
     e.stopPropagation();
     const id = action.dataset.id;
     if (act === 'edit') { const p = pozos.find(x => x.id === id); if (p) openModal(p); }
     else if (act === 'delete') {
       if (confirm('¿Eliminar este pozo?')) {
         pozos = pozos.filter(x => x.id !== id);
-        saveCache(pozos, retos);
+        saveCache(pozos, retos, clases);
         render();
         await syncUp();
       }
@@ -1420,17 +1505,21 @@ function switchTab(tab) {
   activeTab = tab;
   $('#tabPozos').classList.toggle('active', tab === 'pozos');
   $('#tabRetos').classList.toggle('active', tab === 'retos');
+  $('#tabClases').classList.toggle('active', tab === 'clases');
   $('#pozosView').hidden = tab !== 'pozos';
   $('#retosView').hidden = tab !== 'retos';
-  $('#fabLabel').textContent = tab === 'pozos' ? 'Nuevo pozo' : 'Nuevo reto';
+  $('#clasesView').hidden = tab !== 'clases';
+  $('#fabLabel').textContent = tab === 'pozos' ? 'Nuevo pozo' : tab === 'retos' ? 'Nuevo reto' : 'Nueva clase';
 }
 
 $('#tabPozos').addEventListener('click', () => switchTab('pozos'));
 $('#tabRetos').addEventListener('click', () => switchTab('retos'));
+$('#tabClases').addEventListener('click', () => switchTab('clases'));
 
 $('#addBtn').addEventListener('click', () => {
   if (activeTab === 'pozos') openModal();
-  else openRetoModal();
+  else if (activeTab === 'retos') openRetoModal();
+  else openClaseModal();
 });
 
 // ---------- Reto modal ----------
@@ -1549,6 +1638,213 @@ document.addEventListener('click', async (e) => {
   }
   const retoCard = e.target.closest('.reto-card');
   if (retoCard && !e.target.closest('[data-action]')) retoCard.classList.toggle('expanded');
+}, true);
+
+// ---------- Clases ----------
+const EJERCICIOS = [
+  'Volea derecha',
+  'Volea revés',
+  'Bandeja',
+  'Víbora',
+  'Rulo',
+  'Remate x3',
+  'Smash',
+  'Remate al vidrio',
+  'Doble vidrio en defensa',
+  'Saque',
+  'Recepción de saque',
+  'Defensa con vidrio',
+  'Defensa',
+];
+
+function migrateClase(c) {
+  return {
+    ...c,
+    club: c.club || null,
+    profesor: c.profesor || null,
+    duracion: c.duracion || null,
+    calorias: c.calorias || null,
+    costo: c.costo || null,
+    ejercicios: Array.isArray(c.ejercicios) ? c.ejercicios : [],
+    notas: c.notas || null,
+  };
+}
+
+function renderClasesStats() {
+  const total = clases.length;
+  const totalCals = clases.reduce((s, c) => s + (Number(c.calorias) || 0), 0);
+  const totalCosto = clases.reduce((s, c) => s + (Number(c.costo) || 0), 0);
+  const totalMin = clases.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
+  $('#clasesStats').innerHTML = `
+    <div class="stat"><div class="stat-label">Clases</div><div class="stat-value">${total}</div><div class="stat-extra">registradas</div></div>
+    <div class="stat"><div class="stat-label">Tiempo</div><div class="stat-value">${totalMin ? Math.round(totalMin / 60) + '<span style="font-size:18px">h</span>' : '—'}</div><div class="stat-extra">${totalMin} minutos</div></div>
+    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${totalCals ? totalCals.toLocaleString() : '—'}</div><div class="stat-extra">kcal quemadas</div></div>
+    <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(totalCosto)}</div><div class="stat-extra">acumulado</div></div>
+  `;
+}
+
+function renderClases() {
+  $('#clasesCount').textContent = `${clases.length} ${clases.length === 1 ? 'clase' : 'clases'}`;
+  const wrap = $('#clasesWrap');
+  if (!clases.length) {
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— vacío —</div><p>Agregá tu primera clase con el botón verde</p></div>`;
+    return;
+  }
+  const sorted = [...clases].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  wrap.innerHTML = `<div class="list">${sorted.map(c => {
+    const done = (c.ejercicios || []).filter(Boolean).length;
+    const total = EJERCICIOS.length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    const chipsHtml = EJERCICIOS.map((ej, i) => {
+      const checked = c.ejercicios && c.ejercicios[i];
+      return `<span class="ejercicio-chip ${checked ? 'done' : ''}">${escapeHtml(ej)}</span>`;
+    }).join('');
+    return `
+    <div class="clase-card" data-clase-id="${c.id}">
+      <div class="pozo-head">
+        <div>
+          <div class="pozo-meta">${fmtDate(c.fecha)}${c.club ? ' · ' + escapeHtml(c.club) : ''}</div>
+          <div class="pozo-title">${c.profesor ? escapeHtml(c.profesor) : 'Clase'}</div>
+        </div>
+        <button class="pozo-edit-btn" data-action="editClase" data-id="${c.id}" aria-label="Editar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+      </div>
+      <div class="pozo-row" style="margin-top:8px">
+        <span class="chip"><strong>${done}/${total}</strong> ejercicios</span>
+        ${c.duracion ? `<span class="chip"><strong>${c.duracion}</strong> min</span>` : ''}
+        ${c.calorias ? `<span class="chip"><strong>${Number(c.calorias).toLocaleString()}</strong> kcal</span>` : ''}
+        ${c.costo ? `<span class="chip gold"><strong>${fmtMoney(c.costo)}</strong></span>` : ''}
+      </div>
+      <div class="checklist-progress" style="margin-top:10px">
+        <div class="checklist-bar-wrap"><div class="checklist-bar" style="width:${pct}%"></div></div>
+        <span class="checklist-pct">${pct}%</span>
+      </div>
+      <div class="clase-detail">
+        <div class="clase-checklist-preview">${chipsHtml}</div>
+        ${c.notas ? `<div class="detail-grid" style="margin-top:12px"><div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(c.notas)}</div></div></div>` : ''}
+        <div class="detail-actions" style="margin-top:12px">
+          <button data-action="editClase" data-id="${c.id}">Editar</button>
+          <button class="danger" data-action="deleteClase" data-id="${c.id}">Eliminar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ---------- Clase modal ----------
+const CHECKLIST_KEY = 'claseChecklistState';
+
+function buildChecklist(ejerciciosGuardados) {
+  const container = $('#claseChecklist');
+  container.innerHTML = '';
+  EJERCICIOS.forEach((ej, i) => {
+    const checked = Array.isArray(ejerciciosGuardados) ? !!ejerciciosGuardados[i] : false;
+    const item = document.createElement('label');
+    item.className = 'checklist-item' + (checked ? ' checked' : '');
+    item.innerHTML = `
+      <input type="checkbox" ${checked ? 'checked' : ''}>
+      <span class="check-box"></span>
+      <span class="check-label">${escapeHtml(ej)}</span>`;
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      item.classList.toggle('checked');
+      const cb = item.querySelector('input[type="checkbox"]');
+      cb.checked = !cb.checked;
+      updateChecklistProgress();
+    });
+    container.appendChild(item);
+  });
+  updateChecklistProgress();
+}
+
+function updateChecklistProgress() {
+  const items = [...document.querySelectorAll('#claseChecklist .checklist-item')];
+  const done = items.filter(i => i.classList.contains('checked')).length;
+  const total = items.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  $('#claseChecklistBar').style.width = pct + '%';
+  $('#claseChecklistPct').textContent = pct + '%';
+}
+
+function getChecklistValues() {
+  return [...document.querySelectorAll('#claseChecklist .checklist-item')].map(i => i.classList.contains('checked'));
+}
+
+function openClaseModal(clase = null) {
+  editingClaseId = clase ? clase.id : null;
+  $('#claseModalTitle').textContent = clase ? 'Editar clase' : 'Nueva clase';
+  $('#claseFecha').value = clase ? clase.fecha : todayISO();
+  $('#claseDuracion').value = clase && clase.duracion ? clase.duracion : '';
+  $('#claseClub').value = clase ? (clase.club || '') : '';
+  $('#claseProfesor').value = clase ? (clase.profesor || '') : '';
+  $('#claseCalorias').value = clase && clase.calorias ? clase.calorias : '';
+  $('#claseCosto').value = clase && clase.costo ? clase.costo : '';
+  $('#claseNotas').value = clase ? (clase.notas || '') : '';
+  // Populate club datalist
+  const clubs = [...new Set([...pozos.map(p => p.club), ...retos.map(r => r.club), ...clases.map(c => c.club)].filter(Boolean))].sort();
+  $('#claseClubList').innerHTML = clubs.map(c => `<option value="${escapeHtml(c)}">`).join('');
+  buildChecklist(clase ? clase.ejercicios : null);
+  $('#claseModalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeClaseModal() {
+  $('#claseModalBg').classList.remove('open');
+  document.body.style.overflow = '';
+  editingClaseId = null;
+}
+
+$('#cancelClaseBtn').addEventListener('click', closeClaseModal);
+$('#closeClaseModal').addEventListener('click', closeClaseModal);
+$('#claseModalBg').addEventListener('click', (e) => { if (e.target === $('#claseModalBg')) closeClaseModal(); });
+
+$('#claseForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = {
+    id: editingClaseId || uid(),
+    tipo: 'clase',
+    fecha: $('#claseFecha').value,
+    club: $('#claseClub').value.trim() || null,
+    profesor: $('#claseProfesor').value.trim() || null,
+    duracion: $('#claseDuracion').value === '' ? null : Number($('#claseDuracion').value),
+    calorias: $('#claseCalorias').value === '' ? null : Number($('#claseCalorias').value),
+    costo: $('#claseCosto').value === '' ? null : Number($('#claseCosto').value),
+    ejercicios: getChecklistValues(),
+    notas: $('#claseNotas').value.trim() || null,
+    creado: editingClaseId ? (clases.find(c => c.id === editingClaseId)?.creado || new Date().toISOString()) : new Date().toISOString()
+  };
+  if (editingClaseId) clases = clases.map(c => c.id === editingClaseId ? data : c);
+  else clases.push(data);
+  renderClasesStats();
+  renderClases();
+  closeClaseModal();
+  await syncUp();
+});
+
+// Click en clase cards (expand / edit / delete)
+document.addEventListener('click', async (e) => {
+  const action = e.target.closest('[data-action]');
+  if (action) {
+    const act = action.dataset.action;
+    if (act === 'editClase') {
+      e.stopPropagation();
+      const c = clases.find(x => x.id === action.dataset.id);
+      if (c) openClaseModal(c);
+      return;
+    }
+    if (act === 'deleteClase') {
+      e.stopPropagation();
+      if (confirm('¿Eliminar esta clase?')) {
+        clases = clases.filter(x => x.id !== action.dataset.id);
+        renderClasesStats(); renderClases();
+        await syncUp();
+      }
+      return;
+    }
+  }
+  const claseCard = e.target.closest('.clase-card');
+  if (claseCard && !e.target.closest('[data-action]')) claseCard.classList.toggle('expanded');
 }, true);
 
 init();
