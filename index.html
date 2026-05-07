@@ -505,6 +505,11 @@ body { max-width: 720px; margin: 0 auto; }
     </div>
     <form id="settingsForm">
       <div class="field">
+        <label>Tu nombre</label>
+        <input type="text" id="settingsNombre" placeholder="ej: Juan" autocomplete="off">
+        <div class="hint">Se muestra en los retos como "Juan / compañero vs rival".</div>
+      </div>
+      <div class="field">
         <label>Gist ID</label>
         <input type="text" id="settingsGist" class="mono" autocomplete="off" placeholder="abc123def456…">
       </div>
@@ -570,6 +575,7 @@ const GIST_FILENAME = 'pozos.json';
 
 let pozos = [];
 let retos = [];
+let nombre = '';
 let editingId = null;
 let editingRetoId = null;
 let activeTab = 'pozos';
@@ -669,7 +675,7 @@ function renderRetos() {
         <div>
           <div class="pozo-meta">${fmtDate(r.fecha)}${r.club ? ' · ' + escapeHtml(r.club) : ''}</div>
           <div class="reto-vs">
-            <span class="team">${r.companero ? escapeHtml(r.companero) : 'Yo'}</span>
+            <span class="team">${escapeHtml(nombre || 'Yo')}${r.companero ? ' / ' + escapeHtml(r.companero) : ''}</span>
             <span class="vs-sep">vs</span>
             <span class="rivals">${escapeHtml(rivals || '—')}</span>
           </div>
@@ -741,15 +747,15 @@ async function workerFetch(gistId) {
   }
   const body = await res.json();
   const data = body.data;
-  if (Array.isArray(data)) return { pozos: data, retos: [] }; // migración formato viejo
-  return { pozos: data?.pozos || [], retos: data?.retos || [] };
+  if (Array.isArray(data)) return { pozos: data, retos: [], nombre: '' };
+  return { pozos: data?.pozos || [], retos: data?.retos || [], nombre: data?.nombre || '' };
 }
 
-async function workerUpdate(gistId, pArr, rArr) {
+async function workerUpdate(gistId, pArr, rArr, nom) {
   const res = await fetch(`${WORKER_URL}/gist/${gistId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: { pozos: pArr, retos: rArr } })
+    body: JSON.stringify({ data: { pozos: pArr, retos: rArr, nombre: nom || '' } })
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -798,6 +804,7 @@ async function syncDown() {
     const remote = await workerFetch(settings.gistId);
     pozos = remote.pozos.map(migrate);
     retos = (remote.retos || []).map(migrateReto);
+    nombre = remote.nombre || '';
     saveCache(pozos, retos);
     lastSyncedAt = new Date();
     lastError = null;
@@ -814,7 +821,7 @@ async function syncUp() {
   syncing = true;
   setStatus('syncing');
   try {
-    await workerUpdate(settings.gistId, pozos, retos);
+    await workerUpdate(settings.gistId, pozos, retos, nombre);
     saveCache(pozos, retos);
     lastSyncedAt = new Date();
     lastError = null;
@@ -1181,6 +1188,7 @@ function togglePartner() { const tipo = document.querySelector('input[name="tipo
 
 // ---------- Settings modal ----------
 function openSettings() {
+  $('#settingsNombre').value = nombre || '';
   $('#settingsGist').value = settings ? settings.gistId : '';
   $('#settingsModalBg').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1200,6 +1208,7 @@ async function doSetup(gistId) {
     saveSettingsLocal(settings);
     pozos = remote.pozos.map(migrate);
     retos = (remote.retos || []).map(migrateReto);
+    nombre = remote.nombre || '';
     saveCache(pozos, retos);
     lastSyncedAt = new Date();
     $('#setupScreen').hidden = true;
@@ -1322,13 +1331,16 @@ $('#settingsModalBg').addEventListener('click', (e) => { if (e.target === $('#se
 $('#settingsForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const newGist = $('#settingsGist').value.trim() || settings.gistId;
+  const newNombre = $('#settingsNombre').value.trim();
   try {
     await workerFetch(newGist);
     settings = { gistId: newGist };
     saveSettingsLocal(settings);
+    nombre = newNombre;
     closeSettings();
     showToast('Ajustes actualizados');
-    await syncDown();
+    await syncUp();
+    renderRetos();
   } catch (err) {
     showToast('Gist no encontrado. Verificá el ID.', 'error', 3500);
   }
