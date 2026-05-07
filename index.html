@@ -402,7 +402,7 @@ body { max-width: 720px; margin: 0 auto; }
 
   <div class="search-bar">
     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="searchInput" placeholder="Buscar club, compañero, mes…" autocomplete="off">
+    <input type="text" id="searchInput" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
     <button type="button" class="search-clear" id="searchClear" hidden aria-label="Limpiar">×</button>
   </div>
 
@@ -890,7 +890,29 @@ let searchQuery = '';
 
 function getSearchTerms() {
   if (!searchQuery) return [];
-  return searchQuery.split('+').map(t => t.trim().toLowerCase()).filter(Boolean);
+  // Cada grupo separado por + es un OR
+  // Dentro de cada grupo, los términos separados por & son AND
+  return searchQuery
+    .split('+')
+    .map(group => group.split('&').map(t => t.trim().toLowerCase()).filter(Boolean))
+    .filter(g => g.length > 0);
+}
+
+function matchesSearch(p) {
+  const groups = getSearchTerms();
+  if (!groups.length) return true;
+  const text = pozoSearchText(p);
+  // OR entre grupos: basta con que uno matchee
+  return groups.some(andTerms =>
+    // AND dentro del grupo: todos los términos deben matchear
+    andTerms.every(term => text.includes(term))
+  );
+}
+
+function getFilteredPozos() {
+  const groups = getSearchTerms();
+  if (!groups.length) return pozos;
+  return pozos.filter(matchesSearch);
 }
 
 function pozoSearchText(p) {
@@ -908,19 +930,6 @@ function pozoSearchText(p) {
     } catch (e) {}
   }
   return parts.join(' ').toLowerCase();
-}
-
-function matchesSearch(p) {
-  const terms = getSearchTerms();
-  if (!terms.length) return true;
-  const text = pozoSearchText(p);
-  return terms.some(term => text.includes(term)); // OR: match cualquier término
-}
-
-function getFilteredPozos() {
-  const terms = getSearchTerms();
-  if (!terms.length) return pozos;
-  return pozos.filter(matchesSearch);
 }
 
 // ---------- Ordenamiento ----------
@@ -1026,7 +1035,7 @@ function renderChart() {
 
   const getValue = (p) => isPercentual ? pozoPercentualPos(p) : p.posicion;
   const validDated = isPercentual ? dated.filter(p => pozoPercentualPos(p) !== null) : dated;
-  const colorFor = (p) => p.tipo === 'individual' ? '#fbbf24' : '#4ade80';
+  const colorFor = (p) => p.tipo === 'individual' ? '#a78bfa' : '#fbbf24';
 
   const linePath = validDated.map((p, i) => `${i===0?'M':'L'}${xScale(p.fecha).toFixed(1)},${yScale(getValue(p)).toFixed(1)}`).join(' ');
 
@@ -1061,8 +1070,8 @@ function renderChart() {
         ${xFirst}${xMid}${xLast}
       </svg>
       <div class="chart-legend">
-        <div class="item"><span class="dot" style="background:#4ade80"></span>Pareja</div>
-        <div class="item"><span class="dot" style="background:#fbbf24"></span>Individual</div>
+        <div class="item"><span class="dot" style="background:#fbbf24"></span>Pareja</div>
+        <div class="item"><span class="dot" style="background:#a78bfa"></span>Individual</div>
       </div>
     </div>
   `;
