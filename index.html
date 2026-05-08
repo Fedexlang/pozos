@@ -543,12 +543,6 @@ body { max-width: 720px; margin: 0 auto; }
     </button>
   </div>
 
-  <div class="search-bar">
-    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="searchInput" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
-    <button type="button" class="search-clear" id="searchClear" hidden aria-label="Limpiar">×</button>
-  </div>
-
   <div class="filters-panel hidden" id="sortPanel">
     <div class="filter-group">
       <div class="filter-group-label">Ordenar por</div>
@@ -562,6 +556,13 @@ body { max-width: 720px; margin: 0 auto; }
   </div>
 
   <div id="chart"></div>
+
+  <div class="search-bar" style="margin: 12px 20px;">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
+    <button type="button" class="search-clear" id="searchClear" hidden aria-label="Limpiar">×</button>
+  </div>
+
   <div id="listWrap"></div>
   </div><!-- /pozosView -->
 
