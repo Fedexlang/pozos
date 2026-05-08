@@ -2520,10 +2520,9 @@ function renderHome() {
   // Mejor racha de pozos top 3
   const pozosSort = [...pozos].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
   let bestPozStreak = 0, curPozStreak = 0;
-  pozosSort.forEach(p => { if (p.posicion && p.participantes && p.posicion <= 3) { curPozStreak++; bestPozStreak = Math.max(bestPozStreak, curPozStreak); } else curPozStreak = 0; });
-  // Current pozo streak
+  pozosSort.forEach(p => { if (p.posicion && p.participantes && p.posicion <= 4) { curPozStreak++; bestPozStreak = Math.max(bestPozStreak, curPozStreak); } else curPozStreak = 0; });
   let curPozStreakNow = 0;
-  for (const p of [...pozosSort].reverse()) { if (p.posicion && p.posicion <= 3) curPozStreakNow++; else break; }
+  for (const p of [...pozosSort].reverse()) { if (p.posicion && p.posicion <= 4) curPozStreakNow++; else break; }
 
   // ── Últimos 5 eventos ──
   const allEvents = [
@@ -2587,8 +2586,7 @@ function renderHome() {
         <div class="dash-kpi"><div class="kpi-label">Retos</div><div class="kpi-value">${retosThisMonth}</div><div class="kpi-extra">${retosCount} total</div></div>
         <div class="dash-kpi"><div class="kpi-label">Clases</div><div class="kpi-value">${clasesThisMonth}</div><div class="kpi-extra">${clasesCount} total</div></div>
         <div class="dash-kpi ${kcalThisMonth > 0 ? 'accent' : ''}"><div class="kpi-label">Calorías</div><div class="kpi-value">${kcalThisMonth ? kcalThisMonth.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
-        <div class="dash-kpi ${bestPos && bestPos <= 3 ? 'accent' : ''}"><div class="kpi-label">Mejor pos.</div><div class="kpi-value">${bestPos != null ? bestPos : '—'}</div><div class="kpi-extra">en pozos</div></div>
-        <div class="dash-kpi ${curPozStreakNow >= 3 ? 'accent' : ''}"><div class="kpi-label">Racha top 3</div><div class="kpi-value">${curPozStreakNow}</div><div class="kpi-extra">${bestPozStreak} récord</div></div>
+        <div class="dash-kpi ${bestPos && bestPos <= 4 ? 'accent' : ''}"><div class="kpi-label">Mejor pos.</div><div class="kpi-value">${bestPos != null ? bestPos : '—'}</div><div class="kpi-extra">histórica en pozos</div></div>
       </div>
     </div>
 
@@ -2597,7 +2595,8 @@ function renderHome() {
       <div class="dash-grid">
         <div class="dash-kpi"><div class="kpi-label">Actividades</div><div class="kpi-value">${totalActividades}</div><div class="kpi-extra">${pozosCount}P · ${retosCount}R · ${clasesCount}C</div></div>
         <div class="dash-kpi"><div class="kpi-label">Calorías</div><div class="kpi-value" style="font-size:22px">${totalKcal ? totalKcal.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
-        <div class="dash-kpi"><div class="kpi-label">Gasto total</div><div class="kpi-value red" style="font-size:22px">${fmtMoney(totalGasto)}</div><div class="kpi-extra">${totalPremios ? fmtMoney(totalPremios) + ' premios' : 'sin premios'}</div></div>
+        <div class="dash-kpi" style="border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.05)"><div class="kpi-label">Gasto total</div><div class="kpi-value red" style="font-size:22px">${fmtMoney(totalGasto)}</div><div class="kpi-extra">${totalPremios ? fmtMoney(totalPremios) + ' premios' : 'sin premios'}</div></div>
+        <div class="dash-kpi ${curPozStreakNow >= 3 ? 'accent' : ''}"><div class="kpi-label">Racha top 4</div><div class="kpi-value">${curPozStreakNow}</div><div class="kpi-extra">${bestPozStreak} récord histórico</div></div>
       </div>
     </div>
 
@@ -2633,9 +2632,11 @@ function renderHome() {
   // Wire meta controls
   container.querySelectorAll('.meta-card').forEach(card => {
     const id = card.dataset.metaId;
-    card.querySelector('.meta-inc')?.addEventListener('click', () => changeMeta(id, 1));
-    card.querySelector('.meta-dec')?.addEventListener('click', () => changeMeta(id, -1));
-    card.querySelector('.meta-card-del')?.addEventListener('click', () => deleteMeta(id));
+    if (id && !id.startsWith('pre_')) {
+      card.querySelector('.meta-inc')?.addEventListener('click', () => changeMeta(id, 1));
+      card.querySelector('.meta-dec')?.addEventListener('click', () => changeMeta(id, -1));
+      card.querySelector('.meta-card-del')?.addEventListener('click', () => deleteMeta(id));
+    }
   });
 }
 
@@ -2643,28 +2644,80 @@ function renderHome() {
 // METAS
 // ═══════════════════════════════════════════════════════════
 
+// Metas predefinidas — se calculan en tiempo real desde los datos
+function calcMetasPredefinidas() {
+  // 1. Top 1 en un pozo
+  const top1 = pozos.some(p => p.posicion === 1);
+
+  // 2. 3 veces top 4 en pozos
+  const top4Count = pozos.filter(p => p.posicion && p.posicion <= 4).length;
+
+  // 3. Ganar 3 retos seguidos (racha actual o histórica máxima)
+  const retosSort = [...retos].sort((a, b) => (a.fecha||'').localeCompare(b.fecha||''));
+  let maxRacha = 0, curRacha = 0;
+  retosSort.forEach(r => {
+    const res = calcRetoResultado(r.sets);
+    if (res === 'V') { curRacha++; maxRacha = Math.max(maxRacha, curRacha); }
+    else if (res !== null) curRacha = 0;
+  });
+
+  // 4. 2 clases este mes
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const clasesEsteMes = clases.filter(c => (c.fecha||'').startsWith(thisMonth)).length;
+
+  return [
+    { id: 'pre_top1',    pre: true, desc: 'Llegar 1° en un pozo',       actual: top1 ? 1 : 0,              total: 1,  unidad: null,    done: top1 },
+    { id: 'pre_top4x3',  pre: true, desc: '3 veces top 4 en pozos',     actual: Math.min(top4Count, 3),    total: 3,  unidad: 'veces', done: top4Count >= 3 },
+    { id: 'pre_retos3',  pre: true, desc: 'Ganar 3 retos consecutivos', actual: Math.min(maxRacha, 3),     total: 3,  unidad: 'retos', done: maxRacha >= 3 },
+    { id: 'pre_clases2', pre: true, desc: '2 clases este mes',          actual: Math.min(clasesEsteMes, 2), total: 2, unidad: 'clases', done: clasesEsteMes >= 2 },
+  ];
+}
+
 function renderMetasInline() {
-  if (!metas.length) return `<button class="add-meta-btn" id="addMetaBtnEmpty">+ Definí tu primera meta</button>`;
-  return metas.map(m => {
+  const predefinidas = calcMetasPredefinidas();
+  const todasMetas = [...predefinidas, ...metas];
+
+  const renderCard = (m, isPre) => {
     const pct = m.total > 0 ? Math.min(100, Math.round(m.actual / m.total * 100)) : 0;
     const fillCls = pct >= 100 ? 'done' : pct >= 50 ? 'mid' : 'low';
+    const badge = isPre
+      ? `<span style="font-family:JetBrains Mono,monospace;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--court-bright);border:1px solid rgba(74,222,128,.3);border-radius:4px;padding:1px 5px">AUTO</span>`
+      : `<button class="meta-card-del" aria-label="Eliminar meta">×</button>`;
+
+    const controls = isPre
+      ? `<div class="meta-controls">
+          <span class="meta-val" style="margin-left:0">${m.actual}/${m.total}</span>
+          ${m.done ? '<span style="color:var(--court-bright);font-size:13px;margin-left:4px">✓ completada</span>' : ''}
+          <span class="meta-pct">${pct}%</span>
+          <button class="meta-reset" data-pre-id="${m.id}" style="margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--ink-dim);font-size:10px;font-family:JetBrains Mono,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;cursor:pointer">Reset</button>
+        </div>`
+      : `<div class="meta-controls">
+          <button class="meta-dec" aria-label="Restar">−</button>
+          <span class="meta-val">${m.actual}</span>
+          <button class="meta-inc" aria-label="Sumar">+</button>
+          <span class="meta-pct">${pct}%${pct >= 100 ? ' ✓' : ''}</span>
+        </div>`;
+
     return `<div class="meta-card" data-meta-id="${m.id}" style="margin-bottom:8px">
       <div class="meta-card-header">
         <div>
           <div class="meta-card-title">${escapeHtml(m.desc)}</div>
           <div class="meta-card-target">${m.actual} / ${m.total}${m.unidad ? ' ' + escapeHtml(m.unidad) : ''}</div>
         </div>
-        <button class="meta-card-del" aria-label="Eliminar meta">×</button>
+        ${badge}
       </div>
       <div class="meta-progress-bar"><div class="meta-progress-fill ${fillCls}" style="width:${pct}%"></div></div>
-      <div class="meta-controls">
-        <button class="meta-dec" aria-label="Restar">−</button>
-        <span class="meta-val">${m.actual}</span>
-        <button class="meta-inc" aria-label="Sumar">+</button>
-        <span class="meta-pct">${pct}%${pct >= 100 ? ' ✓' : ''}</span>
-      </div>
+      ${controls}
     </div>`;
-  }).join('') + `<button class="add-meta-btn" style="margin-top:4px" id="addMetaBtnExtra">+ Agregar otra meta</button>`;
+  };
+
+  const preHtml = predefinidas.map(m => renderCard(m, true)).join('');
+  const customHtml = metas.length
+    ? metas.map(m => renderCard(m, false)).join('')
+    : '';
+
+  return preHtml + customHtml + `<button class="add-meta-btn" style="margin-top:4px" id="addMetaBtnExtra">+ Agregar meta personalizada</button>`;
 }
 
 async function changeMeta(id, delta) {
@@ -2678,6 +2731,13 @@ async function deleteMeta(id) {
   metas = metas.filter(m => m.id !== id);
   renderHome();
   await syncUp();
+}
+
+async function resetMetaPredefinida(preId) {
+  if (!confirm('¿Resetear esta meta? Los datos reales no se borran, solo se reinicia el contador visual.')) return;
+  // Para metas predefinidas el "reset" guarda un override de progreso en metas con un marcador especial
+  // Simplemente mostramos un toast — las metas auto se recalculan siempre en tiempo real
+  showToast('Las metas AUTO se calculan solos desde tus datos — no se pueden resetear manualmente');
 }
 
 function openMetaModal() {
@@ -2718,6 +2778,9 @@ $('#metaForm').addEventListener('submit', async e => {
 // Dynamic add-meta buttons in home
 document.addEventListener('click', e => {
   if (e.target.id === 'addMetaBtnEmpty' || e.target.id === 'addMetaBtnExtra') openMetaModal();
+  if (e.target.classList.contains('meta-reset')) {
+    resetMetaPredefinida(e.target.dataset.preId);
+  }
 });
 
 // ═══════════════════════════════════════════════════════════
