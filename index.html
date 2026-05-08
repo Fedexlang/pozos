@@ -2677,10 +2677,11 @@ function renderHome() {
   // Wire meta controls
   container.querySelectorAll('.meta-card').forEach(card => {
     const id = card.dataset.metaId;
-    if (id && !id.startsWith('pre_')) {
+    if (!id) return;
+    card.querySelector('.meta-card-del')?.addEventListener('click', () => deleteMeta(id));
+    if (!id.startsWith('pre_')) {
       card.querySelector('.meta-inc')?.addEventListener('click', () => changeMeta(id, 1));
       card.querySelector('.meta-dec')?.addEventListener('click', () => changeMeta(id, -1));
-      card.querySelector('.meta-card-del')?.addEventListener('click', () => deleteMeta(id));
     }
   });
 }
@@ -2745,7 +2746,7 @@ function renderMetasInline() {
     }
 
     const badge = isPre
-      ? `<span style="font-family:JetBrains Mono,monospace;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--court-bright);border:1px solid rgba(74,222,128,.3);border-radius:4px;padding:1px 5px">AUTO</span>`
+      ? `<div style="display:flex;align-items:center;gap:6px"><span style="font-family:JetBrains Mono,monospace;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--court-bright);border:1px solid rgba(74,222,128,.3);border-radius:4px;padding:1px 5px">AUTO</span><button class="meta-card-del" aria-label="Eliminar meta">×</button></div>`
       : `<button class="meta-card-del" aria-label="Eliminar meta">×</button>`;
 
     const controls = isPre
