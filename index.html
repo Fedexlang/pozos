@@ -883,6 +883,7 @@ let editingId = null;
 let editingRetoId = null;
 let editingClaseId = null;
 let activeTab = 'home'; // 'home' | 'pozos' | 'retos' | 'clases'
+let dashMonth = null; // null = current month, else 'YYYY-MM'
 let settings = null; // { gistId }
 let syncing = false;
 let lastSyncedAt = null;
@@ -2511,7 +2512,13 @@ document.addEventListener('click', async (e) => {
 function renderHome() {
   const container = $('#homeContent');
   const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const thisMonth = dashMonth || currentMonth;
+
+  // Month label for display
+  const [ymY, ymM] = thisMonth.split('-').map(Number);
+  const monthLabel = new Date(ymY, ymM - 1, 1).toLocaleDateString('es-CR', { month: 'long', year: 'numeric' });
+  const isCurrentMonth = thisMonth === currentMonth;
 
   // ── KPIs ──
   // Pozos
@@ -2635,7 +2642,13 @@ function renderHome() {
 
   container.innerHTML = `
     <div class="dash-section" style="padding-top:16px">
-      <div class="dash-section-title">Este mes</div>
+      <div class="dash-section-title" style="align-items:center">
+        <button id="dashMonthPrev" style="background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:18px;padding:0 6px;line-height:1;flex-shrink:0" aria-label="Mes anterior">‹</button>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:capitalize;color:${isCurrentMonth?'var(--ink-muted)':'var(--court-bright)'}">
+          ${monthLabel}
+        </span>
+        <button id="dashMonthNext" style="background:none;border:none;color:${isCurrentMonth?'var(--ink-dim)':'var(--ink-muted)'};cursor:${isCurrentMonth?'default':'pointer'};font-size:18px;padding:0 6px;line-height:1;flex-shrink:0" aria-label="Mes siguiente" ${isCurrentMonth?'disabled':''}>›</button>
+      </div>
       <div class="dash-grid">
         <div class="dash-kpi"><div class="kpi-label">Pozos</div><div class="kpi-value">${pozosThisMonth}</div><div class="kpi-extra">${pozosCount} total</div></div>
         <div class="dash-kpi"><div class="kpi-label">Retos</div><div class="kpi-value">${retosThisMonth}</div><div class="kpi-extra">${retosCount} total</div></div>
@@ -2693,6 +2706,22 @@ function renderHome() {
     el.addEventListener('click', () => switchTab(el.dataset.goto));
   });
   $('#addMetaLink')?.addEventListener('click', openMetaModal);
+
+  // Month navigation
+  $('#dashMonthPrev')?.addEventListener('click', () => {
+    const [y, m] = (dashMonth || currentMonth).split('-').map(Number);
+    const prev = new Date(y, m - 2, 1);
+    dashMonth = `${prev.getFullYear()}-${String(prev.getMonth()+1).padStart(2,'0')}`;
+    renderHome();
+  });
+  $('#dashMonthNext')?.addEventListener('click', () => {
+    if (isCurrentMonth) return;
+    const [y, m] = thisMonth.split('-').map(Number);
+    const next = new Date(y, m, 1);
+    const nextStr = `${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}`;
+    dashMonth = nextStr === currentMonth ? null : nextStr;
+    renderHome();
+  });
   // Wire meta controls
   container.querySelectorAll('.meta-card').forEach(card => {
     const id = card.dataset.metaId;
