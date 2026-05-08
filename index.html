@@ -2483,12 +2483,27 @@ function renderHome() {
   const retosCount = retos.length;
   let rv = 0, re = 0, rd = 0;
   retos.forEach(r => { const res = calcRetoResultado(r.sets); if (res === 'V') rv++; else if (res === 'D') rd++; else if (res === 'E') re++; });
-  const retoWR = (rv + re + rd) ? Math.round(rv / (rv + re + rd) * 100) : 0;
   const retosThisMonth = retos.filter(r => (r.fecha || '').startsWith(thisMonth)).length;
 
   // Clases
   const clasesCount = clases.length;
   const clasesThisMonth = clases.filter(c => (c.fecha || '').startsWith(thisMonth)).length;
+
+  // ── Kcal este mes (los 3 tabs) ──
+  const calPozosMonth = pozos.filter(p => (p.fecha||'').startsWith(thisMonth)).reduce((s,p) => s + (Number(p.calorias)||0), 0);
+  const calRetosMonth = retos.filter(r => (r.fecha||'').startsWith(thisMonth)).reduce((s,r) => s + (Number(r.calorias)||0), 0);
+  const calClasesMonth = clases.filter(c => (c.fecha||'').startsWith(thisMonth)).reduce((s,c) => s + (Number(c.calorias)||0), 0);
+  const kcalThisMonth = calPozosMonth + calRetosMonth + calClasesMonth;
+
+  // ── Totales históricos unificados ──
+  const totalActividades = pozosCount + retosCount + clasesCount;
+  const totalKcal = pozos.reduce((s,p) => s + (Number(p.calorias)||0), 0)
+                  + retos.reduce((s,r) => s + (Number(r.calorias)||0), 0)
+                  + clases.reduce((s,c) => s + (Number(c.calorias)||0), 0);
+  const totalGasto = pozos.reduce((s,p) => s + (Number(p.costo)||0), 0)
+                   + retos.reduce((s,r) => s + (Number(r.precio)||0), 0)
+                   + clases.reduce((s,c) => s + (Number(c.costo)||0), 0);
+  const totalPremios = pozos.reduce((s,p) => s + (Number(p.premio)||0), 0);
 
   // Racha de retos (últimos consecutivos)
   const retosOrdenados = [...retos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
@@ -2570,9 +2585,18 @@ function renderHome() {
         <div class="dash-kpi"><div class="kpi-label">Pozos</div><div class="kpi-value">${pozosThisMonth}</div><div class="kpi-extra">${pozosCount} total</div></div>
         <div class="dash-kpi"><div class="kpi-label">Retos</div><div class="kpi-value">${retosThisMonth}</div><div class="kpi-extra">${retosCount} total</div></div>
         <div class="dash-kpi"><div class="kpi-label">Clases</div><div class="kpi-value">${clasesThisMonth}</div><div class="kpi-extra">${clasesCount} total</div></div>
-        <div class="dash-kpi ${retoWR >= 60 ? 'accent' : ''}"><div class="kpi-label">Win rate</div><div class="kpi-value">${retoWR}%</div><div class="kpi-extra">${rv}V · ${re}E · ${rd}D</div></div>
+        <div class="dash-kpi ${kcalThisMonth > 0 ? 'accent' : ''}"><div class="kpi-label">Calorías</div><div class="kpi-value">${kcalThisMonth ? kcalThisMonth.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
         <div class="dash-kpi ${bestPos && bestPos <= 3 ? 'accent' : ''}"><div class="kpi-label">Mejor pos.</div><div class="kpi-value">${bestPos != null ? bestPos : '—'}</div><div class="kpi-extra">en pozos</div></div>
         <div class="dash-kpi ${curPozStreakNow >= 3 ? 'accent' : ''}"><div class="kpi-label">Racha top 3</div><div class="kpi-value">${curPozStreakNow}</div><div class="kpi-extra">${bestPozStreak} récord</div></div>
+      </div>
+    </div>
+
+    <div class="dash-section" style="padding-top:12px">
+      <div class="dash-section-title">Totales históricos</div>
+      <div class="dash-grid">
+        <div class="dash-kpi"><div class="kpi-label">Actividades</div><div class="kpi-value">${totalActividades}</div><div class="kpi-extra">${pozosCount}P · ${retosCount}R · ${clasesCount}C</div></div>
+        <div class="dash-kpi"><div class="kpi-label">Calorías</div><div class="kpi-value" style="font-size:22px">${totalKcal ? totalKcal.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
+        <div class="dash-kpi"><div class="kpi-label">Gasto total</div><div class="kpi-value red" style="font-size:22px">${fmtMoney(totalGasto)}</div><div class="kpi-extra">${totalPremios ? fmtMoney(totalPremios) + ' premios' : 'sin premios'}</div></div>
       </div>
     </div>
 
