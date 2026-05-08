@@ -290,6 +290,7 @@ body { max-width: 720px; margin: 0 auto; }
 .dash-kpi .kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
 .dash-kpi .kpi-value.red { color: var(--crimson); }
 .dash-kpi .kpi-value.green { color: var(--court-bright); }
+.dash-kpi .kpi-value.gold { color: var(--gold); }
 .dash-kpi .kpi-extra { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); margin-top: 4px; letter-spacing: 0.05em; }
 .dash-kpi.accent { border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.05); }
 .dash-kpi.accent .kpi-value { color: var(--court-bright); }
@@ -2660,8 +2661,8 @@ function renderHome() {
   container.innerHTML = `
     <div class="dash-section" style="padding-top:16px">
       <div class="dash-section-title" style="align-items:center">
-        <button id="dashMonthPrev" style="background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:18px;padding:0 6px;line-height:1;flex-shrink:0" aria-label="Mes anterior">‹</button>
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:capitalize;color:${isLast30?'var(--ink-muted)':isCurrentMonth?'var(--ink-muted)':'var(--court-bright)'}">
+        <button id="dashMonthPrev" style="background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:18px;padding:0 6px;line-height:1;flex-shrink:0" aria-label="Período anterior">‹</button>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.06em;text-transform:capitalize;color:${isLast30?'var(--ink-muted)':isCurrentMonth?'var(--court-bright)':'var(--court-bright)'}">
           ${monthLabel}
         </span>
         <button id="dashMonthNext" style="background:none;border:none;color:${isLast30?'var(--ink-dim)':'var(--ink-muted)'};cursor:${isLast30?'default':'pointer'};font-size:18px;padding:0 6px;line-height:1;flex-shrink:0" aria-label="Período siguiente" ${isLast30?'disabled':''}>›</button>
@@ -2672,7 +2673,7 @@ function renderHome() {
         <div class="dash-kpi"><div class="kpi-label">Clases</div><div class="kpi-value">${clasesThisMonth}</div><div class="kpi-extra">${clasesCount} total</div></div>
         <div class="dash-kpi ${kcalThisMonth > 0 ? 'accent' : ''}"><div class="kpi-label">Calorías</div><div class="kpi-value">${kcalThisMonth ? kcalThisMonth.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
         <div class="dash-kpi ${premiosThisMonth > 0 ? 'accent' : ''}"><div class="kpi-label">Premios</div><div class="kpi-value gold">${premiosThisMonth ? fmtMoney(premiosThisMonth) : '—'}</div><div class="kpi-extra">en pozos</div></div>
-        <div class="dash-kpi"><div class="kpi-label">Gasto</div><div class="kpi-value red">${gastoThisMonth ? fmtMoney(gastoThisMonth) : '—'}</div><div class="kpi-extra">total del mes</div></div>
+        <div class="dash-kpi"><div class="kpi-label">Gasto</div><div class="kpi-value red">${gastoThisMonth ? fmtMoney(gastoThisMonth) : '—'}</div><div class="kpi-extra">total del período</div></div>
       </div>
     </div>
 
@@ -2725,9 +2726,16 @@ function renderHome() {
   $('#addMetaLink')?.addEventListener('click', openMetaModal);
 
   // Month navigation
+  // Navigation order: ... abril ‹ mayo ‹ últimos30
+  // last30 is the leftmost (most recent but narrowest window)
+  // › from last30 = disabled (already most recent)
+  // ‹ from last30 = goes to currentMonth
+  // › from currentMonth = last30
+  // ‹ from currentMonth = prev month
+  // › from prev month = forward toward currentMonth
   $('#dashMonthPrev')?.addEventListener('click', () => {
     if (isLast30) {
-      // last30 → current month
+      // last30 → current month (‹ goes right-to-left toward older)
       dashMonth = currentMonth;
     } else if (isCurrentMonth) {
       // current month → prev month
@@ -2735,7 +2743,7 @@ function renderHome() {
       const prev = new Date(y, m - 2, 1);
       dashMonth = `${prev.getFullYear()}-${String(prev.getMonth()+1).padStart(2,'0')}`;
     } else {
-      // prev month → further back
+      // past month → further back
       const [y, m] = thisMonth.split('-').map(Number);
       const prev = new Date(y, m - 2, 1);
       dashMonth = `${prev.getFullYear()}-${String(prev.getMonth()+1).padStart(2,'0')}`;
@@ -2743,9 +2751,9 @@ function renderHome() {
     renderHome();
   });
   $('#dashMonthNext')?.addEventListener('click', () => {
-    if (isLast30) return; // already at default
+    if (isLast30) return; // rightmost, disabled
     if (isCurrentMonth) {
-      // current month → last30 (default)
+      // current month → last30
       dashMonth = 'last30';
     } else {
       // past month → forward
