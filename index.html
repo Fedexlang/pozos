@@ -802,24 +802,57 @@ body { max-width: 720px; margin: 0 auto; }
       </button>
     </div>
     <form id="metaForm">
+      <!-- Tipo de meta -->
       <div class="field">
-        <label>Descripción de la meta</label>
-        <input type="text" id="metaDesc" placeholder="Ej: Llegar top 5 en el próximo pozo" required autocomplete="off">
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Progreso actual</label>
-          <input type="number" id="metaActual" min="0" value="0" inputmode="numeric">
-        </div>
-        <div class="field">
-          <label>Meta (total)</label>
-          <input type="number" id="metaTotal" min="1" value="10" inputmode="numeric" required>
+        <label>Tipo de meta</label>
+        <div class="seg" style="grid-template-columns:1fr 1fr">
+          <input type="radio" name="metaTipo" id="metaTipoPersonal" value="personal" checked>
+          <label for="metaTipoPersonal">Personalizada</label>
+          <input type="radio" name="metaTipo" id="metaTipoPredefinida" value="predefinida">
+          <label for="metaTipoPredefinida">Predefinida</label>
         </div>
       </div>
-      <div class="field">
-        <label>Unidad (opcional)</label>
-        <input type="text" id="metaUnidad" placeholder="Ej: retos, pozos, clases…" autocomplete="off">
+
+      <!-- Opciones predefinidas (se muestran solo si tipo = predefinida) -->
+      <div class="field" id="metaPredefinidaWrap" hidden>
+        <label>Elegí una meta</label>
+        <select id="metaPredefinidaSelect">
+          <option value="">— Seleccioná —</option>
+          <option value="top1">🏆 Llegar 1° en un pozo</option>
+          <option value="top4x3">🎯 3 veces top 4 en pozos</option>
+          <option value="retos3">⚔️ Ganar 3 retos consecutivos</option>
+          <option value="clases2mes">📚 2 clases este mes</option>
+        </select>
+        <div class="hint">El progreso se calcula automáticamente desde tus datos.</div>
       </div>
+
+      <!-- Campos personalizados (solo si tipo = personal) -->
+      <div id="metaPersonalWrap">
+        <div class="field">
+          <label>Descripción</label>
+          <input type="text" id="metaDesc" placeholder="Ej: Llegar top 5 en el próximo pozo" autocomplete="off">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Progreso actual</label>
+            <input type="number" id="metaActual" min="0" value="0" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label>Meta (total)</label>
+            <input type="number" id="metaTotal" min="1" value="10" inputmode="numeric">
+          </div>
+        </div>
+        <div class="field">
+          <label>Unidad (opcional)</label>
+          <input type="text" id="metaUnidad" placeholder="Ej: retos, pozos, clases…" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Fecha límite (opcional)</label>
+          <input type="date" id="metaFechaLimite">
+          <div class="hint">Si definís una fecha, se muestra cuántos días faltan.</div>
+        </div>
+      </div>
+
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="cancelMetaBtn">Cancelar</button>
         <button type="submit" class="btn btn-primary">Agregar</button>
@@ -2496,6 +2529,12 @@ function renderHome() {
   const calClasesMonth = clases.filter(c => (c.fecha||'').startsWith(thisMonth)).reduce((s,c) => s + (Number(c.calorias)||0), 0);
   const kcalThisMonth = calPozosMonth + calRetosMonth + calClasesMonth;
 
+  // ── Gasto este mes (los 3 tabs) ──
+  const gastoPozosMonth = pozos.filter(p => (p.fecha||'').startsWith(thisMonth)).reduce((s,p) => s + (Number(p.costo)||0), 0);
+  const gastoRetosMonth = retos.filter(r => (r.fecha||'').startsWith(thisMonth)).reduce((s,r) => s + (Number(r.precio)||0), 0);
+  const gastoClasesMonth = clases.filter(c => (c.fecha||'').startsWith(thisMonth)).reduce((s,c) => s + (Number(c.costo)||0), 0);
+  const gastoThisMonth = gastoPozosMonth + gastoRetosMonth + gastoClasesMonth;
+
   // ── Totales históricos unificados ──
   const totalActividades = pozosCount + retosCount + clasesCount;
   const totalKcal = pozos.reduce((s,p) => s + (Number(p.calorias)||0), 0)
@@ -2587,15 +2626,15 @@ function renderHome() {
         <div class="dash-kpi"><div class="kpi-label">Clases</div><div class="kpi-value">${clasesThisMonth}</div><div class="kpi-extra">${clasesCount} total</div></div>
         <div class="dash-kpi ${kcalThisMonth > 0 ? 'accent' : ''}"><div class="kpi-label">Calorías</div><div class="kpi-value">${kcalThisMonth ? kcalThisMonth.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
         <div class="dash-kpi ${bestPos && bestPos <= 4 ? 'accent' : ''}"><div class="kpi-label">Mejor pos.</div><div class="kpi-value">${bestPos != null ? bestPos : '—'}</div><div class="kpi-extra">histórica en pozos</div></div>
+        <div class="dash-kpi"><div class="kpi-label">Gasto</div><div class="kpi-value red">${gastoThisMonth ? fmtMoney(gastoThisMonth) : '—'}</div><div class="kpi-extra">este mes</div></div>
       </div>
     </div>
 
     <div class="dash-section" style="padding-top:12px">
-      <div class="dash-section-title">Totales históricos</div>
+      <div class="dash-section-title">Totales históricos <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-muted);font-weight:400;letter-spacing:0.05em">${totalActividades} actividades</span></div>
       <div class="dash-grid">
-        <div class="dash-kpi"><div class="kpi-label">Actividades</div><div class="kpi-value">${totalActividades}</div><div class="kpi-extra">${pozosCount}P · ${retosCount}R · ${clasesCount}C</div></div>
         <div class="dash-kpi"><div class="kpi-label">Calorías</div><div class="kpi-value" style="font-size:22px">${totalKcal ? totalKcal.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
-        <div class="dash-kpi" style="border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.05)"><div class="kpi-label">Gasto total</div><div class="kpi-value red" style="font-size:22px">${fmtMoney(totalGasto)}</div><div class="kpi-extra">${totalPremios ? fmtMoney(totalPremios) + ' premios' : 'sin premios'}</div></div>
+        <div class="dash-kpi"><div class="kpi-label">Gasto total</div><div class="kpi-value red" style="font-size:22px">${fmtMoney(totalGasto)}</div><div class="kpi-extra">${totalPremios ? fmtMoney(totalPremios) + ' premios' : 'sin premios'}</div></div>
         <div class="dash-kpi ${curPozStreakNow >= 3 ? 'accent' : ''}"><div class="kpi-label">Racha top 4</div><div class="kpi-value">${curPozStreakNow}</div><div class="kpi-extra">${bestPozStreak} récord histórico</div></div>
       </div>
     </div>
@@ -2645,65 +2684,79 @@ function renderHome() {
 // ═══════════════════════════════════════════════════════════
 
 // Metas predefinidas — se calculan en tiempo real desde los datos
-function calcMetasPredefinidas() {
-  // 1. Top 1 en un pozo
-  const top1 = pozos.some(p => p.posicion === 1);
-
-  // 2. 3 veces top 4 en pozos
-  const top4Count = pozos.filter(p => p.posicion && p.posicion <= 4).length;
-
-  // 3. Ganar 3 retos seguidos (racha actual o histórica máxima)
-  const retosSort = [...retos].sort((a, b) => (a.fecha||'').localeCompare(b.fecha||''));
-  let maxRacha = 0, curRacha = 0;
-  retosSort.forEach(r => {
-    const res = calcRetoResultado(r.sets);
-    if (res === 'V') { curRacha++; maxRacha = Math.max(maxRacha, curRacha); }
-    else if (res !== null) curRacha = 0;
-  });
-
-  // 4. 2 clases este mes
+function calcProgresoPredefinida(preKey) {
   const now = new Date();
   const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const clasesEsteMes = clases.filter(c => (c.fecha||'').startsWith(thisMonth)).length;
-
-  return [
-    { id: 'pre_top1',    pre: true, desc: 'Llegar 1° en un pozo',       actual: top1 ? 1 : 0,              total: 1,  unidad: null,    done: top1 },
-    { id: 'pre_top4x3',  pre: true, desc: '3 veces top 4 en pozos',     actual: Math.min(top4Count, 3),    total: 3,  unidad: 'veces', done: top4Count >= 3 },
-    { id: 'pre_retos3',  pre: true, desc: 'Ganar 3 retos consecutivos', actual: Math.min(maxRacha, 3),     total: 3,  unidad: 'retos', done: maxRacha >= 3 },
-    { id: 'pre_clases2', pre: true, desc: '2 clases este mes',          actual: Math.min(clasesEsteMes, 2), total: 2, unidad: 'clases', done: clasesEsteMes >= 2 },
-  ];
+  switch (preKey) {
+    case 'pre_top1':
+      return { actual: pozos.some(p => p.posicion === 1) ? 1 : 0, total: 1, done: pozos.some(p => p.posicion === 1) };
+    case 'pre_top4x3': {
+      const count = Math.min(pozos.filter(p => p.posicion && p.posicion <= 4).length, 3);
+      return { actual: count, total: 3, done: count >= 3 };
+    }
+    case 'pre_retos3': {
+      const rs = [...retos].sort((a,b) => (a.fecha||'').localeCompare(b.fecha||''));
+      let max = 0, cur = 0;
+      rs.forEach(r => { const res = calcRetoResultado(r.sets); if (res === 'V') { cur++; max = Math.max(max, cur); } else if (res !== null) cur = 0; });
+      return { actual: Math.min(max, 3), total: 3, done: max >= 3 };
+    }
+    case 'pre_clases2': {
+      const count = Math.min(clases.filter(c => (c.fecha||'').startsWith(thisMonth)).length, 2);
+      return { actual: count, total: 2, done: count >= 2 };
+    }
+    default: return null;
+  }
 }
 
 function renderMetasInline() {
-  const predefinidas = calcMetasPredefinidas();
-  const todasMetas = [...predefinidas, ...metas];
+  if (!metas.length) return `<button class="add-meta-btn" id="addMetaBtnEmpty">+ Definí tu primera meta</button>`;
 
-  const renderCard = (m, isPre) => {
-    const pct = m.total > 0 ? Math.min(100, Math.round(m.actual / m.total * 100)) : 0;
+  const renderCard = (m) => {
+    const isPre = !!m.preKey;
+    let actual = m.actual, total = m.total, done = false;
+
+    if (isPre) {
+      const prog = calcProgresoPredefinida(m.preKey);
+      if (prog) { actual = prog.actual; total = prog.total; done = prog.done; }
+    } else {
+      done = actual >= total;
+    }
+
+    const pct = total > 0 ? Math.min(100, Math.round(actual / total * 100)) : 0;
     const fillCls = pct >= 100 ? 'done' : pct >= 50 ? 'mid' : 'low';
+
+    // Deadline info
+    let deadlineHtml = '';
+    if (!isPre && m.fechaLimite) {
+      const diff = Math.ceil((new Date(m.fechaLimite + 'T12:00:00') - new Date()) / 86400000);
+      const color = diff < 0 ? 'var(--crimson)' : diff <= 3 ? 'var(--amber)' : 'var(--ink-dim)';
+      const label = diff < 0 ? `vencida hace ${Math.abs(diff)}d` : diff === 0 ? 'vence hoy' : `${diff}d restantes`;
+      deadlineHtml = `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:${color};letter-spacing:.06em">${label}</span>`;
+    }
+
     const badge = isPre
       ? `<span style="font-family:JetBrains Mono,monospace;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--court-bright);border:1px solid rgba(74,222,128,.3);border-radius:4px;padding:1px 5px">AUTO</span>`
       : `<button class="meta-card-del" aria-label="Eliminar meta">×</button>`;
 
     const controls = isPre
       ? `<div class="meta-controls">
-          <span class="meta-val" style="margin-left:0">${m.actual}/${m.total}</span>
-          ${m.done ? '<span style="color:var(--court-bright);font-size:13px;margin-left:4px">✓ completada</span>' : ''}
+          <span class="meta-val" style="margin-left:0">${actual}/${total}</span>
+          ${done ? '<span style="color:var(--court-bright);font-size:13px;margin-left:6px">✓</span>' : ''}
           <span class="meta-pct">${pct}%</span>
-          <button class="meta-reset" data-pre-id="${m.id}" style="margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--ink-dim);font-size:10px;font-family:JetBrains Mono,monospace;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;cursor:pointer">Reset</button>
         </div>`
       : `<div class="meta-controls">
           <button class="meta-dec" aria-label="Restar">−</button>
-          <span class="meta-val">${m.actual}</span>
+          <span class="meta-val">${actual}</span>
           <button class="meta-inc" aria-label="Sumar">+</button>
           <span class="meta-pct">${pct}%${pct >= 100 ? ' ✓' : ''}</span>
+          ${deadlineHtml}
         </div>`;
 
     return `<div class="meta-card" data-meta-id="${m.id}" style="margin-bottom:8px">
       <div class="meta-card-header">
         <div>
           <div class="meta-card-title">${escapeHtml(m.desc)}</div>
-          <div class="meta-card-target">${m.actual} / ${m.total}${m.unidad ? ' ' + escapeHtml(m.unidad) : ''}</div>
+          <div class="meta-card-target">${actual} / ${total}${m.unidad ? ' ' + escapeHtml(m.unidad) : ''}</div>
         </div>
         ${badge}
       </div>
@@ -2712,12 +2765,8 @@ function renderMetasInline() {
     </div>`;
   };
 
-  const preHtml = predefinidas.map(m => renderCard(m, true)).join('');
-  const customHtml = metas.length
-    ? metas.map(m => renderCard(m, false)).join('')
-    : '';
-
-  return preHtml + customHtml + `<button class="add-meta-btn" style="margin-top:4px" id="addMetaBtnExtra">+ Agregar meta personalizada</button>`;
+  return metas.map(m => renderCard(m)).join('') +
+    `<button class="add-meta-btn" style="margin-top:4px" id="addMetaBtnExtra">+ Agregar meta</button>`;
 }
 
 async function changeMeta(id, delta) {
@@ -2734,21 +2783,52 @@ async function deleteMeta(id) {
 }
 
 async function resetMetaPredefinida(preId) {
-  if (!confirm('¿Resetear esta meta? Los datos reales no se borran, solo se reinicia el contador visual.')) return;
-  // Para metas predefinidas el "reset" guarda un override de progreso en metas con un marcador especial
-  // Simplemente mostramos un toast — las metas auto se recalculan siempre en tiempo real
-  showToast('Las metas AUTO se calculan solos desde tus datos — no se pueden resetear manualmente');
+  // no-op: predefined metas auto-calculate from data
 }
 
 function openMetaModal() {
+  // Reset form
+  document.querySelector('input[name="metaTipo"][value="personal"]').checked = true;
+  $('#metaPredefinidaWrap').hidden = true;
+  $('#metaPersonalWrap').hidden = false;
+  $('#metaPredefinidaSelect').value = '';
   $('#metaDesc').value = '';
   $('#metaActual').value = '0';
   $('#metaTotal').value = '10';
   $('#metaUnidad').value = '';
+  $('#metaFechaLimite').value = '';
   $('#metaModalBg').classList.add('open');
   document.body.style.overflow = 'hidden';
   setTimeout(() => $('#metaDesc').focus(), 100);
 }
+
+// Dynamic add-meta buttons in home
+document.addEventListener('click', e => {
+  if (e.target.id === 'addMetaBtnEmpty' || e.target.id === 'addMetaBtnExtra') openMetaModal();
+});
+  // Reset form
+  document.querySelector('input[name="metaTipo"][value="personal"]').checked = true;
+  $('#metaPredefinidaWrap').hidden = true;
+  $('#metaPersonalWrap').hidden = false;
+  $('#metaPredefinidaSelect').value = '';
+  $('#metaDesc').value = '';
+  $('#metaActual').value = '0';
+  $('#metaTotal').value = '10';
+  $('#metaUnidad').value = '';
+  $('#metaFechaLimite').value = '';
+  $('#metaModalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => $('#metaDesc').focus(), 100);
+}
+
+// Toggle predefinida/personal fields
+document.querySelectorAll('input[name="metaTipo"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const isPre = r.value === 'predefinida';
+    $('#metaPredefinidaWrap').hidden = !isPre;
+    $('#metaPersonalWrap').hidden = isPre;
+  });
+});
 
 function closeMetaModal() {
   $('#metaModalBg').classList.remove('open');
@@ -2759,17 +2839,40 @@ $('#closeMetaModal').addEventListener('click', closeMetaModal);
 $('#cancelMetaBtn').addEventListener('click', closeMetaModal);
 $('#metaModalBg').addEventListener('click', e => { if (e.target === $('#metaModalBg')) closeMetaModal(); });
 
+// Map of predefined presets → meta definition
+const METAS_PREDEFINIDAS_MAP = {
+  top1:     { desc: 'Llegar 1° en un pozo',        total: 1, unidad: null,    preKey: 'pre_top1' },
+  top4x3:   { desc: '3 veces top 4 en pozos',      total: 3, unidad: 'veces', preKey: 'pre_top4x3' },
+  retos3:   { desc: 'Ganar 3 retos consecutivos',  total: 3, unidad: 'retos', preKey: 'pre_retos3' },
+  clases2mes: { desc: '2 clases este mes',          total: 2, unidad: 'clases', preKey: 'pre_clases2' },
+};
+
 $('#metaForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const m = {
-    id: uid(),
-    desc: $('#metaDesc').value.trim(),
-    actual: Number($('#metaActual').value) || 0,
-    total: Number($('#metaTotal').value) || 10,
-    unidad: $('#metaUnidad').value.trim() || null,
-    creado: new Date().toISOString()
-  };
-  metas.push(m);
+  const tipo = document.querySelector('input[name="metaTipo"]:checked').value;
+
+  if (tipo === 'predefinida') {
+    const key = $('#metaPredefinidaSelect').value;
+    if (!key) { showToast('Elegí una meta predefinida', 'error'); return; }
+    const preset = METAS_PREDEFINIDAS_MAP[key];
+    // Check if already added
+    if (metas.some(m => m.preKey === preset.preKey)) {
+      showToast('Ya tenés esa meta agregada', 'error'); return;
+    }
+    metas.push({ id: uid(), preKey: preset.preKey, desc: preset.desc, actual: 0, total: preset.total, unidad: preset.unidad, fechaLimite: null, creado: new Date().toISOString() });
+  } else {
+    const desc = $('#metaDesc').value.trim();
+    if (!desc) { showToast('Escribí una descripción', 'error'); return; }
+    metas.push({
+      id: uid(),
+      desc,
+      actual: Number($('#metaActual').value) || 0,
+      total: Number($('#metaTotal').value) || 10,
+      unidad: $('#metaUnidad').value.trim() || null,
+      fechaLimite: $('#metaFechaLimite').value || null,
+      creado: new Date().toISOString()
+    });
+  }
   closeMetaModal();
   renderHome();
   await syncUp();
