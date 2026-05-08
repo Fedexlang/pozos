@@ -647,12 +647,14 @@ body { max-width: 720px; margin: 0 auto; }
       <div class="field"><label>Club / lugar</label><input type="text" id="claseClub" placeholder="opcional" autocomplete="off" list="claseClubList"><datalist id="claseClubList"></datalist></div>
       <div class="field-row">
         <div class="field"><label>Profesor / coach</label><input type="text" id="claseProfesor" placeholder="opcional"></div>
-        <div class="field"><label>Participantes</label><input type="number" id="claseParticipantes" min="1" inputmode="numeric" placeholder="opcional"></div>
-      </div>
-      <div class="field-row">
         <div class="field"><label>Calorías (kcal)</label><input type="number" id="claseCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
-        <div class="field"><label>Costo ($)</label><input type="number" id="claseCosto" step="any" min="0" inputmode="decimal" placeholder="0"></div>
       </div>
+      <div class="field">
+        <label>Participantes</label>
+        <div class="sets-form-wrap" id="participantesContainer"></div>
+        <button type="button" class="add-set-btn" id="addParticipanteBtn">+ Agregar participante</button>
+      </div>
+      <div class="field"><label>Costo ($)</label><input type="number" id="claseCosto" step="any" min="0" inputmode="decimal" placeholder="0"></div>
       <div class="field">
         <label>Ejercicios</label>
         <div class="checklist-field" id="claseChecklist"></div>
@@ -1688,7 +1690,7 @@ function migrateClase(c) {
     club: c.club || null,
     profesor: c.profesor || null,
     duracion: c.duracion || null,
-    participantes: c.participantes || null,
+    participantes: Array.isArray(c.participantes) ? c.participantes : (c.participantes ? [] : []),
     calorias: c.calorias || null,
     costo: c.costo || null,
     ejercicios,
@@ -1710,7 +1712,8 @@ function getClaseSearchTerms() {
 function claseSearchText(c) {
   const parts = [
     c.club || '', c.profesor || '', c.notas || '', c.fecha || '',
-    String(c.participantes || ''), String(c.duracion || ''),
+    String(c.duracion || ''),
+    ...(Array.isArray(c.participantes) ? c.participantes : []),
     ...(c.ejercicios || []).map((v, i) => v ? EJERCICIOS[i] : ''),
   ];
   if (c.fecha) {
@@ -1887,13 +1890,14 @@ function renderClases() {
       </div>
       <div class="pozo-row" style="margin-top:8px">
         <span class="chip"><strong>${done}/${totalEj}</strong> ejercicios</span>
-        ${c.participantes ? `<span class="chip"><strong>${c.participantes}</strong> participantes</span>` : ''}
+        ${c.participantes && c.participantes.length ? `<span class="chip"><strong>${c.participantes.length}</strong> participantes</span>` : ''}
         ${c.duracion ? `<span class="chip"><strong>${c.duracion}</strong> min</span>` : ''}
         ${c.calorias ? `<span class="chip"><strong>${Number(c.calorias).toLocaleString()}</strong> kcal</span>` : ''}
         ${c.costo ? `<span class="chip gold"><strong>${fmtMoney(c.costo)}</strong></span>` : ''}
       </div>
       <div class="clase-detail">
         <div class="clase-checklist-preview">${chipsHtml}</div>
+        ${c.participantes && c.participantes.length ? `<div style="margin-top:10px"><div class="detail-item"><div class="label" style="font-family:JetBrains Mono,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--ink-dim);margin-bottom:6px">Participantes</div><div style="display:flex;flex-wrap:wrap;gap:4px">${c.participantes.map(n => `<span class="chip">${escapeHtml(n)}</span>`).join('')}</div></div></div>` : ''}
         ${c.notas ? `<div class="detail-grid" style="margin-top:12px"><div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(c.notas)}</div></div></div>` : ''}
         <div class="detail-actions" style="margin-top:12px">
           <button data-action="editClase" data-id="${c.id}">Editar</button>
@@ -1936,6 +1940,35 @@ function getChecklistValues() {
   return [...document.querySelectorAll('#claseChecklist .checklist-item')].map(i => i.classList.contains('checked'));
 }
 
+function addParticipanteRow(nombre = '') {
+  const container = $('#participantesContainer');
+  const row = document.createElement('div');
+  row.className = 'set-row';
+  const idx = container.children.length + 1;
+  row.innerHTML = `
+    <span class="set-num">#${idx}</span>
+    <input type="text" class="participante-nombre" placeholder="Nombre" value="${escapeHtml(nombre)}" autocomplete="off" style="font-size:14px;font-weight:400;text-align:left;padding:10px 10px">
+    <button type="button" class="set-del" aria-label="Quitar">×</button>`;
+  row.querySelector('.set-del').addEventListener('click', () => {
+    row.remove();
+    reNumberParticipantes();
+  });
+  container.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+function reNumberParticipantes() {
+  [...$('#participantesContainer').children].forEach((row, i) => {
+    row.querySelector('.set-num').textContent = `#${i + 1}`;
+  });
+}
+
+function getParticipantes() {
+  return [...$('#participantesContainer').children]
+    .map(row => row.querySelector('.participante-nombre').value.trim())
+    .filter(Boolean);
+}
+
 function openClaseModal(clase = null) {
   editingClaseId = clase ? clase.id : null;
   $('#claseModalTitle').textContent = clase ? 'Editar clase' : 'Nueva clase';
@@ -1943,10 +1976,12 @@ function openClaseModal(clase = null) {
   $('#claseDuracion').value = clase && clase.duracion ? clase.duracion : '';
   $('#claseClub').value = clase ? (clase.club || '') : '';
   $('#claseProfesor').value = clase ? (clase.profesor || '') : '';
-  $('#claseParticipantes').value = clase && clase.participantes ? clase.participantes : '';
   $('#claseCalorias').value = clase && clase.calorias ? clase.calorias : '';
   $('#claseCosto').value = clase && clase.costo ? clase.costo : '';
   $('#claseNotas').value = clase ? (clase.notas || '') : '';
+  // Participantes list
+  $('#participantesContainer').innerHTML = '';
+  (Array.isArray(clase?.participantes) ? clase.participantes : []).forEach(n => addParticipanteRow(n));
   const clubs = [...new Set([...pozos.map(p => p.club), ...retos.map(r => r.club), ...clases.map(c => c.club)].filter(Boolean))].sort();
   $('#claseClubList').innerHTML = clubs.map(c => `<option value="${escapeHtml(c)}">`).join('');
   buildChecklist(clase ? clase.ejercicios : null);
@@ -1963,6 +1998,7 @@ function closeClaseModal() {
 $('#cancelClaseBtn').addEventListener('click', closeClaseModal);
 $('#closeClaseModal').addEventListener('click', closeClaseModal);
 $('#claseModalBg').addEventListener('click', (e) => { if (e.target === $('#claseModalBg')) closeClaseModal(); });
+$('#addParticipanteBtn').addEventListener('click', () => addParticipanteRow());
 
 $('#claseForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -1973,7 +2009,7 @@ $('#claseForm').addEventListener('submit', async (e) => {
     club: $('#claseClub').value.trim() || null,
     profesor: $('#claseProfesor').value.trim() || null,
     duracion: $('#claseDuracion').value === '' ? null : Number($('#claseDuracion').value),
-    participantes: $('#claseParticipantes').value === '' ? null : Number($('#claseParticipantes').value),
+    participantes: getParticipantes(),
     calorias: $('#claseCalorias').value === '' ? null : Number($('#claseCalorias').value),
     costo: $('#claseCosto').value === '' ? null : Number($('#claseCosto').value),
     ejercicios: getChecklistValues(),
