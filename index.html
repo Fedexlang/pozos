@@ -272,11 +272,75 @@ body { max-width: 720px; margin: 0 auto; }
 }
 
 /* Tabs */
-.tab-bar { display: flex; gap: 4px; padding: 12px 20px 0; }
-.tab { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-muted); padding: 10px; border-radius: 10px; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.06em; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.tab svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+.tab-bar { display: flex; gap: 4px; padding: 12px 20px 0; overflow-x: auto; scrollbar-width: none; }
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab { flex: 1; min-width: 60px; background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-muted); padding: 10px 6px; border-radius: 10px; font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 0.06em; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; }
+.tab svg { width: 14px; height: 14px; stroke: currentColor; fill: none; flex-shrink: 0; }
 .tab:hover { color: var(--ink); border-color: var(--border-strong); }
 .tab.active { background: var(--court); border-color: var(--court); color: white; }
+
+/* Dashboard */
+.dash-section { padding: 20px 20px 0; }
+.dash-section-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.06em; color: var(--ink-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.dash-section-title a { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--court-bright); letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; cursor: pointer; }
+.dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 500px) { .dash-grid { grid-template-columns: repeat(3, 1fr); } }
+.dash-kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+.dash-kpi .kpi-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-muted); margin-bottom: 5px; }
+.dash-kpi .kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
+.dash-kpi .kpi-extra { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); margin-top: 4px; letter-spacing: 0.05em; }
+.dash-kpi.accent { border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.05); }
+.dash-kpi.accent .kpi-value { color: var(--court-bright); }
+.dash-events { display: flex; flex-direction: column; gap: 8px; }
+.dash-event { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color .15s; }
+.dash-event:hover { border-color: var(--border-strong); }
+.dash-event-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dash-event-dot.victory { background: var(--court-bright); }
+.dash-event-dot.defeat { background: var(--crimson); }
+.dash-event-dot.tie { background: var(--amber); }
+.dash-event-dot.neutral { background: var(--ink-dim); }
+.dash-event-dot.clase { background: var(--court); }
+.dash-event-body { flex: 1; min-width: 0; }
+.dash-event-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dash-event-meta { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); margin-top: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
+.dash-event-badge { font-family: 'Bebas Neue', sans-serif; font-size: 18px; flex-shrink: 0; }
+.dash-event-badge.win { color: var(--court-bright); }
+.dash-event-badge.loss { color: var(--crimson); }
+.dash-event-badge.mid { color: var(--amber); }
+.dash-streak { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; align-items: center; gap: 14px; }
+.dash-streak-num { font-family: 'Bebas Neue', sans-serif; font-size: 52px; line-height: 1; color: var(--court-bright); }
+.dash-streak-info .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-muted); }
+.dash-streak-info .sub { font-size: 13px; color: var(--ink-muted); margin-top: 4px; }
+
+/* Metas */
+.meta-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+.meta-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+.meta-card-title { font-size: 14px; font-weight: 600; line-height: 1.3; }
+.meta-card-target { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim); letter-spacing: 0.06em; margin-top: 2px; }
+.meta-card-del { background: transparent; border: none; color: var(--ink-dim); cursor: pointer; font-size: 18px; line-height: 1; padding: 0; flex-shrink: 0; }
+.meta-card-del:hover { color: var(--crimson); }
+.meta-progress-bar { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.meta-progress-fill { height: 100%; border-radius: 3px; transition: width .4s; }
+.meta-progress-fill.done { background: var(--court-bright); }
+.meta-progress-fill.mid { background: var(--amber); }
+.meta-progress-fill.low { background: var(--ink-dim); }
+.meta-controls { display: flex; align-items: center; gap: 8px; }
+.meta-controls .meta-val { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; min-width: 48px; text-align: center; }
+.meta-controls button { width: 32px; height: 32px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; color: var(--ink); font-size: 18px; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; transition: all .15s; }
+.meta-controls button:hover { border-color: var(--court-bright); color: var(--court-bright); }
+.meta-pct { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim); margin-left: auto; letter-spacing: 0.06em; }
+.add-meta-btn { width: 100%; background: transparent; border: 1px dashed var(--border); border-radius: 12px; padding: 14px; color: var(--ink-muted); font-family: inherit; font-size: 13px; cursor: pointer; transition: all .15s; margin-top: 2px; }
+.add-meta-btn:hover { border-color: var(--court-bright); color: var(--court-bright); }
+
+/* Share modal */
+#shareModalBg .modal { padding-bottom: 24px; }
+.share-canvas-wrap { background: var(--surface-2); border-radius: 14px; overflow: hidden; margin-bottom: 16px; display: flex; justify-content: center; align-items: center; padding: 12px; }
+#shareCanvas { border-radius: 10px; max-width: 100%; display: block; }
+.share-actions { display: flex; gap: 8px; }
+
+/* PDF export toast progress */
+.toast.progress { padding: 14px 20px; }
+</style>
 
 /* Reto cards */
 .reto-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; transition: border-color .2s; cursor: pointer; }
@@ -443,7 +507,11 @@ body { max-width: 720px; margin: 0 auto; }
   </div>
 
   <div class="tab-bar">
-    <button class="tab active" id="tabPozos">
+    <button class="tab active" id="tabHome">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="tab" id="tabPozos">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
       Pozos
     </button>
@@ -457,8 +525,13 @@ body { max-width: 720px; margin: 0 auto; }
     </button>
   </div>
 
+  <!-- Vista home -->
+  <div id="homeView">
+    <div id="homeContent"></div>
+  </div>
+
   <!-- Vista pozos -->
-  <div id="pozosView">
+  <div id="pozosView" hidden>
   <section class="stats" id="stats"></section>
   <div class="stats-note" id="statsNote" hidden></div>
 
@@ -697,6 +770,64 @@ body { max-width: 720px; margin: 0 auto; }
   </div>
 </div>
 
+<!-- Modal share card -->
+<div class="modal-bg" id="shareModalBg">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="shareModalTitle">Compartir</h3>
+      <button class="icon-btn" id="closeShareModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="share-canvas-wrap">
+      <canvas id="shareCanvas" width="600" height="340"></canvas>
+    </div>
+    <div class="share-actions">
+      <button class="btn btn-secondary" id="shareDownloadBtn">Descargar imagen</button>
+      <button class="btn btn-primary" id="shareWhatsappBtn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right:4px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.777.463 3.448 1.27 4.9L2 22l5.256-1.249A9.953 9.953 0 0 0 12 22c5.522 0 10-4.477 10-10S17.522 2 12 2z" fill-rule="evenodd" clip-rule="evenodd"/></svg>
+        WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal nueva meta -->
+<div class="modal-bg" id="metaModalBg">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Nueva meta</h3>
+      <button class="icon-btn" id="closeMetaModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="metaForm">
+      <div class="field">
+        <label>Descripción de la meta</label>
+        <input type="text" id="metaDesc" placeholder="Ej: Llegar top 5 en el próximo pozo" required autocomplete="off">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Progreso actual</label>
+          <input type="number" id="metaActual" min="0" value="0" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>Meta (total)</label>
+          <input type="number" id="metaTotal" min="1" value="10" inputmode="numeric" required>
+        </div>
+      </div>
+      <div class="field">
+        <label>Unidad (opcional)</label>
+        <input type="text" id="metaUnidad" placeholder="Ej: retos, pozos, clases…" autocomplete="off">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelMetaBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Agregar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -707,11 +838,12 @@ const GIST_FILENAME = 'pozos.json';
 let pozos = [];
 let retos = [];
 let clases = [];
+let metas = []; // [{ id, desc, actual, total, unidad, creado }]
 let nombre = '';
 let editingId = null;
 let editingRetoId = null;
 let editingClaseId = null;
-let activeTab = 'pozos'; // 'pozos' | 'retos' | 'clases'
+let activeTab = 'home'; // 'home' | 'pozos' | 'retos' | 'clases'
 let settings = null; // { gistId }
 let syncing = false;
 let lastSyncedAt = null;
@@ -1051,6 +1183,7 @@ function renderRetos() {
         </div>
         <div class="detail-actions">
           <button data-action="editReto" data-id="${r.id}">Editar</button>
+          <button data-action="shareReto" data-id="${r.id}" style="color:var(--court-bright)">Compartir</button>
           <button class="danger" data-action="deleteReto" data-id="${r.id}">Eliminar</button>
         </div>
       </div>
@@ -1075,14 +1208,14 @@ function clearSettings() {
 function loadCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    if (!raw) return { pozos: [], retos: [], clases: [] };
+    if (!raw) return { pozos: [], retos: [], clases: [], metas: [] };
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return { pozos: parsed, retos: [], clases: [] }; // migración
-    return { pozos: parsed.pozos || [], retos: parsed.retos || [], clases: parsed.clases || [] };
-  } catch (e) { return { pozos: [], retos: [], clases: [] }; }
+    if (Array.isArray(parsed)) return { pozos: parsed, retos: [], clases: [], metas: [] };
+    return { pozos: parsed.pozos || [], retos: parsed.retos || [], clases: parsed.clases || [], metas: parsed.metas || [] };
+  } catch (e) { return { pozos: [], retos: [], clases: [], metas: [] }; }
 }
-function saveCache(pArr, rArr, cArr) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ pozos: pArr, retos: rArr, clases: cArr || [] })); } catch (e) {}
+function saveCache(pArr, rArr, cArr, mArr) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ pozos: pArr, retos: rArr, clases: cArr || [], metas: mArr || [] })); } catch (e) {}
 }
 
 // ---------- GitHub Gist API ----------
@@ -1098,15 +1231,15 @@ async function workerFetch(gistId) {
   }
   const body = await res.json();
   const data = body.data;
-  if (Array.isArray(data)) return { pozos: data, retos: [], clases: [], nombre: '' };
-  return { pozos: data?.pozos || [], retos: data?.retos || [], clases: data?.clases || [], nombre: data?.nombre || '' };
+  if (Array.isArray(data)) return { pozos: data, retos: [], clases: [], metas: [], nombre: '' };
+  return { pozos: data?.pozos || [], retos: data?.retos || [], clases: data?.clases || [], metas: data?.metas || [], nombre: data?.nombre || '' };
 }
 
-async function workerUpdate(gistId, pArr, rArr, cArr, nom) {
+async function workerUpdate(gistId, pArr, rArr, cArr, mArr, nom) {
   const res = await fetch(`${WORKER_URL}/gist/${gistId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: { pozos: pArr, retos: rArr, clases: cArr || [], nombre: nom || '' } })
+    body: JSON.stringify({ data: { pozos: pArr, retos: rArr, clases: cArr || [], metas: mArr || [], nombre: nom || '' } })
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -1156,8 +1289,9 @@ async function syncDown() {
     pozos = remote.pozos.map(migrate);
     retos = (remote.retos || []).map(migrateReto);
     clases = (remote.clases || []).map(migrateClase);
+    metas = remote.metas || [];
     nombre = remote.nombre || '';
-    saveCache(pozos, retos, clases);
+    saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
@@ -1173,8 +1307,8 @@ async function syncUp() {
   syncing = true;
   setStatus('syncing');
   try {
-    await workerUpdate(settings.gistId, pozos, retos, clases, nombre);
-    saveCache(pozos, retos, clases);
+    await workerUpdate(settings.gistId, pozos, retos, clases, metas, nombre);
+    saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
@@ -1504,6 +1638,7 @@ function renderList() {
         </div>
         <div class="detail-actions">
           <button data-action="edit" data-id="${p.id}">Editar</button>
+          <button data-action="sharePozo" data-id="${p.id}" style="color:var(--court-bright)">Compartir</button>
           <button class="danger" data-action="delete" data-id="${p.id}">Eliminar</button>
         </div>
       </div>
@@ -1511,7 +1646,7 @@ function renderList() {
   }).join('')}</div>`;
 }
 
-function render() { renderStats(); renderChart(); renderList(); renderRetosAll(); renderClasesAll(); }
+function render() { renderHome(); renderStats(); renderChart(); renderList(); renderRetosAll(); renderClasesAll(); }
 
 // ---------- Pozo modal ----------
 function openModal(pozo = null) {
@@ -1568,8 +1703,9 @@ async function doSetup(gistId) {
     pozos = remote.pozos.map(migrate);
     retos = (remote.retos || []).map(migrateReto);
     clases = (remote.clases || []).map(migrateClase);
+    metas = remote.metas || [];
     nombre = remote.nombre || '';
-    saveCache(pozos, retos, clases);
+    saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
     $('#setupScreen').hidden = true;
     $('#app').hidden = false;
@@ -1602,6 +1738,7 @@ async function init() {
   pozos = cached.pozos.map(migrate);
   retos = cached.retos.map(migrateReto);
   clases = (cached.clases || []).map(migrateClase);
+  metas = cached.metas || [];
   $('#loadingOverlay').hidden = true;
   $('#app').hidden = false;
   render();
@@ -1646,7 +1783,7 @@ $('#pozoForm').addEventListener('submit', async (e) => {
   };
   if (editingId) pozos = pozos.map(p => p.id === editingId ? data : p);
   else pozos.push(data);
-  saveCache(pozos, retos, clases);
+  saveCache(pozos, retos, clases, metas);
   render();
   closeModal();
   await syncUp();
@@ -1663,7 +1800,7 @@ document.addEventListener('click', async (e) => {
     else if (act === 'delete') {
       if (confirm('¿Eliminar este pozo?')) {
         pozos = pozos.filter(x => x.id !== id);
-        saveCache(pozos, retos, clases);
+        saveCache(pozos, retos, clases, metas);
         render();
         await syncUp();
       }
@@ -1728,7 +1865,7 @@ $('#exportBtn').addEventListener('click', () => {
   showToast('JSON exportado');
 });
 
-$('#exportTopBtn').addEventListener('click', () => $('#exportBtn').click());
+$('#exportTopBtn').addEventListener('click', () => exportPDF());
 
 window.addEventListener('online', () => { if (settings) syncDown(); });
 
@@ -1772,15 +1909,19 @@ $('#searchClear').addEventListener('click', () => {
 // ---------- Tabs ----------
 function switchTab(tab) {
   activeTab = tab;
+  $('#tabHome').classList.toggle('active', tab === 'home');
   $('#tabPozos').classList.toggle('active', tab === 'pozos');
   $('#tabRetos').classList.toggle('active', tab === 'retos');
   $('#tabClases').classList.toggle('active', tab === 'clases');
+  $('#homeView').hidden = tab !== 'home';
   $('#pozosView').hidden = tab !== 'pozos';
   $('#retosView').hidden = tab !== 'retos';
   $('#clasesView').hidden = tab !== 'clases';
-  $('#fabLabel').textContent = tab === 'pozos' ? 'Nuevo pozo' : tab === 'retos' ? 'Nuevo reto' : 'Nueva clase';
+  const fabLabels = { home: 'Nueva meta', pozos: 'Nuevo pozo', retos: 'Nuevo reto', clases: 'Nueva clase' };
+  $('#fabLabel').textContent = fabLabels[tab] || 'Agregar';
 }
 
+$('#tabHome').addEventListener('click', () => switchTab('home'));
 $('#tabPozos').addEventListener('click', () => switchTab('pozos'));
 $('#tabRetos').addEventListener('click', () => switchTab('retos'));
 $('#tabClases').addEventListener('click', () => switchTab('clases'));
@@ -1788,7 +1929,8 @@ $('#tabClases').addEventListener('click', () => switchTab('clases'));
 $('#addBtn').addEventListener('click', () => {
   if (activeTab === 'pozos') openModal();
   else if (activeTab === 'retos') openRetoModal();
-  else openClaseModal();
+  else if (activeTab === 'clases') openClaseModal();
+  else openMetaModal();
 });
 
 // ---------- Reto modal ----------
@@ -2322,6 +2464,717 @@ document.addEventListener('click', async (e) => {
   if (claseCard && !e.target.closest('[data-action]')) claseCard.classList.toggle('expanded');
 }, true);
 
+
+// ═══════════════════════════════════════════════════════════
+// DASHBOARD (HOME TAB)
+// ═══════════════════════════════════════════════════════════
+
+function renderHome() {
+  const container = $('#homeContent');
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+  // ── KPIs ──
+  // Pozos
+  const pozosCount = pozos.length;
+  const bestPos = pozos.length ? Math.min(...pozos.map(p => p.posicion || 999).filter(x => x < 999)) : null;
+  const pozosThisMonth = pozos.filter(p => (p.fecha || '').startsWith(thisMonth)).length;
+
+  // Retos
+  const retosCount = retos.length;
+  let rv = 0, re = 0, rd = 0;
+  retos.forEach(r => { const res = calcRetoResultado(r.sets); if (res === 'V') rv++; else if (res === 'D') rd++; else if (res === 'E') re++; });
+  const retoWR = (rv + re + rd) ? Math.round(rv / (rv + re + rd) * 100) : 0;
+  const retosThisMonth = retos.filter(r => (r.fecha || '').startsWith(thisMonth)).length;
+
+  // Clases
+  const clasesCount = clases.length;
+  const clasesThisMonth = clases.filter(c => (c.fecha || '').startsWith(thisMonth)).length;
+
+  // Racha de retos (últimos consecutivos)
+  const retosOrdenados = [...retos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  let rachaActual = 0, rachaType = null;
+  for (const r of retosOrdenados) {
+    const res = calcRetoResultado(r.sets);
+    if (!res) continue;
+    if (rachaActual === 0) { rachaActual = 1; rachaType = res; }
+    else if (res === rachaType) rachaActual++;
+    else break;
+  }
+
+  // Mejor racha de pozos top 3
+  const pozosSort = [...pozos].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
+  let bestPozStreak = 0, curPozStreak = 0;
+  pozosSort.forEach(p => { if (p.posicion && p.participantes && p.posicion <= 3) { curPozStreak++; bestPozStreak = Math.max(bestPozStreak, curPozStreak); } else curPozStreak = 0; });
+  // Current pozo streak
+  let curPozStreakNow = 0;
+  for (const p of [...pozosSort].reverse()) { if (p.posicion && p.posicion <= 3) curPozStreakNow++; else break; }
+
+  // ── Últimos 5 eventos ──
+  const allEvents = [
+    ...pozos.map(p => ({ type: 'pozo', fecha: p.fecha, obj: p })),
+    ...retos.map(r => ({ type: 'reto', fecha: r.fecha, obj: r })),
+    ...clases.map(c => ({ type: 'clase', fecha: c.fecha, obj: c })),
+  ].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || '')).slice(0, 5);
+
+  const eventHtml = allEvents.length ? allEvents.map(ev => {
+    if (ev.type === 'pozo') {
+      const p = ev.obj;
+      const pct = pozoPercentualPos(p);
+      const dot = pct != null && pct >= 70 ? 'victory' : pct != null && pct <= 30 ? 'defeat' : 'neutral';
+      const badge = p.posicion ? `${p.posicion}<span style="font-size:12px;color:var(--ink-dim)">/${p.participantes}</span>` : '—';
+      const badgeCls = dot === 'victory' ? 'win' : dot === 'defeat' ? 'loss' : '';
+      return `<div class="dash-event" data-goto="pozos">
+        <div class="dash-event-dot ${dot}"></div>
+        <div class="dash-event-body">
+          <div class="dash-event-title">${escapeHtml(p.categoria || 'Pozo')}${p.club ? ' · ' + escapeHtml(p.club) : ''}</div>
+          <div class="dash-event-meta">${fmtDate(p.fecha)} · Pozo${p.tipo === 'pareja' && p.companero ? ' · con ' + escapeHtml(p.companero) : ''}</div>
+        </div>
+        <div class="dash-event-badge ${badgeCls}">${badge}</div>
+      </div>`;
+    }
+    if (ev.type === 'reto') {
+      const r = ev.obj;
+      const res = calcRetoResultado(r.sets);
+      const dot = res === 'V' ? 'victory' : res === 'D' ? 'defeat' : res === 'E' ? 'tie' : 'neutral';
+      const badgeCls = res === 'V' ? 'win' : res === 'D' ? 'loss' : 'mid';
+      const rivals = [r.rival1, r.rival2].filter(Boolean).join('/');
+      return `<div class="dash-event" data-goto="retos">
+        <div class="dash-event-dot ${dot}"></div>
+        <div class="dash-event-body">
+          <div class="dash-event-title">vs ${escapeHtml(rivals || '—')}${r.companero ? ' · con ' + escapeHtml(r.companero) : ''}</div>
+          <div class="dash-event-meta">${fmtDate(r.fecha)} · Reto</div>
+        </div>
+        <div class="dash-event-badge ${badgeCls}">${res || '—'}</div>
+      </div>`;
+    }
+    // clase
+    const c = ev.obj;
+    const done = (c.ejercicios || []).filter(Boolean).length;
+    return `<div class="dash-event" data-goto="clases">
+      <div class="dash-event-dot clase"></div>
+      <div class="dash-event-body">
+        <div class="dash-event-title">${escapeHtml(c.profesor || 'Clase')}${c.club ? ' · ' + escapeHtml(c.club) : ''}</div>
+        <div class="dash-event-meta">${fmtDate(c.fecha)} · ${done}/${EJERCICIOS.length} ejercicios</div>
+      </div>
+      <div class="dash-event-badge" style="color:var(--court-bright);font-size:14px">${done > 0 ? '✓' : ''}</div>
+    </div>`;
+  }).join('') : `<div style="padding:20px;text-align:center;color:var(--ink-dim);font-size:13px">Sin actividad registrada</div>`;
+
+  // ── Metas ──
+  const metasHtml = renderMetasInline();
+
+  container.innerHTML = `
+    <div class="dash-section" style="padding-top:16px">
+      <div class="dash-section-title">Este mes</div>
+      <div class="dash-grid">
+        <div class="dash-kpi"><div class="kpi-label">Pozos</div><div class="kpi-value">${pozosThisMonth}</div><div class="kpi-extra">${pozosCount} total</div></div>
+        <div class="dash-kpi"><div class="kpi-label">Retos</div><div class="kpi-value">${retosThisMonth}</div><div class="kpi-extra">${retosCount} total</div></div>
+        <div class="dash-kpi"><div class="kpi-label">Clases</div><div class="kpi-value">${clasesThisMonth}</div><div class="kpi-extra">${clasesCount} total</div></div>
+        <div class="dash-kpi ${retoWR >= 60 ? 'accent' : ''}"><div class="kpi-label">Win rate</div><div class="kpi-value">${retoWR}%</div><div class="kpi-extra">${rv}V · ${re}E · ${rd}D</div></div>
+        <div class="dash-kpi ${bestPos && bestPos <= 3 ? 'accent' : ''}"><div class="kpi-label">Mejor pos.</div><div class="kpi-value">${bestPos != null ? bestPos : '—'}</div><div class="kpi-extra">en pozos</div></div>
+        <div class="dash-kpi ${curPozStreakNow >= 3 ? 'accent' : ''}"><div class="kpi-label">Racha top 3</div><div class="kpi-value">${curPozStreakNow}</div><div class="kpi-extra">${bestPozStreak} récord</div></div>
+      </div>
+    </div>
+
+    ${rachaActual > 0 ? `
+    <div class="dash-section" style="padding-top:12px">
+      <div class="dash-streak">
+        <div class="dash-streak-num">${rachaActual}</div>
+        <div class="dash-streak-info">
+          <div class="label">Racha de retos</div>
+          <div class="sub">${rachaType === 'V' ? '🟢 victorias consecutivas' : rachaType === 'D' ? '🔴 derrotas consecutivas' : '🟡 empates consecutivos'}</div>
+        </div>
+      </div>
+    </div>` : ''}
+
+    <div class="dash-section" style="padding-top:12px">
+      <div class="dash-section-title">
+        Metas
+        <a id="addMetaLink">+ Agregar</a>
+      </div>
+      ${metasHtml}
+    </div>
+
+    <div class="dash-section" style="padding-top:12px;padding-bottom:20px">
+      <div class="dash-section-title">Actividad reciente</div>
+      <div class="dash-events">${eventHtml}</div>
+    </div>`;
+
+  // Wire goto clicks
+  container.querySelectorAll('.dash-event[data-goto]').forEach(el => {
+    el.addEventListener('click', () => switchTab(el.dataset.goto));
+  });
+  $('#addMetaLink')?.addEventListener('click', openMetaModal);
+  // Wire meta controls
+  container.querySelectorAll('.meta-card').forEach(card => {
+    const id = card.dataset.metaId;
+    card.querySelector('.meta-inc')?.addEventListener('click', () => changeMeta(id, 1));
+    card.querySelector('.meta-dec')?.addEventListener('click', () => changeMeta(id, -1));
+    card.querySelector('.meta-card-del')?.addEventListener('click', () => deleteMeta(id));
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// METAS
+// ═══════════════════════════════════════════════════════════
+
+function renderMetasInline() {
+  if (!metas.length) return `<button class="add-meta-btn" id="addMetaBtnEmpty">+ Definí tu primera meta</button>`;
+  return metas.map(m => {
+    const pct = m.total > 0 ? Math.min(100, Math.round(m.actual / m.total * 100)) : 0;
+    const fillCls = pct >= 100 ? 'done' : pct >= 50 ? 'mid' : 'low';
+    return `<div class="meta-card" data-meta-id="${m.id}" style="margin-bottom:8px">
+      <div class="meta-card-header">
+        <div>
+          <div class="meta-card-title">${escapeHtml(m.desc)}</div>
+          <div class="meta-card-target">${m.actual} / ${m.total}${m.unidad ? ' ' + escapeHtml(m.unidad) : ''}</div>
+        </div>
+        <button class="meta-card-del" aria-label="Eliminar meta">×</button>
+      </div>
+      <div class="meta-progress-bar"><div class="meta-progress-fill ${fillCls}" style="width:${pct}%"></div></div>
+      <div class="meta-controls">
+        <button class="meta-dec" aria-label="Restar">−</button>
+        <span class="meta-val">${m.actual}</span>
+        <button class="meta-inc" aria-label="Sumar">+</button>
+        <span class="meta-pct">${pct}%${pct >= 100 ? ' ✓' : ''}</span>
+      </div>
+    </div>`;
+  }).join('') + `<button class="add-meta-btn" style="margin-top:4px" id="addMetaBtnExtra">+ Agregar otra meta</button>`;
+}
+
+async function changeMeta(id, delta) {
+  metas = metas.map(m => m.id === id ? { ...m, actual: Math.max(0, m.actual + delta) } : m);
+  renderHome();
+  await syncUp();
+}
+
+async function deleteMeta(id) {
+  if (!confirm('¿Eliminar esta meta?')) return;
+  metas = metas.filter(m => m.id !== id);
+  renderHome();
+  await syncUp();
+}
+
+function openMetaModal() {
+  $('#metaDesc').value = '';
+  $('#metaActual').value = '0';
+  $('#metaTotal').value = '10';
+  $('#metaUnidad').value = '';
+  $('#metaModalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => $('#metaDesc').focus(), 100);
+}
+
+function closeMetaModal() {
+  $('#metaModalBg').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+$('#closeMetaModal').addEventListener('click', closeMetaModal);
+$('#cancelMetaBtn').addEventListener('click', closeMetaModal);
+$('#metaModalBg').addEventListener('click', e => { if (e.target === $('#metaModalBg')) closeMetaModal(); });
+
+$('#metaForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const m = {
+    id: uid(),
+    desc: $('#metaDesc').value.trim(),
+    actual: Number($('#metaActual').value) || 0,
+    total: Number($('#metaTotal').value) || 10,
+    unidad: $('#metaUnidad').value.trim() || null,
+    creado: new Date().toISOString()
+  };
+  metas.push(m);
+  closeMetaModal();
+  renderHome();
+  await syncUp();
+});
+
+// Dynamic add-meta buttons in home
+document.addEventListener('click', e => {
+  if (e.target.id === 'addMetaBtnEmpty' || e.target.id === 'addMetaBtnExtra') openMetaModal();
+});
+
+// ═══════════════════════════════════════════════════════════
+// SHARE CARD (Canvas)
+// ═══════════════════════════════════════════════════════════
+
+let shareItem = null;
+
+function openShareModal(item, type) {
+  shareItem = { item, type };
+  $('#shareModalTitle').textContent = type === 'pozo' ? 'Compartir pozo' : 'Compartir reto';
+  $('#shareModalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  drawShareCard(item, type);
+}
+
+function closeShareModal() {
+  $('#shareModalBg').classList.remove('open');
+  document.body.style.overflow = '';
+}
+$('#closeShareModal').addEventListener('click', closeShareModal);
+$('#shareModalBg').addEventListener('click', e => { if (e.target === $('#shareModalBg')) closeShareModal(); });
+
+function drawShareCard(item, type) {
+  const canvas = $('#shareCanvas');
+  const W = 600, H = 340;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // BG
+  ctx.fillStyle = '#0a100c';
+  ctx.fillRect(0, 0, W, H);
+
+  // Green gradient accent top-left
+  const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, 320);
+  grad.addColorStop(0, 'rgba(74,222,128,0.14)');
+  grad.addColorStop(1, 'rgba(74,222,128,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Border
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, 4, 4, W - 8, H - 8, 16);
+  ctx.stroke();
+
+  // Left accent bar
+  ctx.fillStyle = '#4ade80';
+  ctx.fillRect(20, 20, 4, H - 40);
+
+  // App label
+  ctx.fillStyle = '#8a9690';
+  ctx.font = '500 11px JetBrains Mono, monospace';
+  ctx.letterSpacing = '0.2em';
+  ctx.fillText('POZOS · PÁDEL', 36, 44);
+  ctx.letterSpacing = '0';
+
+  if (type === 'pozo') {
+    // Category big
+    ctx.fillStyle = '#f0f4ed';
+    ctx.font = '700 64px Bebas Neue, Impact, sans-serif';
+    ctx.fillText((item.categoria || 'POZO').toUpperCase(), 36, 120);
+
+    // Club
+    if (item.club) {
+      ctx.fillStyle = '#8a9690';
+      ctx.font = '500 14px Manrope, sans-serif';
+      ctx.fillText(item.club, 36, 148);
+    }
+
+    // Date
+    ctx.fillStyle = '#5a655e';
+    ctx.font = '400 12px JetBrains Mono, monospace';
+    ctx.fillText(fmtDate(item.fecha || ''), 36, H - 36);
+
+    // Tipo chip
+    if (item.tipo === 'pareja' && item.companero) {
+      ctx.fillStyle = '#5a655e';
+      ctx.font = '400 12px JetBrains Mono, monospace';
+      ctx.fillText('CON ' + item.companero.toUpperCase(), 36, H - 56);
+    }
+
+    // Position big — right side
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#4ade80';
+    ctx.font = '700 120px Bebas Neue, Impact, sans-serif';
+    ctx.fillText(item.posicion || '—', W - 36, 160);
+    ctx.fillStyle = '#8a9690';
+    ctx.font = '500 18px JetBrains Mono, monospace';
+    ctx.fillText('POSICIÓN', W - 36, 180);
+    ctx.fillStyle = '#5a655e';
+    ctx.font = '400 14px JetBrains Mono, monospace';
+    ctx.fillText(`de ${item.participantes || '?'}`, W - 36, 202);
+
+    // W/E/D
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#4ade80';
+    ctx.font = '700 22px Bebas Neue, Impact, sans-serif';
+    ctx.fillText(item.victorias || 0, 36, 200);
+    ctx.fillStyle = '#8a9690';
+    ctx.font = '700 22px Bebas Neue, Impact, sans-serif';
+    ctx.fillText('V', 62, 200);
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = '700 22px Bebas Neue, Impact, sans-serif';
+    ctx.fillText(item.empates || 0, 86, 200);
+    ctx.fillStyle = '#8a9690';
+    ctx.font = '700 22px Bebas Neue, Impact, sans-serif';
+    ctx.fillText('E', 112, 200);
+    ctx.fillStyle = '#ef4444';
+    ctx.font = '700 22px Bebas Neue, Impact, sans-serif';
+    ctx.fillText(item.derrotas || 0, 136, 200);
+    ctx.fillStyle = '#8a9690';
+    ctx.font = '700 22px Bebas Neue, Impact, sans-serif';
+    ctx.fillText('D', 162, 200);
+
+    // Score chips
+    if (item.puntaje != null) {
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '700 22px Bebas Neue, Impact, sans-serif';
+      ctx.fillText(`${item.puntaje} PTS`, 36, 240);
+    }
+
+  } else {
+    // RETO card
+    const res = calcRetoResultado(item.sets || []);
+    const resColor = res === 'V' ? '#4ade80' : res === 'D' ? '#ef4444' : '#f59e0b';
+    const resLabel = res === 'V' ? 'VICTORIA' : res === 'D' ? 'DERROTA' : res === 'E' ? 'EMPATE' : 'RETO';
+    const rivals = [item.rival1, item.rival2].filter(Boolean).join(' / ');
+
+    ctx.fillStyle = resColor;
+    ctx.font = '700 72px Bebas Neue, Impact, sans-serif';
+    ctx.fillText(resLabel, 36, 118);
+
+    ctx.fillStyle = '#8a9690';
+    ctx.font = '600 14px Manrope, sans-serif';
+    const team = `${nombre || 'Yo'}${item.companero ? ' / ' + item.companero : ''}`;
+    ctx.fillText(team + '  vs  ' + (rivals || '—'), 36, 150);
+
+    // Sets
+    let sx = 36;
+    (item.sets || []).forEach(s => {
+      const mn = Number(s.mine), rv = Number(s.rival);
+      const won = mn > rv;
+      ctx.fillStyle = won ? 'rgba(74,222,128,0.12)' : 'rgba(239,68,68,0.08)';
+      roundRect(ctx, sx, 168, 62, 36, 8);
+      ctx.fill();
+      ctx.strokeStyle = won ? 'rgba(74,222,128,0.3)' : 'rgba(239,68,68,0.2)';
+      ctx.lineWidth = 1;
+      roundRect(ctx, sx, 168, 62, 36, 8);
+      ctx.stroke();
+      ctx.fillStyle = won ? '#4ade80' : '#ef4444';
+      ctx.font = '700 20px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${mn}–${rv}`, sx + 31, 193);
+      ctx.textAlign = 'left';
+      sx += 70;
+    });
+
+    if (item.club) {
+      ctx.fillStyle = '#5a655e';
+      ctx.font = '400 12px JetBrains Mono, monospace';
+      ctx.fillText(item.club.toUpperCase(), 36, H - 56);
+    }
+    ctx.fillStyle = '#5a655e';
+    ctx.font = '400 12px JetBrains Mono, monospace';
+    ctx.fillText(fmtDate(item.fecha || ''), 36, H - 36);
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+$('#shareDownloadBtn').addEventListener('click', () => {
+  const canvas = $('#shareCanvas');
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  const type = shareItem?.type || 'resultado';
+  a.download = `padel_${type}_${todayISO()}.png`;
+  a.click();
+  showToast('Imagen descargada');
+});
+
+$('#shareWhatsappBtn').addEventListener('click', () => {
+  const canvas = $('#shareCanvas');
+  canvas.toBlob(blob => {
+    if (navigator.share && blob) {
+      const file = new File([blob], 'resultado.png', { type: 'image/png' });
+      navigator.share({ files: [file], title: 'Mi resultado en pádel' })
+        .catch(() => fallbackWhatsapp());
+    } else {
+      fallbackWhatsapp();
+    }
+  });
+});
+
+function fallbackWhatsapp() {
+  const type = shareItem?.type;
+  const item = shareItem?.item;
+  let text = '🎾 Mi resultado en pádel\n';
+  if (type === 'pozo') {
+    text += `📋 ${item?.categoria || 'Pozo'} · Posición ${item?.posicion}/${item?.participantes}\n`;
+    text += `${item?.victorias || 0}V ${item?.empates || 0}E ${item?.derrotas || 0}D`;
+  } else if (type === 'reto') {
+    const res = calcRetoResultado(item?.sets || []);
+    const rivals = [item?.rival1, item?.rival2].filter(Boolean).join('/');
+    text += `⚔️ vs ${rivals} · ${res === 'V' ? 'Victoria 🏆' : res === 'D' ? 'Derrota' : 'Empate'}`;
+  }
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+// Wire share buttons in pozo/reto cards (using event delegation)
+document.addEventListener('click', e => {
+  const shareBtn = e.target.closest('[data-action="sharePozo"]');
+  if (shareBtn) {
+    e.stopPropagation();
+    const p = pozos.find(x => x.id === shareBtn.dataset.id);
+    if (p) openShareModal(p, 'pozo');
+    return;
+  }
+  const shareRetoBtn = e.target.closest('[data-action="shareReto"]');
+  if (shareRetoBtn) {
+    e.stopPropagation();
+    const r = retos.find(x => x.id === shareRetoBtn.dataset.id);
+    if (r) openShareModal(r, 'reto');
+  }
+}, true);
+
+// ═══════════════════════════════════════════════════════════
+// PDF EXPORT
+// ═══════════════════════════════════════════════════════════
+
+async function exportPDF() {
+  showToast('Generando PDF…');
+  // Load jsPDF from CDN
+  if (!window.jspdf) {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const W = 210, margin = 16;
+  let y = 20;
+
+  const lh = (n = 1) => { y += n; };
+  const title = (txt, size = 22) => {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(size);
+    doc.setTextColor(30, 50, 35);
+    doc.text(txt, margin, y);
+    y += size * 0.45;
+    lh(2);
+  };
+  const sub = (txt, color = [90, 101, 94]) => {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...color);
+    doc.text(txt, margin, y);
+    y += 5;
+  };
+  const row = (label, val, indent = 0) => {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(50, 70, 55);
+    doc.text(label + ':', margin + indent, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(20, 30, 22);
+    doc.text(String(val ?? '—'), margin + indent + 38, y);
+    y += 5;
+  };
+  const hr = (color = [230, 240, 232]) => {
+    doc.setDrawColor(...color);
+    doc.line(margin, y, W - margin, y);
+    y += 4;
+  };
+  const newPageIfNeeded = (needed = 30) => {
+    if (y + needed > 280) { doc.addPage(); y = 20; }
+  };
+
+  // ── Cover ──
+  doc.setFillColor(10, 16, 12);
+  doc.rect(0, 0, W, 50, 'F');
+  doc.setFillColor(74, 222, 128);
+  doc.rect(0, 0, 5, 50, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(32);
+  doc.setTextColor(240, 244, 237);
+  doc.text('POZOS.', 14, 28);
+  doc.setFontSize(10);
+  doc.setTextColor(138, 150, 144);
+  doc.text(`Control de torneos · pádel`, 14, 38);
+  doc.setTextColor(90, 101, 94);
+  doc.text(`Exportado ${new Date().toLocaleDateString('es-CR', { day:'2-digit', month:'long', year:'numeric' })}`, W - margin, 38, { align: 'right' });
+  if (nombre) {
+    doc.setTextColor(74, 222, 128);
+    doc.setFontSize(11);
+    doc.text(nombre, W - margin, 28, { align: 'right' });
+  }
+  y = 62;
+
+  // ── Resumen ──
+  title('Resumen general', 18);
+  let rv2 = 0, re2 = 0, rd2 = 0;
+  retos.forEach(r => { const res = calcRetoResultado(r.sets); if (res === 'V') rv2++; else if (res === 'D') rd2++; else if (res === 'E') re2++; });
+  const wr2 = (rv2 + re2 + rd2) ? Math.round(rv2 / (rv2 + re2 + rd2) * 100) : 0;
+  const bestPos2 = pozos.length ? Math.min(...pozos.map(p => p.posicion || 999).filter(x => x < 999)) : null;
+  row('Pozos jugados', pozos.length);
+  row('Mejor posición', bestPos2 != null ? bestPos2 : '—');
+  row('Retos jugados', retos.length);
+  row('Win rate retos', `${wr2}%  (${rv2}V · ${re2}E · ${rd2}D)`);
+  row('Clases registradas', clases.length);
+  if (metas.length) row('Metas activas', metas.length);
+  hr(); lh(2);
+
+  // ── Pozos ──
+  if (pozos.length) {
+    newPageIfNeeded(30);
+    title('Pozos', 18);
+    const sorted = [...pozos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+    sorted.forEach((p, i) => {
+      newPageIfNeeded(40);
+      doc.setFillColor(245, 250, 246);
+      doc.roundedRect(margin, y - 3, W - margin * 2, 32, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(20, 30, 22);
+      doc.text(`${p.categoria || 'Pozo'}  ·  ${fmtDate(p.fecha || '')}`, margin + 3, y + 4);
+      if (p.club) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(90, 101, 94);
+        doc.text(p.club, margin + 3, y + 10);
+      }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.setTextColor(45, 134, 89);
+      doc.text(`${p.posicion}/${p.participantes}`, W - margin - 3, y + 9, { align: 'right' });
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(90, 101, 94);
+      const recLine = `${p.victorias || 0}V  ${p.empates || 0}E  ${p.derrotas || 0}D${p.puntaje != null ? '  ·  ' + p.puntaje + ' pts' : ''}${p.tipo === 'pareja' && p.companero ? '  ·  Con ' + p.companero : ''}`;
+      doc.text(recLine, margin + 3, y + 18);
+      if (p.notas) {
+        doc.setTextColor(130, 150, 134);
+        doc.text(p.notas.slice(0, 80), margin + 3, y + 24);
+      }
+      y += 38;
+    });
+    lh(2);
+  }
+
+  // ── Retos ──
+  if (retos.length) {
+    newPageIfNeeded(30);
+    title('Retos', 18);
+    const sortedR = [...retos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+    sortedR.forEach(r => {
+      newPageIfNeeded(36);
+      const res = calcRetoResultado(r.sets);
+      const rivals = [r.rival1, r.rival2].filter(Boolean).join(' / ');
+      const resColor = res === 'V' ? [45, 134, 89] : res === 'D' ? [200, 40, 40] : [180, 120, 0];
+      doc.setFillColor(245, 250, 246);
+      doc.roundedRect(margin, y - 3, W - margin * 2, 28, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(20, 30, 22);
+      doc.text(`vs ${rivals || '—'}${r.companero ? '  ·  Con ' + r.companero : ''}`, margin + 3, y + 4);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(90, 101, 94);
+      const sets = (r.sets || []).map(s => `${s.mine}–${s.rival}`).join('  ');
+      doc.text(`${fmtDate(r.fecha || '')}${r.club ? '  ·  ' + r.club : ''}${sets ? '  ·  ' + sets : ''}`, margin + 3, y + 11);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(...resColor);
+      doc.text(res || '—', W - margin - 3, y + 8, { align: 'right' });
+      y += 32;
+    });
+    lh(2);
+  }
+
+  // ── Metas ──
+  if (metas.length) {
+    newPageIfNeeded(30);
+    title('Metas', 18);
+    metas.forEach(m => {
+      newPageIfNeeded(24);
+      const pct = m.total > 0 ? Math.min(100, Math.round(m.actual / m.total * 100)) : 0;
+      doc.setFillColor(245, 250, 246);
+      doc.roundedRect(margin, y - 3, W - margin * 2, 20, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(20, 30, 22);
+      doc.text(m.desc, margin + 3, y + 4);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(90, 101, 94);
+      doc.text(`${m.actual} / ${m.total}${m.unidad ? ' ' + m.unidad : ''}  ·  ${pct}%${pct >= 100 ? ' ✓' : ''}`, margin + 3, y + 11);
+      // Progress bar
+      const barW = 60;
+      doc.setFillColor(220, 235, 225);
+      doc.roundedRect(W - margin - barW - 3, y + 2, barW, 6, 2, 2, 'F');
+      doc.setFillColor(74, 222, 128);
+      doc.roundedRect(W - margin - barW - 3, y + 2, Math.max(2, barW * pct / 100), 6, 2, 2, 'F');
+      y += 24;
+    });
+  }
+
+  doc.save(`pozos_export_${todayISO()}.pdf`);
+  showToast('PDF descargado ✓');
+}
+
+// ═══════════════════════════════════════════════════════════
+// PWA — Service Worker + Manifest
+// ═══════════════════════════════════════════════════════════
+
+function initPWA() {
+  // Inject web app manifest
+  const manifest = {
+    name: 'Pozos · Pádel',
+    short_name: 'Pozos',
+    description: 'Control de torneos y retos de pádel',
+    start_url: './',
+    display: 'standalone',
+    background_color: '#0a100c',
+    theme_color: '#0a100c',
+    orientation: 'portrait',
+    icons: [
+      { src: "data:image/svg+xml,%3Csvg viewBox='0 0 100 130' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='5' width='80' height='85' rx='40' fill='%234ade80'/%3E%3Ccircle cx='50' cy='25' r='7' fill='%230a100c'/%3E%3Ccircle cx='32' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='68' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='32' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='68' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='77' r='7' fill='%230a100c'/%3E%3Crect x='40' y='88' width='20' height='36' rx='8' fill='%234ade80'/%3E%3C/svg%3E", sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+  const manifestUrl = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel = 'manifest'; link.href = manifestUrl;
+  document.head.appendChild(link);
+
+  // Register service worker inline via blob
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+const CACHE = 'pozos-v1';
+const OFFLINE_URLS = [self.location.href.replace('/sw.js','/')];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll([])));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request).then(res => {
+      if (res && res.status === 200 && res.type === 'basic') {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+      }
+      return res;
+    }).catch(() => caches.match(e.request))
+  );
+});`;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl, { scope: './' })
+      .catch(() => {}); // Fail silently on localhost/restrictions
+  }
+}
+
+initPWA();
 init();
 </script>
 </body>
