@@ -288,6 +288,8 @@ body { max-width: 720px; margin: 0 auto; }
 .dash-kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
 .dash-kpi .kpi-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-muted); margin-bottom: 5px; }
 .dash-kpi .kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
+.dash-kpi .kpi-value.red { color: var(--crimson); }
+.dash-kpi .kpi-value.green { color: var(--court-bright); }
 .dash-kpi .kpi-extra { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); margin-top: 4px; letter-spacing: 0.05em; }
 .dash-kpi.accent { border-color: rgba(74,222,128,0.25); background: rgba(74,222,128,0.05); }
 .dash-kpi.accent .kpi-value { color: var(--court-bright); }
@@ -821,9 +823,13 @@ body { max-width: 720px; margin: 0 auto; }
           <option value="top1">🏆 Llegar 1° en un pozo</option>
           <option value="top4x3">🎯 3 veces top 4 en pozos</option>
           <option value="retos3">⚔️ Ganar 3 retos consecutivos</option>
-          <option value="clases2mes">📚 2 clases este mes</option>
+          <option value="clases2mes">📚 2 clases en el mes</option>
         </select>
-        <div class="hint">El progreso se calcula automáticamente desde tus datos.</div>
+        <div class="field" style="margin-top:10px;margin-bottom:0">
+          <label>Mes objetivo</label>
+          <input type="month" id="metaMesObjetivo" placeholder="ej: 2026-05">
+          <div class="hint">El progreso se evalúa solo con actividades de ese mes.</div>
+        </div>
       </div>
 
       <!-- Campos personalizados (solo si tipo = personal) -->
@@ -2684,24 +2690,28 @@ function renderHome() {
 // ═══════════════════════════════════════════════════════════
 
 // Metas predefinidas — se calculan en tiempo real desde los datos
-function calcProgresoPredefinida(preKey) {
+function calcProgresoPredefinida(preBaseKey, mesObjetivo) {
   const now = new Date();
-  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  switch (preKey) {
-    case 'pre_top1':
-      return { actual: pozos.some(p => p.posicion === 1) ? 1 : 0, total: 1, done: pozos.some(p => p.posicion === 1) };
+  const mes = mesObjetivo || `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const inMes = (fecha) => (fecha || '').startsWith(mes);
+
+  switch (preBaseKey) {
+    case 'pre_top1': {
+      const done = pozos.filter(p => inMes(p.fecha) && p.posicion === 1).length > 0;
+      return { actual: done ? 1 : 0, total: 1, done };
+    }
     case 'pre_top4x3': {
-      const count = Math.min(pozos.filter(p => p.posicion && p.posicion <= 4).length, 3);
+      const count = Math.min(pozos.filter(p => inMes(p.fecha) && p.posicion && p.posicion <= 4).length, 3);
       return { actual: count, total: 3, done: count >= 3 };
     }
     case 'pre_retos3': {
-      const rs = [...retos].sort((a,b) => (a.fecha||'').localeCompare(b.fecha||''));
+      const rs = [...retos].filter(r => inMes(r.fecha)).sort((a,b) => (a.fecha||'').localeCompare(b.fecha||''));
       let max = 0, cur = 0;
       rs.forEach(r => { const res = calcRetoResultado(r.sets); if (res === 'V') { cur++; max = Math.max(max, cur); } else if (res !== null) cur = 0; });
       return { actual: Math.min(max, 3), total: 3, done: max >= 3 };
     }
     case 'pre_clases2': {
-      const count = Math.min(clases.filter(c => (c.fecha||'').startsWith(thisMonth)).length, 2);
+      const count = Math.min(clases.filter(c => inMes(c.fecha)).length, 2);
       return { actual: count, total: 2, done: count >= 2 };
     }
     default: return null;
@@ -2716,7 +2726,7 @@ function renderMetasInline() {
     let actual = m.actual, total = m.total, done = false;
 
     if (isPre) {
-      const prog = calcProgresoPredefinida(m.preKey);
+      const prog = calcProgresoPredefinida(m.preBaseKey || m.preKey, m.mesObjetivo || null);
       if (prog) { actual = prog.actual; total = prog.total; done = prog.done; }
     } else {
       done = actual >= total;
@@ -2792,6 +2802,7 @@ function openMetaModal() {
   $('#metaPredefinidaWrap').hidden = true;
   $('#metaPersonalWrap').hidden = false;
   $('#metaPredefinidaSelect').value = '';
+  $('#metaMesObjetivo').value = '';
   $('#metaDesc').value = '';
   $('#metaActual').value = '0';
   $('#metaTotal').value = '10';
@@ -2840,12 +2851,24 @@ $('#metaForm').addEventListener('submit', async e => {
   if (tipo === 'predefinida') {
     const key = $('#metaPredefinidaSelect').value;
     if (!key) { showToast('Elegí una meta predefinida', 'error'); return; }
+    const mes = $('#metaMesObjetivo').value || null;
     const preset = METAS_PREDEFINIDAS_MAP[key];
-    // Check if already added
-    if (metas.some(m => m.preKey === preset.preKey)) {
-      showToast('Ya tenés esa meta agregada', 'error'); return;
+    // Allow same preKey with different month
+    const preKeyWithMes = preset.preKey + (mes ? '_' + mes.replace('-','') : '');
+    if (metas.some(m => m.preKey === preKeyWithMes)) {
+      showToast('Ya tenés esa meta para ese mes', 'error'); return;
     }
-    metas.push({ id: uid(), preKey: preset.preKey, desc: preset.desc, actual: 0, total: preset.total, unidad: preset.unidad, fechaLimite: null, creado: new Date().toISOString() });
+    const mesLabel = mes ? (() => { try { return new Date(mes + '-01T12:00:00').toLocaleDateString('es-CR', { month: 'long', year: 'numeric' }); } catch(e) { return mes; } })() : null;
+    metas.push({
+      id: uid(),
+      preKey: preKeyWithMes,
+      preBaseKey: preset.preKey,
+      mesObjetivo: mes,
+      desc: preset.desc + (mesLabel ? ' · ' + mesLabel : ''),
+      actual: 0, total: preset.total, unidad: preset.unidad,
+      fechaLimite: mes ? mes + '-' + new Date(mes + '-01').toISOString().slice(8,10) : null,
+      creado: new Date().toISOString()
+    });
   } else {
     const desc = $('#metaDesc').value.trim();
     if (!desc) { showToast('Escribí una descripción', 'error'); return; }
