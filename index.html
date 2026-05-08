@@ -2806,20 +2806,6 @@ function openMetaModal() {
 document.addEventListener('click', e => {
   if (e.target.id === 'addMetaBtnEmpty' || e.target.id === 'addMetaBtnExtra') openMetaModal();
 });
-  // Reset form
-  document.querySelector('input[name="metaTipo"][value="personal"]').checked = true;
-  $('#metaPredefinidaWrap').hidden = true;
-  $('#metaPersonalWrap').hidden = false;
-  $('#metaPredefinidaSelect').value = '';
-  $('#metaDesc').value = '';
-  $('#metaActual').value = '0';
-  $('#metaTotal').value = '10';
-  $('#metaUnidad').value = '';
-  $('#metaFechaLimite').value = '';
-  $('#metaModalBg').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(() => $('#metaDesc').focus(), 100);
-}
 
 // Toggle predefinida/personal fields
 document.querySelectorAll('input[name="metaTipo"]').forEach(r => {
