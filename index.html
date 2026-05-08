@@ -2562,6 +2562,7 @@ function renderHome() {
   const gastoPozosMonth = pozos.filter(p => inPeriod(p.fecha)).reduce((s,p) => s + (Number(p.costo)||0), 0);
   const gastoRetosMonth = retos.filter(r => inPeriod(r.fecha)).reduce((s,r) => s + (Number(r.precio)||0), 0);
   const gastoClasesMonth = clases.filter(c => inPeriod(c.fecha)).reduce((s,c) => s + (Number(c.costo)||0), 0);
+  const gastoThisMonth = gastoPozosMonth + gastoRetosMonth + gastoClasesMonth;
   const premiosThisMonth = pozos.filter(p => inPeriod(p.fecha)).reduce((s,p) => s + (Number(p.premio)||0), 0);
 
   // ── Totales históricos unificados ──
