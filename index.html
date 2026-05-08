@@ -309,6 +309,73 @@ body { max-width: 720px; margin: 0 auto; }
 .set-row .set-del:hover { color: var(--crimson); border-color: rgba(239,68,68,0.3); }
 .add-set-btn { background: transparent; border: 1px dashed var(--border); color: var(--ink-muted); padding: 9px; border-radius: 8px; width: 100%; cursor: pointer; font-family: inherit; font-size: 13px; margin-top: 4px; }
 .add-set-btn:hover { color: var(--ink); border-color: var(--court-bright); }
+
+/* Clases */
+.clases-stats { padding: 20px 20px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 600px) { .clases-stats { grid-template-columns: repeat(4, 1fr); } }
+
+.clase-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--court); border-radius: 16px; padding: 16px; transition: border-color .2s; cursor: pointer; }
+.clase-card:hover { border-color: var(--border-strong); border-left-color: var(--court-bright); }
+.clase-card.expanded .clase-detail { display: block; }
+.clase-detail { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+/* Checklist */
+.checklist-field { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 4px; }
+.checklist-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; transition: background .1s; user-select: none; }
+.checklist-item:hover { background: var(--surface-3); }
+.checklist-item input[type="checkbox"] { display: none; }
+.check-box { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--border-strong); flex-shrink: 0; display: grid; place-items: center; transition: all .15s; }
+.checklist-item.checked .check-box { background: var(--court-bright); border-color: var(--court-bright); }
+.checklist-item.checked .check-box::after { content: ''; display: block; width: 10px; height: 6px; border-left: 2px solid var(--bg); border-bottom: 2px solid var(--bg); transform: rotate(-45deg) translate(1px, -1px); }
+.checklist-item .check-label { font-size: 14px; color: var(--ink-muted); transition: color .15s; font-family: 'Manrope', sans-serif; }
+.checklist-item.checked .check-label { color: var(--ink); }
+.checklist-progress { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.checklist-bar-wrap { flex: 1; height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+.checklist-bar { height: 100%; background: var(--court-bright); border-radius: 2px; transition: width .3s; }
+.checklist-pct { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--court-bright); letter-spacing: 0.08em; min-width: 32px; text-align: right; }
+
+/* Clase card checklist preview (read-only) */
+.clase-checklist-preview { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+.ejercicio-chip { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; border: 1px solid var(--border); color: var(--ink-dim); background: var(--surface-2); }
+.ejercicio-chip.done { color: var(--court-bright); border-color: rgba(74,222,128,0.3); background: rgba(74,222,128,0.06); }
+
+/* Retos chart */
+.retos-chart-wrap { margin: 16px 20px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+.retos-chart-wrap .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.retos-chart-wrap h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; }
+.reto-person-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.reto-person-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-muted); letter-spacing: 0.05em; min-width: 80px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reto-person-role { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 1px 5px; border-radius: 4px; flex-shrink: 0; }
+.reto-person-role.con { color: var(--court-bright); background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.25); }
+.reto-person-role.vs { color: var(--crimson); background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+.reto-wr-track { flex: 1; height: 14px; background: var(--surface-2); border-radius: 4px; overflow: hidden; position: relative; }
+.reto-wr-fill { height: 100%; border-radius: 4px; transition: width .4s; }
+.reto-wr-fill.good { background: var(--court-bright); opacity: 0.85; }
+.reto-wr-fill.bad { background: var(--crimson); opacity: 0.7; }
+.reto-wr-fill.mid { background: var(--amber); opacity: 0.75; }
+.reto-wr-pct { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); min-width: 30px; text-align: right; }
+.reto-wr-vd { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--ink-dim); min-width: 44px; text-align: left; }
+
+/* Clases chart — reuse for retos toggle tabs */
+.retos-chart-wrap .clases-chart-tabs { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; }
+.retos-chart-wrap .clases-chart-tabs button { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: none; color: var(--ink-dim); padding: 5px 9px; border-radius: 5px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.retos-chart-wrap .clases-chart-tabs button.active { background: var(--surface-3); color: var(--court-bright); }
+.retos-chart-wrap .clases-chart-tabs button:hover:not(.active) { color: var(--ink); }
+
+/* Clases chart */
+.clases-chart-wrap { margin: 16px 20px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+.clases-chart-wrap .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.clases-chart-wrap h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; }
+.clases-chart-tabs { display: flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; }
+.clases-chart-tabs button { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: transparent; border: none; color: var(--ink-dim); padding: 5px 9px; border-radius: 5px; cursor: pointer; transition: all .15s; white-space: nowrap; }
+.clases-chart-tabs button.active { background: var(--surface-3); color: var(--court-bright); }
+.clases-chart-tabs button:hover:not(.active) { color: var(--ink); }
+.freq-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.freq-bar-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-muted); letter-spacing: 0.05em; min-width: 110px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.freq-bar-track { flex: 1; height: 14px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+.freq-bar-fill { height: 100%; background: var(--court-bright); border-radius: 4px; transition: width .4s; opacity: 0.85; }
+.freq-bar-count { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); min-width: 22px; }
+.timeline-empty { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); text-align: center; padding: 30px 10px; letter-spacing: 0.1em; text-transform: uppercase; }
 </style>
 </head>
 <body>
@@ -384,6 +451,10 @@ body { max-width: 720px; margin: 0 auto; }
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
       Retos
     </button>
+    <button class="tab" id="tabClases">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Clases
+    </button>
   </div>
 
   <!-- Vista pozos -->
@@ -425,12 +496,34 @@ body { max-width: 720px; margin: 0 auto; }
   <!-- Vista retos -->
   <div id="retosView" hidden>
     <section class="retos-stats" id="retosStats"></section>
+    <div id="retosChart"></div>
     <div class="section-title">
       <h2>Retos</h2>
       <span class="count" id="retosCount">0 retos</span>
     </div>
+    <div class="search-bar" style="margin: 0 20px 12px;">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="retoSearchInput" placeholder="Buscar… vs Pedro · con Eduardo · + para OR · & para AND" autocomplete="off">
+      <button type="button" class="search-clear" id="retoSearchClear" hidden aria-label="Limpiar">×</button>
+    </div>
     <div id="retosWrap"></div>
   </div><!-- /retosView -->
+
+  <!-- Vista clases -->
+  <div id="clasesView" hidden>
+    <section class="clases-stats" id="clasesStats"></section>
+    <div id="clasesChart"></div>
+    <div class="section-title">
+      <h2>Clases</h2>
+      <span class="count" id="clasesCount">0 clases</span>
+    </div>
+    <div class="search-bar" style="margin: 0 20px 12px;">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="claseSearchInput" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
+      <button type="button" class="search-clear" id="claseSearchClear" hidden aria-label="Limpiar">×</button>
+    </div>
+    <div id="clasesWrap"></div>
+  </div><!-- /clasesView -->
 
   <button class="fab" id="addBtn">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -566,6 +659,44 @@ body { max-width: 720px; margin: 0 auto; }
   </div>
 </div>
 
+<!-- Modal de clase -->
+<div class="modal-bg" id="claseModalBg">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="claseModalTitle">Nueva clase</h3>
+      <button class="icon-btn" id="closeClaseModal" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="claseForm">
+      <div class="field-row">
+        <div class="field"><label>Fecha</label><input type="date" id="claseFecha" required></div>
+        <div class="field"><label>Duración (min)</label><input type="number" id="claseDuracion" min="1" inputmode="numeric" placeholder="60"></div>
+      </div>
+      <div class="field"><label>Club / lugar</label><input type="text" id="claseClub" placeholder="opcional" autocomplete="off" list="claseClubList"><datalist id="claseClubList"></datalist></div>
+      <div class="field-row">
+        <div class="field"><label>Profesor / coach</label><input type="text" id="claseProfesor" placeholder="opcional"></div>
+        <div class="field"><label>Calorías (kcal)</label><input type="number" id="claseCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
+      </div>
+      <div class="field">
+        <label>Participantes</label>
+        <div class="sets-form-wrap" id="participantesContainer"></div>
+        <button type="button" class="add-set-btn" id="addParticipanteBtn">+ Agregar participante</button>
+      </div>
+      <div class="field"><label>Costo ($)</label><input type="number" id="claseCosto" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      <div class="field">
+        <label>Ejercicios</label>
+        <div class="checklist-field" id="claseChecklist"></div>
+      </div>
+      <div class="field"><label>Notas</label><textarea id="claseNotas" rows="2" placeholder="Opcional"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelClaseBtn">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -575,10 +706,12 @@ const GIST_FILENAME = 'pozos.json';
 
 let pozos = [];
 let retos = [];
+let clases = [];
 let nombre = '';
 let editingId = null;
 let editingRetoId = null;
-let activeTab = 'pozos';
+let editingClaseId = null;
+let activeTab = 'pozos'; // 'pozos' | 'retos' | 'clases'
 let settings = null; // { gistId }
 let syncing = false;
 let lastSyncedAt = null;
@@ -631,10 +764,212 @@ function retoOutcome(r) {
   return !res ? 'neutral' : res === 'V' ? 'victory' : res === 'D' ? 'defeat' : 'tie';
 }
 
+// ---------- Retos search ----------
+let retoSearchQuery = '';
+
+function getRetoSearchTerms() {
+  if (!retoSearchQuery) return [];
+  return retoSearchQuery
+    .split('+')
+    .map(group => group.split('&').map(t => t.trim().toLowerCase()).filter(Boolean))
+    .filter(g => g.length > 0);
+}
+
+// Parses prefix keywords: "vs Pedro" → match only rivals; "con Eduardo" → match only compañero
+function matchesRetoSearch(r) {
+  const groups = getRetoSearchTerms();
+  if (!groups.length) return true;
+
+  const fullText = [r.club, r.companero, r.rival1, r.rival2, r.notas, r.fecha].filter(Boolean).join(' ').toLowerCase();
+  const companeroText = (r.companero || '').toLowerCase();
+  const rivalesText = [r.rival1, r.rival2].filter(Boolean).join(' ').toLowerCase();
+
+  if (r.fecha) {
+    try {
+      const d = new Date(r.fecha + 'T12:00:00');
+      const dateStr = d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' +
+                      d.toLocaleDateString('es-CR', { month: 'long' });
+      fullText.concat(' ' + dateStr.toLowerCase());
+    } catch (e) {}
+  }
+
+  return groups.some(andTerms => andTerms.every(term => {
+    // "vs X" → solo busca en rivales
+    if (term.startsWith('vs ')) {
+      const name = term.slice(3).trim();
+      return rivalesText.includes(name);
+    }
+    // "con X" → solo busca en compañero
+    if (term.startsWith('con ')) {
+      const name = term.slice(4).trim();
+      return companeroText.includes(name);
+    }
+    // sin prefijo → busca en todo
+    return fullText.includes(term);
+  }));
+}
+
+function getFilteredRetos() {
+  const groups = getRetoSearchTerms();
+  if (!groups.length) return retos;
+  return retos.filter(matchesRetoSearch);
+}
+
+// ---------- Retos chart ----------
+let retosChartMode = 'winrate'; // 'winrate' | 'timeline'
+
+function renderRetosChart() {
+  const container = $('#retosChart');
+  const source = getFilteredRetos();
+  if (source.length === 0) { container.innerHTML = ''; return; }
+
+  const isTimeline = retosChartMode === 'timeline';
+
+  container.innerHTML = `
+    <div class="retos-chart-wrap">
+      <div class="chart-header">
+        <h3>Estadísticas</h3>
+        <div class="clases-chart-tabs">
+          <button id="rtChartWR" class="${!isTimeline ? 'active' : ''}">Win rate</button>
+          <button id="rtChartTL" class="${isTimeline ? 'active' : ''}">Evolución</button>
+        </div>
+      </div>
+      <div id="rtChartBody"></div>
+    </div>`;
+
+  $('#rtChartWR').addEventListener('click', () => { retosChartMode = 'winrate'; renderRetosChart(); });
+  $('#rtChartTL').addEventListener('click', () => { retosChartMode = 'timeline'; renderRetosChart(); });
+
+  const body = $('#rtChartBody');
+
+  if (!isTimeline) {
+    // ── Win rate por persona ──────────────────────────────────────
+    // Collect all people: each appears as compañero (con) or rival (vs)
+    const personMap = {}; // name → { con: {v,e,d}, vs: {v,e,d} }
+    source.forEach(r => {
+      const res = calcRetoResultado(r.sets);
+      if (!res) return;
+      const addPerson = (name, role) => {
+        if (!name) return;
+        if (!personMap[name]) personMap[name] = { con: {v:0,e:0,d:0}, vs: {v:0,e:0,d:0} };
+        const bucket = personMap[name][role];
+        if (res === 'V') bucket.v++;
+        else if (res === 'D') bucket.d++;
+        else bucket.e++;
+      };
+      addPerson(r.companero, 'con');
+      addPerson(r.rival1, 'vs');
+      addPerson(r.rival2, 'vs');
+    });
+
+    const entries = Object.entries(personMap).map(([name, roles]) => {
+      const con = roles.con, vs = roles.vs;
+      const conTotal = con.v + con.e + con.d;
+      const vsTotal  = vs.v  + vs.e  + vs.d;
+      const conWR = conTotal ? Math.round(con.v / conTotal * 100) : null;
+      const vsWR  = vsTotal  ? Math.round(vs.v  / vsTotal  * 100) : null;
+      return { name, con, vs, conTotal, vsTotal, conWR, vsWR };
+    }).sort((a, b) => (b.conTotal + b.vsTotal) - (a.conTotal + a.vsTotal));
+
+    if (!entries.length) {
+      body.innerHTML = `<div class="timeline-empty">Sin retos con resultados</div>`;
+      return;
+    }
+
+    body.innerHTML = entries.map(({ name, con, vs, conTotal, vsTotal, conWR, vsWR }) => {
+      const rows = [];
+      if (conTotal > 0) {
+        const fillClass = conWR >= 60 ? 'good' : conWR <= 40 ? 'bad' : 'mid';
+        rows.push(`
+          <div class="reto-person-row">
+            <span class="reto-person-label" title="${escapeHtml(name)}">${escapeHtml(name)}</span>
+            <span class="reto-person-role con">con</span>
+            <div class="reto-wr-track"><div class="reto-wr-fill ${fillClass}" style="width:${conWR}%"></div></div>
+            <span class="reto-wr-pct">${conWR}%</span>
+            <span class="reto-wr-vd">${con.v}V·${con.e}E·${con.d}D</span>
+          </div>`);
+      }
+      if (vsTotal > 0) {
+        // vs: winning = good, losing = bad (my result against them)
+        const fillClass = vsWR >= 60 ? 'good' : vsWR <= 40 ? 'bad' : 'mid';
+        rows.push(`
+          <div class="reto-person-row">
+            <span class="reto-person-label" title="${escapeHtml(name)}">${escapeHtml(name)}</span>
+            <span class="reto-person-role vs">vs</span>
+            <div class="reto-wr-track"><div class="reto-wr-fill ${fillClass}" style="width:${vsWR}%"></div></div>
+            <span class="reto-wr-pct">${vsWR}%</span>
+            <span class="reto-wr-vd">${vs.v}V·${vs.e}E·${vs.d}D</span>
+          </div>`);
+      }
+      return rows.join('');
+    }).join('') + `
+      <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em"><span class="reto-person-role con" style="font-size:8px">con</span>Compañero</div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em"><span class="reto-person-role vs" style="font-size:8px">vs</span>Rival</div>
+      </div>`;
+
+  } else {
+    // ── Evolución temporal (dots V/E/D) ───────────────────────────
+    const sorted = [...source].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
+    const withResult = sorted.filter(r => calcRetoResultado(r.sets));
+    if (withResult.length < 2) {
+      body.innerHTML = `<div class="timeline-empty">Necesitás al menos 2 retos con resultado</div>`;
+      return;
+    }
+    const n = withResult.length;
+    const cellW = 28, padLeft = 20, padTop = 22, dotR = 7, H = padTop + dotR * 2 + 32;
+    const W = padLeft + n * cellW + 20;
+
+    const dots = withResult.map((r, i) => {
+      const res = calcRetoResultado(r.sets);
+      const x = padLeft + i * cellW + cellW / 2;
+      const y = padTop + dotR;
+      const fill = res === 'V' ? 'var(--court-bright)' : res === 'D' ? 'var(--crimson)' : 'var(--amber)';
+      const label = res;
+      const rivals = [r.rival1, r.rival2].filter(Boolean).join('/');
+      const tip = `${fmtDate(r.fecha)} · ${res}${rivals ? ' vs ' + rivals : ''}`;
+      const dateShort = (() => { try { return new Date(r.fecha + 'T12:00:00').toLocaleDateString('es-CR', { day:'2-digit', month:'short' }); } catch(e) { return r.fecha || ''; } })();
+      return `
+        <circle cx="${x}" cy="${y}" r="${dotR}" fill="${fill}" opacity="0.9"><title>${escapeHtml(tip)}</title></circle>
+        <text x="${x}" y="${y + 1}" text-anchor="middle" dominant-baseline="middle" font-family="Bebas Neue, sans-serif" font-size="9" fill="var(--bg)" letter-spacing="0.05em">${label}</text>
+        <text x="${x}" y="${padTop + dotR * 2 + 10}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6.5" fill="var(--ink-dim)">${escapeHtml(dateShort)}</text>`;
+    }).join('');
+
+    // Running win rate line
+    let runV = 0, runTotal = 0;
+    const linePoints = withResult.map((r, i) => {
+      const res = calcRetoResultado(r.sets);
+      if (res === 'V') runV++;
+      if (res !== null) runTotal++;
+      const x = padLeft + i * cellW + cellW / 2;
+      const wr = runTotal ? runV / runTotal : 0;
+      return `${x},${padTop - 4 - wr * 14}`;
+    });
+
+    body.innerHTML = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block;overflow:visible">
+        <polyline points="${linePoints.join(' ')}" fill="none" stroke="var(--court-bright)" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.4"/>
+        ${dots}
+      </svg>
+      <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap">
+        ${[['var(--court-bright)','Victoria'],['var(--amber)','Empate'],['var(--crimson)','Derrota']].map(([c,l])=>`
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em">
+          <svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="${c}" opacity=".9"/></svg>${l}
+        </div>`).join('')}
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em">
+          <svg width="18" height="6"><line x1="0" y1="3" x2="18" y2="3" stroke="var(--court-bright)" stroke-width="1.5" stroke-dasharray="3 2" opacity=".4"/></svg>WR acumulado
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+
 function renderRetosStats() {
+  const filtered = getFilteredRetos();
   const total = retos.length;
   let v = 0, e = 0, d = 0, cals = 0, gasto = 0;
-  retos.forEach(r => {
+  filtered.forEach(r => {
     const res = calcRetoResultado(r.sets);
     if (res === 'V') v++; else if (res === 'D') d++; else if (res === 'E') e++;
     cals += Number(r.calorias) || 0;
@@ -642,22 +977,38 @@ function renderRetosStats() {
   });
   const partidos = v + e + d;
   const wr = partidos ? Math.round(v / partidos * 100) : 0;
+  const shown = filtered.length;
   $('#retosStats').innerHTML = `
-    <div class="stat"><div class="stat-label">Retos</div><div class="stat-value">${total}</div><div class="stat-extra">${partidos} jugados</div></div>
+    <div class="stat"><div class="stat-label">Retos</div><div class="stat-value">${shown === total ? total : shown + '<span style="font-size:14px"> / ' + total + '</span>'}</div><div class="stat-extra">${partidos} jugados</div></div>
     <div class="stat"><div class="stat-label">Win rate</div><div class="stat-value green">${wr}<span style="font-size:18px">%</span></div><div class="stat-extra">${v}V · ${e}E · ${d}D</div></div>
     <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${cals ? cals.toLocaleString() : '—'}</div><div class="stat-extra">kcal</div></div>
     <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(gasto)}</div><div class="stat-extra">acumulado</div></div>
   `;
 }
 
+function renderRetosAll() {
+  renderRetosStats();
+  renderRetosChart();
+  renderRetos();
+}
+
 function renderRetos() {
-  $('#retosCount').textContent = `${retos.length} ${retos.length === 1 ? 'reto' : 'retos'}`;
+  const filtered = getFilteredRetos();
+  const total = retos.length;
+  const shown = filtered.length;
+  $('#retosCount').textContent = retoSearchQuery
+    ? `${shown} de ${total}`
+    : `${total} ${total === 1 ? 'reto' : 'retos'}`;
   const wrap = $('#retosWrap');
-  if (!retos.length) {
+  if (!total) {
     wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— vacío —</div><p>Agregá tu primer reto con el botón verde</p></div>`;
     return;
   }
-  const sorted = [...retos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  if (!shown) {
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— sin match —</div><p>Ningún reto coincide con "${escapeHtml(retoSearchQuery)}"</p><p style="font-size:12px;color:var(--ink-dim);margin-top:8px">Tip: usá <strong>vs Pedro</strong> para buscar por rival, <strong>con Eduardo</strong> para compañero</p></div>`;
+    return;
+  }
+  const sorted = [...filtered].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
   wrap.innerHTML = `<div class="list">${sorted.map(r => {
     const res = calcRetoResultado(r.sets);
     const outcome = retoOutcome(r);
@@ -724,14 +1075,14 @@ function clearSettings() {
 function loadCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
-    if (!raw) return { pozos: [], retos: [] };
+    if (!raw) return { pozos: [], retos: [], clases: [] };
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return { pozos: parsed, retos: [] }; // migración
-    return { pozos: parsed.pozos || [], retos: parsed.retos || [] };
-  } catch (e) { return { pozos: [], retos: [] }; }
+    if (Array.isArray(parsed)) return { pozos: parsed, retos: [], clases: [] }; // migración
+    return { pozos: parsed.pozos || [], retos: parsed.retos || [], clases: parsed.clases || [] };
+  } catch (e) { return { pozos: [], retos: [], clases: [] }; }
 }
-function saveCache(pArr, rArr) {
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ pozos: pArr, retos: rArr })); } catch (e) {}
+function saveCache(pArr, rArr, cArr) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ pozos: pArr, retos: rArr, clases: cArr || [] })); } catch (e) {}
 }
 
 // ---------- GitHub Gist API ----------
@@ -747,15 +1098,15 @@ async function workerFetch(gistId) {
   }
   const body = await res.json();
   const data = body.data;
-  if (Array.isArray(data)) return { pozos: data, retos: [], nombre: '' };
-  return { pozos: data?.pozos || [], retos: data?.retos || [], nombre: data?.nombre || '' };
+  if (Array.isArray(data)) return { pozos: data, retos: [], clases: [], nombre: '' };
+  return { pozos: data?.pozos || [], retos: data?.retos || [], clases: data?.clases || [], nombre: data?.nombre || '' };
 }
 
-async function workerUpdate(gistId, pArr, rArr, nom) {
+async function workerUpdate(gistId, pArr, rArr, cArr, nom) {
   const res = await fetch(`${WORKER_URL}/gist/${gistId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: { pozos: pArr, retos: rArr, nombre: nom || '' } })
+    body: JSON.stringify({ data: { pozos: pArr, retos: rArr, clases: cArr || [], nombre: nom || '' } })
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -804,8 +1155,9 @@ async function syncDown() {
     const remote = await workerFetch(settings.gistId);
     pozos = remote.pozos.map(migrate);
     retos = (remote.retos || []).map(migrateReto);
+    clases = (remote.clases || []).map(migrateClase);
     nombre = remote.nombre || '';
-    saveCache(pozos, retos);
+    saveCache(pozos, retos, clases);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
@@ -821,8 +1173,8 @@ async function syncUp() {
   syncing = true;
   setStatus('syncing');
   try {
-    await workerUpdate(settings.gistId, pozos, retos, nombre);
-    saveCache(pozos, retos);
+    await workerUpdate(settings.gistId, pozos, retos, clases, nombre);
+    saveCache(pozos, retos, clases);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
@@ -1159,7 +1511,7 @@ function renderList() {
   }).join('')}</div>`;
 }
 
-function render() { renderStats(); renderChart(); renderList(); renderRetosStats(); renderRetos(); }
+function render() { renderStats(); renderChart(); renderList(); renderRetosAll(); renderClasesAll(); }
 
 // ---------- Pozo modal ----------
 function openModal(pozo = null) {
@@ -1215,8 +1567,9 @@ async function doSetup(gistId) {
     saveSettingsLocal(settings);
     pozos = remote.pozos.map(migrate);
     retos = (remote.retos || []).map(migrateReto);
+    clases = (remote.clases || []).map(migrateClase);
     nombre = remote.nombre || '';
-    saveCache(pozos, retos);
+    saveCache(pozos, retos, clases);
     lastSyncedAt = new Date();
     $('#setupScreen').hidden = true;
     $('#app').hidden = false;
@@ -1248,6 +1601,7 @@ async function init() {
   const cached = loadCache();
   pozos = cached.pozos.map(migrate);
   retos = cached.retos.map(migrateReto);
+  clases = (cached.clases || []).map(migrateClase);
   $('#loadingOverlay').hidden = true;
   $('#app').hidden = false;
   render();
@@ -1292,7 +1646,7 @@ $('#pozoForm').addEventListener('submit', async (e) => {
   };
   if (editingId) pozos = pozos.map(p => p.id === editingId ? data : p);
   else pozos.push(data);
-  saveCache(pozos, retos);
+  saveCache(pozos, retos, clases);
   render();
   closeModal();
   await syncUp();
@@ -1302,14 +1656,14 @@ document.addEventListener('click', async (e) => {
   const action = e.target.closest('[data-action]');
   if (action) {
     const act = action.dataset.action;
-    if (act === 'editReto' || act === 'deleteReto') return; // manejado por el otro listener
+    if (act === 'editReto' || act === 'deleteReto' || act === 'editClase' || act === 'deleteClase') return;
     e.stopPropagation();
     const id = action.dataset.id;
     if (act === 'edit') { const p = pozos.find(x => x.id === id); if (p) openModal(p); }
     else if (act === 'delete') {
       if (confirm('¿Eliminar este pozo?')) {
         pozos = pozos.filter(x => x.id !== id);
-        saveCache(pozos, retos);
+        saveCache(pozos, retos, clases);
         render();
         await syncUp();
       }
@@ -1420,17 +1774,21 @@ function switchTab(tab) {
   activeTab = tab;
   $('#tabPozos').classList.toggle('active', tab === 'pozos');
   $('#tabRetos').classList.toggle('active', tab === 'retos');
+  $('#tabClases').classList.toggle('active', tab === 'clases');
   $('#pozosView').hidden = tab !== 'pozos';
   $('#retosView').hidden = tab !== 'retos';
-  $('#fabLabel').textContent = tab === 'pozos' ? 'Nuevo pozo' : 'Nuevo reto';
+  $('#clasesView').hidden = tab !== 'clases';
+  $('#fabLabel').textContent = tab === 'pozos' ? 'Nuevo pozo' : tab === 'retos' ? 'Nuevo reto' : 'Nueva clase';
 }
 
 $('#tabPozos').addEventListener('click', () => switchTab('pozos'));
 $('#tabRetos').addEventListener('click', () => switchTab('retos'));
+$('#tabClases').addEventListener('click', () => switchTab('clases'));
 
 $('#addBtn').addEventListener('click', () => {
   if (activeTab === 'pozos') openModal();
-  else openRetoModal();
+  else if (activeTab === 'retos') openRetoModal();
+  else openClaseModal();
 });
 
 // ---------- Reto modal ----------
@@ -1520,10 +1878,23 @@ $('#retoForm').addEventListener('submit', async (e) => {
   };
   if (editingRetoId) retos = retos.map(r => r.id === editingRetoId ? data : r);
   else retos.push(data);
-  renderRetosStats();
-  renderRetos();
+  renderRetosAll();
   closeRetoModal();
   await syncUp();
+});
+
+// Reto search handlers
+$('#retoSearchInput').addEventListener('input', (e) => {
+  retoSearchQuery = e.target.value.trim();
+  $('#retoSearchClear').hidden = !retoSearchQuery;
+  renderRetosAll();
+});
+$('#retoSearchClear').addEventListener('click', () => {
+  $('#retoSearchInput').value = '';
+  retoSearchQuery = '';
+  $('#retoSearchClear').hidden = true;
+  renderRetosAll();
+  $('#retoSearchInput').focus();
 });
 
 // Click en reto cards (expand / edit / delete)
@@ -1541,7 +1912,7 @@ document.addEventListener('click', async (e) => {
       e.stopPropagation();
       if (confirm('¿Eliminar este reto?')) {
         retos = retos.filter(x => x.id !== action.dataset.id);
-        renderRetosStats(); renderRetos();
+        renderRetosAll();
         await syncUp();
       }
       return;
@@ -1549,6 +1920,406 @@ document.addEventListener('click', async (e) => {
   }
   const retoCard = e.target.closest('.reto-card');
   if (retoCard && !e.target.closest('[data-action]')) retoCard.classList.toggle('expanded');
+}, true);
+
+// ---------- Clases ----------
+const EJERCICIOS = [
+  'Volea derecha',
+  'Volea revés',
+  'Bandeja',
+  'Víbora',
+  'Rulo',
+  'Remate x3',
+  'Smash',
+  'Doble vidrio en defensa',
+  'Saque',
+  'Recepción de saque',
+  'Defensa con vidrio',
+  'Defensa',
+];
+
+function migrateClase(c) {
+  // Remap ejercicios if they were saved with old 13-item array (had 'Remate al vidrio' at index 7)
+  let ejercicios = Array.isArray(c.ejercicios) ? c.ejercicios : [];
+  if (ejercicios.length === 13) {
+    // Old format: remove index 7 (Remate al vidrio)
+    ejercicios = [...ejercicios.slice(0, 7), ...ejercicios.slice(8)];
+  }
+  return {
+    ...c,
+    club: c.club || null,
+    profesor: c.profesor || null,
+    duracion: c.duracion || null,
+    participantes: Array.isArray(c.participantes) ? c.participantes : (c.participantes ? [] : []),
+    calorias: c.calorias || null,
+    costo: c.costo || null,
+    ejercicios,
+    notas: c.notas || null,
+  };
+}
+
+// ---------- Clases search ----------
+let claseSearchQuery = '';
+
+function getClaseSearchTerms() {
+  if (!claseSearchQuery) return [];
+  return claseSearchQuery
+    .split('+')
+    .map(group => group.split('&').map(t => t.trim().toLowerCase()).filter(Boolean))
+    .filter(g => g.length > 0);
+}
+
+function claseSearchText(c) {
+  const parts = [
+    c.club || '', c.profesor || '', c.notas || '', c.fecha || '',
+    String(c.duracion || ''),
+    ...(Array.isArray(c.participantes) ? c.participantes : []),
+    ...(c.ejercicios || []).map((v, i) => v ? EJERCICIOS[i] : ''),
+  ];
+  if (c.fecha) {
+    try {
+      const d = new Date(c.fecha + 'T12:00:00');
+      parts.push(d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' }));
+      parts.push(d.toLocaleDateString('es-CR', { month: 'long' }));
+    } catch (e) {}
+  }
+  return parts.join(' ').toLowerCase();
+}
+
+function matchesClaseSearch(c) {
+  const groups = getClaseSearchTerms();
+  if (!groups.length) return true;
+  const text = claseSearchText(c);
+  return groups.some(andTerms => andTerms.every(term => text.includes(term)));
+}
+
+function getFilteredClases() {
+  const groups = getClaseSearchTerms();
+  if (!groups.length) return clases;
+  return clases.filter(matchesClaseSearch);
+}
+
+// ---------- Clases chart ----------
+let clasesChartMode = 'freq'; // 'freq' | 'timeline'
+
+function renderClasesChart() {
+  const container = $('#clasesChart');
+  const source = getFilteredClases();
+  const sorted = [...source].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
+
+  if (source.length === 0) { container.innerHTML = ''; return; }
+
+  const isTimeline = clasesChartMode === 'timeline';
+
+  const toggleHtml = `
+    <div class="clases-chart-wrap">
+      <div class="chart-header">
+        <h3>Ejercicios</h3>
+        <div class="clases-chart-tabs">
+          <button id="clChartFreq" class="${!isTimeline ? 'active' : ''}">Frecuencia</button>
+          <button id="clChartTime" class="${isTimeline ? 'active' : ''}">Evolución</button>
+        </div>
+      </div>
+      <div id="clChartBody"></div>
+    </div>`;
+  container.innerHTML = toggleHtml;
+
+  $('#clChartFreq').addEventListener('click', () => { clasesChartMode = 'freq'; renderClasesChart(); });
+  $('#clChartTime').addEventListener('click', () => { clasesChartMode = 'timeline'; renderClasesChart(); });
+
+  const body = $('#clChartBody');
+
+  if (!isTimeline) {
+    // ── Barras de frecuencia ──────────────────────────────────────
+    const counts = EJERCICIOS.map((_, i) =>
+      source.filter(c => c.ejercicios && c.ejercicios[i]).length
+    );
+    const max = Math.max(...counts, 1);
+    body.innerHTML = `<div style="padding:4px 0">` +
+      EJERCICIOS.map((ej, i) => `
+        <div class="freq-bar-row">
+          <span class="freq-bar-label" title="${escapeHtml(ej)}">${escapeHtml(ej)}</span>
+          <div class="freq-bar-track">
+            <div class="freq-bar-fill" style="width:${(counts[i]/max*100).toFixed(1)}%"></div>
+          </div>
+          <span class="freq-bar-count">${counts[i]}</span>
+        </div>`).join('') + `</div>`;
+  } else {
+    // ── Evolución temporal (SVG grid) ─────────────────────────────
+    if (sorted.length < 2) {
+      body.innerHTML = `<div class="timeline-empty">Necesitás al menos 2 clases para ver evolución</div>`;
+      return;
+    }
+    const n = sorted.length;
+    const m = EJERCICIOS.length;
+    const cellW = 22, cellH = 18, labelW = 112, padTop = 8, dotR = 5;
+    const W = labelW + n * cellW + 16;
+    const H = padTop + m * cellH + 28;
+
+    // Column headers: short dates
+    const headers = sorted.map(c => {
+      const d = new Date((c.fecha || '') + 'T12:00:00');
+      return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short' });
+    });
+
+    const headerSvg = headers.map((h, ci) => {
+      const x = labelW + ci * cellW + cellW / 2;
+      return `<text x="${x}" y="${padTop - 2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--ink-dim)">${escapeHtml(h)}</text>`;
+    }).join('');
+
+    const rows = EJERCICIOS.map((ej, ri) => {
+      const y = padTop + ri * cellH + cellH / 2;
+      const label = `<text x="${labelW - 6}" y="${y + 1}" text-anchor="end" dominant-baseline="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--ink-muted)">${escapeHtml(ej)}</text>`;
+      const dots = sorted.map((c, ci) => {
+        const x = labelW + ci * cellW + cellW / 2;
+        const done = c.ejercicios && c.ejercicios[ri];
+        return `<circle cx="${x}" cy="${y}" r="${dotR}" fill="${done ? 'var(--court-bright)' : 'var(--surface-3)'}" opacity="${done ? '0.9' : '0.5'}"><title>${escapeHtml(ej)} · ${escapeHtml(fmtDate(c.fecha))}${done ? ' ✓' : ' —'}</title></circle>`;
+      }).join('');
+      // Horizontal separator line
+      const sep = ri < m - 1 ? `<line x1="${labelW}" y1="${padTop + (ri+1)*cellH}" x2="${W}" y2="${padTop + (ri+1)*cellH}" stroke="var(--border)" stroke-width="0.5"/>` : '';
+      return label + dots + sep;
+    }).join('');
+
+    body.innerHTML = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block">
+        ${headerSvg}
+        ${rows}
+      </svg>
+      <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em">
+          <svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="var(--court-bright)" opacity=".9"/></svg>Practicado
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em">
+          <svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="var(--surface-3)" opacity=".5"/></svg>No practicado
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+function renderClasesStats() {
+  const filtered = getFilteredClases();
+  const total = clases.length;
+  const shown = filtered.length;
+  const totalCals = filtered.reduce((s, c) => s + (Number(c.calorias) || 0), 0);
+  const totalCosto = filtered.reduce((s, c) => s + (Number(c.costo) || 0), 0);
+  const totalMin = filtered.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
+  $('#clasesStats').innerHTML = `
+    <div class="stat"><div class="stat-label">Clases</div><div class="stat-value">${shown === total ? total : shown + '<span style="font-size:14px"> / ' + total + '</span>'}</div><div class="stat-extra">registradas</div></div>
+    <div class="stat"><div class="stat-label">Tiempo</div><div class="stat-value">${totalMin ? Math.round(totalMin / 60) + '<span style="font-size:18px">h</span>' : '—'}</div><div class="stat-extra">${totalMin} min</div></div>
+    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${totalCals ? totalCals.toLocaleString() : '—'}</div><div class="stat-extra">kcal</div></div>
+    <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(totalCosto)}</div><div class="stat-extra">acumulado</div></div>
+  `;
+}
+
+function renderClases() {
+  const filtered = getFilteredClases();
+  const total = clases.length;
+  const shown = filtered.length;
+  $('#clasesCount').textContent = claseSearchQuery
+    ? `${shown} de ${total}`
+    : `${total} ${total === 1 ? 'clase' : 'clases'}`;
+
+  const wrap = $('#clasesWrap');
+  if (!total) {
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— vacío —</div><p>Agregá tu primera clase con el botón verde</p></div>`;
+    return;
+  }
+  if (!shown) {
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— sin match —</div><p>Ninguna clase coincide con "${escapeHtml(claseSearchQuery)}"</p></div>`;
+    return;
+  }
+  const sorted = [...filtered].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+  wrap.innerHTML = `<div class="list">${sorted.map(c => {
+    const done = (c.ejercicios || []).filter(Boolean).length;
+    const totalEj = EJERCICIOS.length;
+    const chipsHtml = EJERCICIOS.map((ej, i) => {
+      const checked = c.ejercicios && c.ejercicios[i];
+      return `<span class="ejercicio-chip ${checked ? 'done' : ''}">${escapeHtml(ej)}</span>`;
+    }).join('');
+    return `
+    <div class="clase-card" data-clase-id="${c.id}">
+      <div class="pozo-head">
+        <div>
+          <div class="pozo-meta">${fmtDate(c.fecha)}${c.club ? ' · ' + escapeHtml(c.club) : ''}</div>
+          <div class="pozo-title">${c.profesor ? escapeHtml(c.profesor) : 'Clase'}</div>
+        </div>
+        <button class="pozo-edit-btn" data-action="editClase" data-id="${c.id}" aria-label="Editar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+      </div>
+      <div class="pozo-row" style="margin-top:8px">
+        <span class="chip"><strong>${done}/${totalEj}</strong> ejercicios</span>
+        ${c.participantes && c.participantes.length ? `<span class="chip"><strong>${c.participantes.length}</strong> participantes</span>` : ''}
+        ${c.duracion ? `<span class="chip"><strong>${c.duracion}</strong> min</span>` : ''}
+        ${c.calorias ? `<span class="chip"><strong>${Number(c.calorias).toLocaleString()}</strong> kcal</span>` : ''}
+        ${c.costo ? `<span class="chip gold"><strong>${fmtMoney(c.costo)}</strong></span>` : ''}
+      </div>
+      <div class="clase-detail">
+        <div class="clase-checklist-preview">${chipsHtml}</div>
+        ${c.participantes && c.participantes.length ? `<div style="margin-top:10px"><div class="detail-item"><div class="label" style="font-family:JetBrains Mono,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--ink-dim);margin-bottom:6px">Participantes</div><div style="display:flex;flex-wrap:wrap;gap:4px">${c.participantes.map(n => `<span class="chip">${escapeHtml(n)}</span>`).join('')}</div></div></div>` : ''}
+        ${c.notas ? `<div class="detail-grid" style="margin-top:12px"><div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(c.notas)}</div></div></div>` : ''}
+        <div class="detail-actions" style="margin-top:12px">
+          <button data-action="editClase" data-id="${c.id}">Editar</button>
+          <button class="danger" data-action="deleteClase" data-id="${c.id}">Eliminar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderClasesAll() {
+  renderClasesStats();
+  renderClasesChart();
+  renderClases();
+}
+
+// ---------- Clase modal ----------
+function buildChecklist(ejerciciosGuardados) {
+  const container = $('#claseChecklist');
+  container.innerHTML = '';
+  EJERCICIOS.forEach((ej, i) => {
+    const checked = Array.isArray(ejerciciosGuardados) ? !!ejerciciosGuardados[i] : false;
+    const item = document.createElement('label');
+    item.className = 'checklist-item' + (checked ? ' checked' : '');
+    item.innerHTML = `
+      <input type="checkbox" ${checked ? 'checked' : ''}>
+      <span class="check-box"></span>
+      <span class="check-label">${escapeHtml(ej)}</span>`;
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      item.classList.toggle('checked');
+      const cb = item.querySelector('input[type="checkbox"]');
+      cb.checked = !cb.checked;
+    });
+    container.appendChild(item);
+  });
+}
+
+function getChecklistValues() {
+  return [...document.querySelectorAll('#claseChecklist .checklist-item')].map(i => i.classList.contains('checked'));
+}
+
+function addParticipanteRow(nombre = '') {
+  const container = $('#participantesContainer');
+  const row = document.createElement('div');
+  row.className = 'set-row';
+  const idx = container.children.length + 1;
+  row.innerHTML = `
+    <span class="set-num">#${idx}</span>
+    <input type="text" class="participante-nombre" placeholder="Nombre" value="${escapeHtml(nombre)}" autocomplete="off" style="font-size:14px;font-weight:400;text-align:left;padding:10px 10px">
+    <button type="button" class="set-del" aria-label="Quitar">×</button>`;
+  row.querySelector('.set-del').addEventListener('click', () => {
+    row.remove();
+    reNumberParticipantes();
+  });
+  container.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+function reNumberParticipantes() {
+  [...$('#participantesContainer').children].forEach((row, i) => {
+    row.querySelector('.set-num').textContent = `#${i + 1}`;
+  });
+}
+
+function getParticipantes() {
+  return [...$('#participantesContainer').children]
+    .map(row => row.querySelector('.participante-nombre').value.trim())
+    .filter(Boolean);
+}
+
+function openClaseModal(clase = null) {
+  editingClaseId = clase ? clase.id : null;
+  $('#claseModalTitle').textContent = clase ? 'Editar clase' : 'Nueva clase';
+  $('#claseFecha').value = clase ? clase.fecha : todayISO();
+  $('#claseDuracion').value = clase && clase.duracion ? clase.duracion : '';
+  $('#claseClub').value = clase ? (clase.club || '') : '';
+  $('#claseProfesor').value = clase ? (clase.profesor || '') : '';
+  $('#claseCalorias').value = clase && clase.calorias ? clase.calorias : '';
+  $('#claseCosto').value = clase && clase.costo ? clase.costo : '';
+  $('#claseNotas').value = clase ? (clase.notas || '') : '';
+  // Participantes list
+  $('#participantesContainer').innerHTML = '';
+  (Array.isArray(clase?.participantes) ? clase.participantes : []).forEach(n => addParticipanteRow(n));
+  const clubs = [...new Set([...pozos.map(p => p.club), ...retos.map(r => r.club), ...clases.map(c => c.club)].filter(Boolean))].sort();
+  $('#claseClubList').innerHTML = clubs.map(c => `<option value="${escapeHtml(c)}">`).join('');
+  buildChecklist(clase ? clase.ejercicios : null);
+  $('#claseModalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeClaseModal() {
+  $('#claseModalBg').classList.remove('open');
+  document.body.style.overflow = '';
+  editingClaseId = null;
+}
+
+$('#cancelClaseBtn').addEventListener('click', closeClaseModal);
+$('#closeClaseModal').addEventListener('click', closeClaseModal);
+$('#claseModalBg').addEventListener('click', (e) => { if (e.target === $('#claseModalBg')) closeClaseModal(); });
+$('#addParticipanteBtn').addEventListener('click', () => addParticipanteRow());
+
+$('#claseForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = {
+    id: editingClaseId || uid(),
+    tipo: 'clase',
+    fecha: $('#claseFecha').value,
+    club: $('#claseClub').value.trim() || null,
+    profesor: $('#claseProfesor').value.trim() || null,
+    duracion: $('#claseDuracion').value === '' ? null : Number($('#claseDuracion').value),
+    participantes: getParticipantes(),
+    calorias: $('#claseCalorias').value === '' ? null : Number($('#claseCalorias').value),
+    costo: $('#claseCosto').value === '' ? null : Number($('#claseCosto').value),
+    ejercicios: getChecklistValues(),
+    notas: $('#claseNotas').value.trim() || null,
+    creado: editingClaseId ? (clases.find(c => c.id === editingClaseId)?.creado || new Date().toISOString()) : new Date().toISOString()
+  };
+  if (editingClaseId) clases = clases.map(c => c.id === editingClaseId ? data : c);
+  else clases.push(data);
+  renderClasesAll();
+  closeClaseModal();
+  await syncUp();
+});
+
+// Search handlers
+$('#claseSearchInput').addEventListener('input', (e) => {
+  claseSearchQuery = e.target.value.trim();
+  $('#claseSearchClear').hidden = !claseSearchQuery;
+  renderClasesAll();
+});
+$('#claseSearchClear').addEventListener('click', () => {
+  $('#claseSearchInput').value = '';
+  claseSearchQuery = '';
+  $('#claseSearchClear').hidden = true;
+  renderClasesAll();
+  $('#claseSearchInput').focus();
+});
+
+// Click en clase cards (expand / edit / delete)
+document.addEventListener('click', async (e) => {
+  const action = e.target.closest('[data-action]');
+  if (action) {
+    const act = action.dataset.action;
+    if (act === 'editClase') {
+      e.stopPropagation();
+      const c = clases.find(x => x.id === action.dataset.id);
+      if (c) openClaseModal(c);
+      return;
+    }
+    if (act === 'deleteClase') {
+      e.stopPropagation();
+      if (confirm('¿Eliminar esta clase?')) {
+        clases = clases.filter(x => x.id !== action.dataset.id);
+        renderClasesAll();
+        await syncUp();
+      }
+      return;
+    }
+  }
+  const claseCard = e.target.closest('.clase-card');
+  if (claseCard && !e.target.closest('[data-action]')) claseCard.classList.toggle('expanded');
 }, true);
 
 init();
