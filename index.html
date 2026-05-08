@@ -2620,6 +2620,16 @@ function renderHome() {
     </div>`;
   }).join('') : `<div style="padding:20px;text-align:center;color:var(--ink-dim);font-size:13px">Sin actividad registrada</div>`;
 
+  // ── Metas completadas ──
+  const metasCompletadas = metas.filter(m => {
+    if (m.preKey || m.preBaseKey) {
+      const prog = calcProgresoPredefinida(m.preBaseKey || m.preKey, m.mesObjetivo || null);
+      return prog ? prog.done : false;
+    }
+    return (m.actual >= m.total);
+  }).length;
+  const metasTotal = metas.length;
+
   // ── Metas ──
   const metasHtml = renderMetasInline();
 
@@ -2658,7 +2668,7 @@ function renderHome() {
 
     <div class="dash-section" style="padding-top:12px">
       <div class="dash-section-title">
-        Metas
+        Metas ${metasTotal > 0 ? `<span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:${metasCompletadas === metasTotal && metasTotal > 0 ? 'var(--court-bright)' : 'var(--ink-muted)'};font-weight:400;letter-spacing:0.05em">${metasCompletadas} de ${metasTotal}</span>` : ''}
         <a id="addMetaLink">+ Agregar</a>
       </div>
       ${metasHtml}
