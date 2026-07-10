@@ -1819,16 +1819,11 @@ $('#forgotBtn').addEventListener('click', async () => {
     return;
   }
   try {
-    const methods = await auth.fetchSignInMethodsForEmail(email);
-    if (methods.length === 0) {
-      showToast('No hay ningún usuario asociado a este correo.', 'error', 3500);
-      return;
-    }
     await auth.sendPasswordResetEmail(email);
     showToast('Email de recuperación enviado · revisá tu bandeja y la carpeta de spam', '', 5000);
   } catch (e) {
     const msgs = {
-      'auth/user-not-found': 'No existe una cuenta con ese email.',
+      'auth/user-not-found': 'No hay ningún usuario asociado a este correo.',
       'auth/invalid-email': 'El email no es válido.',
     };
     showToast(msgs[e.code] || 'Error: ' + e.message, 'error', 3500);
