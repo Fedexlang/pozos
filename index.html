@@ -3306,7 +3306,6 @@ document.addEventListener('click', e => {
 
 async function exportPDF() {
   showToast('Generando PDF…');
-  // Load jsPDF from CDN
   if (!window.jspdf) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
@@ -3317,174 +3316,299 @@ async function exportPDF() {
   }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const W = 210, margin = 16;
+  const W = 210, margin = 16, contentW = W - margin * 2;
   let y = 20;
 
   const lh = (n = 1) => { y += n; };
-  const title = (txt, size = 22) => {
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(size);
-    doc.setTextColor(30, 50, 35);
-    doc.text(txt, margin, y);
-    y += size * 0.45;
-    lh(2);
+  const newPageIfNeeded = (needed = 30) => { if (y + needed > 282) { doc.addPage(); y = 20; } };
+  const sectionTitle = (txt) => {
+    newPageIfNeeded(16);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.setTextColor(20, 30, 22);
+    doc.text(txt, margin, y); y += 6;
+    doc.setDrawColor(74, 222, 128); doc.setLineWidth(0.8);
+    doc.line(margin, y, margin + 60, y); doc.setLineWidth(0.2);
+    y += 6;
   };
-  const sub = (txt, color = [90, 101, 94]) => {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...color);
-    doc.text(txt, margin, y);
+  const row2 = (label, val, x = margin, colW = 55) => {
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(80, 100, 85);
+    doc.text(label, x, y);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(20, 30, 22);
+    doc.text(String(val ?? '—'), x + colW, y);
     y += 5;
   };
-  const row = (label, val, indent = 0) => {
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.setTextColor(50, 70, 55);
-    doc.text(label + ':', margin + indent, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(20, 30, 22);
-    doc.text(String(val ?? '—'), margin + indent + 38, y);
-    y += 5;
+  const hr = () => {
+    doc.setDrawColor(220, 232, 222); doc.line(margin, y, W - margin, y); y += 4;
   };
-  const hr = (color = [230, 240, 232]) => {
-    doc.setDrawColor(...color);
-    doc.line(margin, y, W - margin, y);
-    y += 4;
+  const statBox = (label, value, sub, x, bw, color = [74, 222, 128]) => {
+    doc.setFillColor(245, 250, 246);
+    doc.roundedRect(x, y, bw - 2, 20, 2, 2, 'F');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(100, 120, 105);
+    doc.text(label, x + bw / 2 - 1, y + 5, { align: 'center' });
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(...color);
+    doc.text(String(value), x + bw / 2 - 1, y + 13, { align: 'center' });
+    if (sub) { doc.setFont('helvetica', 'normal'); doc.setFontSize(6); doc.setTextColor(120, 140, 125); doc.text(sub, x + bw / 2 - 1, y + 18, { align: 'center' }); }
   };
-  const newPageIfNeeded = (needed = 30) => {
-    if (y + needed > 280) { doc.addPage(); y = 20; }
+  const hBar = (label, value, maxVal, barColor = [74, 222, 128], labelW = 40) => {
+    const barAreaW = contentW - labelW - 20;
+    const filled = maxVal > 0 ? Math.max(2, barAreaW * value / maxVal) : 0;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(50, 70, 55);
+    doc.text(label, margin, y + 3.5);
+    doc.setFillColor(225, 238, 228);
+    doc.roundedRect(margin + labelW, y, barAreaW, 6, 2, 2, 'F');
+    doc.setFillColor(...barColor);
+    if (filled > 0) doc.roundedRect(margin + labelW, y, filled, 6, 2, 2, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(50, 70, 55);
+    doc.text(String(value), margin + labelW + barAreaW + 2, y + 4.5);
+    y += 9;
   };
 
-  // ── Cover ──
+  // ── PORTADA ──
   doc.setFillColor(10, 16, 12);
-  doc.rect(0, 0, W, 50, 'F');
+  doc.rect(0, 0, W, 55, 'F');
   doc.setFillColor(74, 222, 128);
-  doc.rect(0, 0, 5, 50, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(32);
-  doc.setTextColor(240, 244, 237);
-  doc.text('I-PADEL.', 14, 28);
-  doc.setFontSize(10);
-  doc.setTextColor(138, 150, 144);
-  doc.text(`Torneos · Retos · Clases`, 14, 38);
-  doc.setTextColor(90, 101, 94);
-  doc.text(`Exportado ${new Date().toLocaleDateString('es-CR', { day:'2-digit', month:'long', year:'numeric' })}`, W - margin, 38, { align: 'right' });
+  doc.rect(0, 0, 5, 55, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(28); doc.setTextColor(240, 244, 237);
+  doc.text('PLUS', 14, 28);
+  doc.setTextColor(74, 222, 128);
+  doc.text('PADEL', 14 + doc.getTextWidth('PLUS'), 28);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(138, 150, 144);
+  doc.text('Torneos · Retos · Clases', 14, 37);
+  doc.setTextColor(80, 95, 85);
+  doc.text(`Exportado ${new Date().toLocaleDateString('es-MX', { day:'2-digit', month:'long', year:'numeric' })}`, W - margin, 37, { align: 'right' });
   if (nombre) {
-    doc.setTextColor(74, 222, 128);
-    doc.setFontSize(11);
-    doc.text(nombre, W - margin, 28, { align: 'right' });
+    doc.setTextColor(74, 222, 128); doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+    doc.text(nombre, W - margin, 27, { align: 'right' });
   }
-  y = 62;
+  y = 68;
 
-  // ── Resumen ──
-  title('Resumen general', 18);
-  let rv2 = 0, re2 = 0, rd2 = 0;
-  retos.forEach(r => { const res = calcRetoResultado(r.sets); if (res === 'V') rv2++; else if (res === 'D') rd2++; else if (res === 'E') re2++; });
-  const wr2 = (rv2 + re2 + rd2) ? Math.round(rv2 / (rv2 + re2 + rd2) * 100) : 0;
-  const bestPos2 = pozos.length ? Math.min(...pozos.map(p => p.posicion || 999).filter(x => x < 999)) : null;
-  row('Pozos jugados', pozos.length);
-  row('Mejor posición', bestPos2 != null ? bestPos2 : '—');
-  row('Retos jugados', retos.length);
-  row('Win rate retos', `${wr2}%  (${rv2}V · ${re2}E · ${rd2}D)`);
-  row('Clases registradas', clases.length);
-  if (metas.length) row('Metas activas', metas.length);
-  hr(); lh(2);
+  // ── RESUMEN GENERAL ──
+  sectionTitle('Resumen general');
+  const s = calcStats(pozos);
+  const bestPos = pozos.length ? Math.min(...pozos.map(p => p.posicion || 999).filter(x => x < 999)) : null;
+  const top1 = pozos.filter(p => p.posicion === 1).length;
+  const top3 = pozos.filter(p => p.posicion <= 3).length;
+  const top4 = pozos.filter(p => p.posicion <= 4).length;
+  const gananciaNet = s.totalPremio - s.totalCosto;
+  let rv = 0, re = 0, rd = 0;
+  retos.forEach(r => { const res = calcRetoResultado(r.sets); if (res === 'V') rv++; else if (res === 'D') rd++; else if (res === 'E') re++; });
+  const totalCalClases = clases.reduce((s, c) => s + (Number(c.calorias) || 0), 0);
+  const totalMinClases = clases.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
 
-  // ── Pozos ──
+  const bw4 = contentW / 4;
+  statBox('Pozos', pozos.length, 'jugados', margin, bw4);
+  statBox('Mejor pos.', bestPos != null ? `${bestPos}°` : '—', '', margin + bw4, bw4, [45, 134, 89]);
+  statBox('Win rate', `${s.winRate}%`, `${s.v}V · ${s.e}E · ${s.d}D`, margin + bw4 * 2, bw4);
+  statBox('Ganancia', `${gananciaNet >= 0 ? '+' : ''}$${gananciaNet}`, `$${s.totalPremio} ganado`, margin + bw4 * 3, bw4, gananciaNet >= 0 ? [45, 134, 89] : [200, 60, 60]);
+  y += 24; lh(3);
+
+  const bw3 = contentW / 3;
+  statBox('Top 1°', top1, `${pozos.length ? Math.round(top1/pozos.length*100) : 0}% de pozos`, margin, bw3, [45, 134, 89]);
+  statBox('Top 3', top3, `${pozos.length ? Math.round(top3/pozos.length*100) : 0}% de pozos`, margin + bw3, bw3);
+  statBox('Top 4', top4, `${pozos.length ? Math.round(top4/pozos.length*100) : 0}% de pozos`, margin + bw3 * 2, bw3);
+  y += 24; lh(3);
+
+  const bw3b = contentW / 3;
+  statBox('Calorías', s.totalCalorias ? s.totalCalorias.toLocaleString() : '—', 'kcal en pozos', margin, bw3b);
+  statBox('Retos', retos.length, `${rv}V · ${re}E · ${rd}D`, margin + bw3b, bw3b);
+  statBox('Clases', clases.length, totalMinClases ? `${Math.round(totalMinClases/60)}h entrenadas` : '', margin + bw3b * 2, bw3b);
+  y += 24; lh(4);
+
+  // ── ESTADÍSTICAS ──
+  sectionTitle('Estadísticas');
+
+  // Distribución de posiciones
+  if (pozos.length) {
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
+    doc.text('Distribución de posiciones', margin, y); y += 6;
+    const p1 = pozos.filter(p => p.posicion === 1).length;
+    const p23 = pozos.filter(p => p.posicion >= 2 && p.posicion <= 3).length;
+    const p48 = pozos.filter(p => p.posicion >= 4 && p.posicion <= 8).length;
+    const pRest = pozos.filter(p => p.posicion > 8).length;
+    const maxP = Math.max(p1, p23, p48, pRest, 1);
+    hBar('1°', p1, maxP, [74, 222, 128]);
+    hBar('2° - 3°', p23, maxP, [100, 200, 140]);
+    hBar('4° - 8°', p48, maxP, [150, 200, 170]);
+    hBar('9° o más', pRest, maxP, [200, 220, 205]);
+    lh(3);
+
+    // Win rate por categoría
+    const cats = [...new Set(pozos.map(p => p.categoria).filter(Boolean))].sort();
+    if (cats.length > 1) {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
+      doc.text('Win rate por categoría', margin, y); y += 6;
+      cats.forEach(cat => {
+        const catPozos = pozos.filter(p => p.categoria === cat);
+        const cs = calcStats(catPozos);
+        hBar(`${cat} (${catPozos.length})`, `${cs.winRate}%`, 100, [74, 222, 128]);
+      });
+      lh(3);
+    }
+
+    // Finanzas mensuales
+    const meses = {};
+    pozos.forEach(p => {
+      if (!p.fecha) return;
+      const mes = p.fecha.slice(0, 7);
+      if (!meses[mes]) meses[mes] = { premio: 0, costo: 0 };
+      meses[mes].premio += Number(p.premio) || 0;
+      meses[mes].costo += Number(p.costo) || 0;
+    });
+    const mesKeys = Object.keys(meses).sort().slice(-8);
+    if (mesKeys.length > 1) {
+      newPageIfNeeded(mesKeys.length * 9 + 20);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
+      doc.text('Ganancia neta por mes (últimos 8)', margin, y); y += 6;
+      const ganancias = mesKeys.map(m => meses[m].premio - meses[m].costo);
+      const maxG = Math.max(...ganancias.map(Math.abs), 1);
+      mesKeys.forEach((m, i) => {
+        const g = ganancias[i];
+        const label = m.slice(5) + '/' + m.slice(2, 4);
+        hBar(label, `${g >= 0 ? '+' : ''}$${g}`, maxG, g >= 0 ? [74, 222, 128] : [220, 80, 80]);
+      });
+      lh(3);
+    }
+  }
+
+  // ── POZOS ──
   if (pozos.length) {
     newPageIfNeeded(30);
-    title('Pozos', 18);
+    sectionTitle('Pozos');
     const sorted = [...pozos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
-    sorted.forEach((p, i) => {
-      newPageIfNeeded(40);
+    sorted.forEach(p => {
+      const hasFinanzas = p.costo != null || p.premio != null;
+      const cardH = p.notas ? 40 : (hasFinanzas ? 36 : 30);
+      newPageIfNeeded(cardH + 4);
       doc.setFillColor(245, 250, 246);
-      doc.roundedRect(margin, y - 3, W - margin * 2, 32, 3, 3, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(11);
-      doc.setTextColor(20, 30, 22);
-      doc.text(`${p.categoria || 'Pozo'}  ·  ${fmtDate(p.fecha || '')}`, margin + 3, y + 4);
+      doc.roundedRect(margin, y - 3, contentW, cardH, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(20, 30, 22);
+      doc.text(`${p.categoria || ''}  ·  ${fmtDate(p.fecha || '')}`, margin + 3, y + 4);
       if (p.club) {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9);
-        doc.setTextColor(90, 101, 94);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(90, 101, 94);
         doc.text(p.club, margin + 3, y + 10);
       }
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(18);
-      doc.setTextColor(45, 134, 89);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(45, 134, 89);
       doc.text(`${p.posicion}/${p.participantes}`, W - margin - 3, y + 9, { align: 'right' });
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(90, 101, 94);
-      const recLine = `${p.victorias || 0}V  ${p.empates || 0}E  ${p.derrotas || 0}D${p.puntaje != null ? '  ·  ' + p.puntaje + ' pts' : ''}${p.tipo === 'pareja' && p.companero ? '  ·  Con ' + p.companero : ''}`;
+      doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(90, 101, 94);
+      const recLine = `${p.victorias || 0}V  ${p.empates || 0}E  ${p.derrotas || 0}D${p.puntaje != null ? '  ·  ' + p.puntaje + ' pts' : ''}${p.calorias ? '  ·  ' + p.calorias + ' kcal' : ''}${p.tipo === 'pareja' && p.companero ? '  ·  Con ' + p.companero : ''}`;
       doc.text(recLine, margin + 3, y + 18);
-      if (p.notas) {
-        doc.setTextColor(130, 150, 134);
-        doc.text(p.notas.slice(0, 80), margin + 3, y + 24);
+      if (hasFinanzas) {
+        const ganancia = (Number(p.premio) || 0) - (Number(p.costo) || 0);
+        const finLine = `Costo: $${p.costo ?? '—'}  ·  Premio: $${p.premio ?? '—'}  ·  Neto: ${ganancia >= 0 ? '+' : ''}$${ganancia}`;
+        doc.setTextColor(ganancia >= 0 ? 45 : 200, ganancia >= 0 ? 134 : 60, ganancia >= 0 ? 89 : 60);
+        doc.text(finLine, margin + 3, y + 25);
       }
-      y += 38;
+      if (p.notas) {
+        doc.setTextColor(130, 150, 134); doc.setFontSize(7);
+        doc.text(p.notas.slice(0, 90), margin + 3, y + (hasFinanzas ? 33 : 26));
+      }
+      y += cardH + 5;
     });
     lh(2);
   }
 
-  // ── Retos ──
+  // ── RETOS ──
   if (retos.length) {
     newPageIfNeeded(30);
-    title('Retos', 18);
+    sectionTitle('Retos');
     const sortedR = [...retos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
     sortedR.forEach(r => {
-      newPageIfNeeded(36);
+      newPageIfNeeded(38);
       const res = calcRetoResultado(r.sets);
       const rivals = [r.rival1, r.rival2].filter(Boolean).join(' / ');
       const resColor = res === 'V' ? [45, 134, 89] : res === 'D' ? [200, 40, 40] : [180, 120, 0];
       doc.setFillColor(245, 250, 246);
-      doc.roundedRect(margin, y - 3, W - margin * 2, 28, 3, 3, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.setTextColor(20, 30, 22);
+      doc.roundedRect(margin, y - 3, contentW, 32, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(20, 30, 22);
       doc.text(`vs ${rivals || '—'}${r.companero ? '  ·  Con ' + r.companero : ''}`, margin + 3, y + 4);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(90, 101, 94);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(90, 101, 94);
       const sets = (r.sets || []).map(s => `${s.mine}–${s.rival}`).join('  ');
-      doc.text(`${fmtDate(r.fecha || '')}${r.club ? '  ·  ' + r.club : ''}${sets ? '  ·  ' + sets : ''}`, margin + 3, y + 11);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(14);
-      doc.setTextColor(...resColor);
-      doc.text(res || '—', W - margin - 3, y + 8, { align: 'right' });
-      y += 32;
+      doc.text(`${fmtDate(r.fecha || '')}${r.club ? '  ·  ' + r.club : ''}`, margin + 3, y + 11);
+      if (sets) doc.text(sets, margin + 3, y + 18);
+      if (r.notas) { doc.setTextColor(130, 150, 134); doc.text(r.notas.slice(0, 80), margin + 3, y + 25); }
+      if (r.calorias) { doc.setTextColor(90, 101, 94); doc.text(`${r.calorias} kcal`, W - margin - 3, y + 18, { align: 'right' }); }
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(...resColor);
+      doc.text(res || '—', W - margin - 3, y + 9, { align: 'right' });
+      y += 36;
     });
     lh(2);
   }
 
-  // ── Metas ──
+  // ── CLASES ──
+  if (clases.length) {
+    newPageIfNeeded(30);
+    sectionTitle('Clases');
+    const EJERCICIOS_NAMES = ['Volea derecha','Volea revés','Bandeja','Vibora','Rulo','Remate x3','Smash','Doble vidrio def.','Saque','Recepción de saque','Defensa con vidrio','Defensa'];
+    const sortedC = [...clases].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+
+    // Stats de clases
+    const totalCalC = clases.reduce((s, c) => s + (Number(c.calorias) || 0), 0);
+    const totalMinC = clases.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
+    const totalCostoC = clases.reduce((s, c) => s + (Number(c.costo) || 0), 0);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(80, 100, 85);
+    doc.text(`Total: ${clases.length} clases  ·  ${Math.round(totalMinC/60)}h entrenadas  ·  ${totalCalC.toLocaleString()} kcal  ·  Gasto: $${totalCostoC}`, margin, y);
+    y += 8;
+
+    // Ejercicios frecuencia
+    const ejercFreq = EJERCICIOS_NAMES.map((n, i) => ({ n, count: clases.filter(c => c.ejercicios && c.ejercicios[i]).length })).filter(x => x.count > 0).sort((a, b) => b.count - a.count);
+    if (ejercFreq.length) {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
+      doc.text('Ejercicios más practicados', margin, y); y += 6;
+      const maxE = ejercFreq[0].count;
+      ejercFreq.slice(0, 8).forEach(e => hBar(e.n, e.count, maxE, [74, 222, 128], 50));
+      lh(3);
+    }
+
+    sortedC.forEach(c => {
+      newPageIfNeeded(36);
+      const ejercsHechos = (c.ejercicios || []).map((v, i) => v ? EJERCICIOS_NAMES[i] : null).filter(Boolean);
+      const cardH = ejercsHechos.length ? 36 : 28;
+      doc.setFillColor(245, 250, 246);
+      doc.roundedRect(margin, y - 3, contentW, cardH, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(20, 30, 22);
+      doc.text(`${fmtDate(c.fecha || '')}${c.club ? '  ·  ' + c.club : ''}`, margin + 3, y + 4);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(90, 101, 94);
+      const infoLine = [c.profesor ? 'Prof. ' + c.profesor : null, c.duracion ? c.duracion + ' min' : null, c.calorias ? c.calorias + ' kcal' : null, c.costo ? '$' + c.costo : null, ...(c.participantes || []).map(p => p)].filter(Boolean).join('  ·  ');
+      doc.text(infoLine, margin + 3, y + 11);
+      if (ejercsHechos.length) {
+        doc.setFontSize(7); doc.setTextColor(60, 130, 90);
+        const ejercTxt = ejercsHechos.join('  ·  ');
+        const lines = doc.splitTextToSize(ejercTxt, contentW - 6);
+        doc.text(lines[0], margin + 3, y + 19);
+        if (lines[1]) doc.text(lines[1], margin + 3, y + 25);
+      }
+      if (c.notas) { doc.setFontSize(7); doc.setTextColor(130, 150, 134); doc.text(c.notas.slice(0, 80), margin + 3, y + (ejercsHechos.length ? 32 : 20)); }
+      y += cardH + 5;
+    });
+    lh(2);
+  }
+
+  // ── METAS ──
   if (metas.length) {
     newPageIfNeeded(30);
-    title('Metas', 18);
+    sectionTitle('Metas');
     metas.forEach(m => {
-      newPageIfNeeded(24);
+      newPageIfNeeded(26);
       const pct = m.total > 0 ? Math.min(100, Math.round(m.actual / m.total * 100)) : 0;
-      doc.setFillColor(245, 250, 246);
-      doc.roundedRect(margin, y - 3, W - margin * 2, 20, 3, 3, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.setTextColor(20, 30, 22);
-      doc.text(m.desc, margin + 3, y + 4);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(90, 101, 94);
-      doc.text(`${m.actual} / ${m.total}${m.unidad ? ' ' + m.unidad : ''}  ·  ${pct}%${pct >= 100 ? ' ✓' : ''}`, margin + 3, y + 11);
-      // Progress bar
-      const barW = 60;
+      const done = pct >= 100;
+      doc.setFillColor(done ? 240 : 245, done ? 255 : 250, done ? 245 : 246);
+      doc.roundedRect(margin, y - 3, contentW, 22, 3, 3, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+      doc.setTextColor(done ? 45 : 20, done ? 134 : 30, done ? 89 : 22);
+      doc.text(`${done ? '✓ ' : ''}${m.desc}`, margin + 3, y + 4);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(90, 101, 94);
+      doc.text(`${m.actual} / ${m.total}${m.unidad ? ' ' + m.unidad : ''}  ·  ${pct}%`, margin + 3, y + 11);
+      const barW = 70;
       doc.setFillColor(220, 235, 225);
-      doc.roundedRect(W - margin - barW - 3, y + 2, barW, 6, 2, 2, 'F');
+      doc.roundedRect(W - margin - barW - 3, y + 4, barW, 7, 2, 2, 'F');
       doc.setFillColor(74, 222, 128);
-      doc.roundedRect(W - margin - barW - 3, y + 2, Math.max(2, barW * pct / 100), 6, 2, 2, 'F');
-      y += 24;
+      if (pct > 0) doc.roundedRect(W - margin - barW - 3, y + 4, Math.max(3, barW * pct / 100), 7, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(45, 134, 89);
+      doc.text(`${pct}%`, W - margin - 1, y + 9.5, { align: 'right' });
+      y += 26;
     });
   }
 
-  doc.save(`pozos_export_${todayISO()}.pdf`);
+  doc.save(`pluspadel_export_${todayISO()}.pdf`);
   showToast('PDF descargado ✓');
 }
 
