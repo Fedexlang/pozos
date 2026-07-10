@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a100c">
-<title>I-Padel</title>
+<title>PlusPadel</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 100 130' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='5' width='80' height='85' rx='40' fill='%234ade80'/%3E%3Ccircle cx='50' cy='25' r='7' fill='%230a100c'/%3E%3Ccircle cx='32' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='68' cy='42' r='7' fill='%230a100c'/%3E%3Ccircle cx='32' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='68' cy='60' r='7' fill='%230a100c'/%3E%3Ccircle cx='50' cy='77' r='7' fill='%230a100c'/%3E%3Crect x='40' y='88' width='20' height='36' rx='8' fill='%234ade80'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -455,30 +455,52 @@ body { max-width: 720px; margin: 0 auto; }
 <!-- Pantalla de setup (primera vez) -->
 <div class="setup" id="setupScreen" hidden>
   <div class="setup-card">
-    <h1>I-PADEL<span class="accent">.</span></h1>
+    <h1>PLUS<span class="accent">PADEL</span></h1>
     <div class="tagline">Torneos · Retos · Clases</div>
-    <p class="intro">Ingresá tu <strong>Gist ID</strong> para conectar y sincronizar tus datos entre dispositivos.</p>
+    <p class="intro">Creá tu cuenta o ingresá para <strong>sincronizar tus datos</strong> entre dispositivos.</p>
 
     <form id="setupForm">
+      <div class="seg" style="margin-bottom:14px">
+        <input type="radio" name="authMode" id="modeLogin" value="login" checked>
+        <label for="modeLogin">Ingresar</label>
+        <input type="radio" name="authMode" id="modeRegister" value="register">
+        <label for="modeRegister">Registrarse</label>
+      </div>
       <div class="field">
-        <label>Gist ID</label>
-        <input type="text" id="setupGist" class="mono" placeholder="abc123def456…" autocomplete="off" required>
-        <div class="hint">Lo encontrás en la URL de tu Gist, después de tu usuario de GitHub.</div>
+        <label>Email</label>
+        <input type="email" id="setupEmail" placeholder="tu@email.com" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <div style="position:relative">
+          <input type="password" id="setupPassword" placeholder="mínimo 6 caracteres" autocomplete="current-password" required style="width:100%;padding-right:44px">
+          <button type="button" id="togglePassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--ink-muted);cursor:pointer;padding:4px" aria-label="Mostrar contraseña">
+            <svg id="eyeIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="field" id="confirmPasswordField" hidden>
+        <label>Confirmar contraseña</label>
+        <div style="position:relative">
+          <input type="password" id="setupPasswordConfirm" placeholder="repetí la contraseña" autocomplete="new-password" style="width:100%;padding-right:44px">
+          <button type="button" id="togglePasswordConfirm" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--ink-muted);cursor:pointer;padding:4px" aria-label="Mostrar contraseña">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
       </div>
       <div id="setupError" class="setup-error" hidden></div>
       <div class="modal-actions">
-        <button type="submit" class="btn btn-primary" id="setupBtn">Conectar</button>
+        <button type="submit" class="btn btn-primary" id="setupBtn">Ingresar</button>
       </div>
+      <div id="forgotWrap" style="text-align:center;margin-top:10px">
+        <button type="button" id="forgotBtn" style="background:none;border:none;color:var(--ink-muted);font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit">¿Olvidaste tu contraseña?</button>
+      </div>
+      <div class="divider-label">o</div>
+      <button type="button" id="googleBtn" class="btn btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuar con Google
+      </button>
     </form>
-
-    <details class="help">
-      <summary>¿Cómo obtengo mi Gist ID?</summary>
-      <ol>
-        <li>Crear cuenta en <a href="https://github.com" target="_blank" rel="noopener">github.com</a> si no tenés.</li>
-        <li>Ir a <a href="https://gist.github.com" target="_blank" rel="noopener">gist.github.com</a>. Filename: <code>pozos.json</code>. Contenido: <code>[]</code>. Click en "Create secret gist".</li>
-        <li>Copiar el <strong>Gist ID</strong> de la URL — la cadena de letras y números al final, ej: <code>4b3a2c1d…</code></li>
-      </ol>
-    </details>
   </div>
 </div>
 
@@ -486,7 +508,7 @@ body { max-width: 720px; margin: 0 auto; }
 <div class="app-wrap" id="app" hidden>
   <header class="app-bar">
     <div>
-      <h1>I-PADEL<span class="accent">.</span></h1>
+      <h1>PLUS<span class="accent">PADEL</span></h1>
       <span class="sub">Torneos · Retos · Clases</span>
     </div>
     <div class="bar-actions">
@@ -679,8 +701,8 @@ body { max-width: 720px; margin: 0 auto; }
         <div class="hint">Se muestra en los retos como "Juan / compañero vs rival".</div>
       </div>
       <div class="field">
-        <label>Gist ID</label>
-        <input type="text" id="settingsGist" class="mono" autocomplete="off" placeholder="abc123def456…">
+        <label>Cuenta</label>
+        <input type="email" id="settingsEmail" class="mono" readonly style="opacity:0.6;cursor:default">
       </div>
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="settingsCancelBtn">Cancelar</button>
@@ -689,7 +711,8 @@ body { max-width: 720px; margin: 0 auto; }
       <div class="divider-label">Otros</div>
       <div class="modal-actions col">
         <button type="button" class="btn btn-secondary" id="exportBtn">Exportar JSON (backup)</button>
-        <button type="button" class="btn btn-danger" id="disconnectBtn">Desconectar</button>
+        <button type="button" class="btn btn-secondary" id="importBtn">Importar JSON</button>
+        <button type="button" class="btn btn-danger" id="disconnectBtn">Cerrar sesión</button>
       </div>
     </form>
   </div>
@@ -871,24 +894,24 @@ body { max-width: 720px; margin: 0 auto; }
 <script>
 'use strict';
 
-const SETTINGS_KEY = 'pozos_settings_v1';
 const CACHE_KEY = 'pozos_cache_v1';
-const GIST_FILENAME = 'pozos.json';
 
 let pozos = [];
 let retos = [];
 let clases = [];
-let metas = []; // [{ id, desc, actual, total, unidad, creado }]
+let metas = [];
 let nombre = '';
 let editingId = null;
 let editingRetoId = null;
 let editingClaseId = null;
-let activeTab = 'home'; // 'home' | 'pozos' | 'retos' | 'clases'
-let dashMonth = 'last30'; // 'last30' | 'YYYY-MM'
-let settings = null; // { gistId }
+let activeTab = 'home';
+let dashMonth = 'last30';
 let syncing = false;
 let lastSyncedAt = null;
 let lastError = null;
+
+// Firebase refs (set after SDK loads)
+let auth, db;
 
 const $ = (q) => document.querySelector(q);
 
@@ -1232,18 +1255,8 @@ function renderRetos() {
   }).join('')}</div>`;
 }
 
-// ---------- LocalStorage (settings + cache) ----------
-function loadSettings() {
-  try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) { return null; }
-}
-function saveSettingsLocal(s) {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-}
-function clearSettings() {
-  localStorage.removeItem(SETTINGS_KEY);
+// ---------- LocalStorage (cache) ----------
+function clearCache() {
   localStorage.removeItem(CACHE_KEY);
 }
 function loadCache() {
@@ -1259,35 +1272,9 @@ function saveCache(pArr, rArr, cArr, mArr) {
   try { localStorage.setItem(CACHE_KEY, JSON.stringify({ pozos: pArr, retos: rArr, clases: cArr || [], metas: mArr || [] })); } catch (e) {}
 }
 
-// ---------- GitHub Gist API ----------
-const WORKER_URL = 'https://padel.fedexlang.workers.dev';
-
-async function workerFetch(gistId) {
-  const res = await fetch(`${WORKER_URL}/gist/${gistId}`);
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const err = new Error(body.error || `HTTP ${res.status}`);
-    err.status = res.status;
-    throw err;
-  }
-  const body = await res.json();
-  const data = body.data;
-  if (Array.isArray(data)) return { pozos: data, retos: [], clases: [], metas: [], nombre: '' };
-  return { pozos: data?.pozos || [], retos: data?.retos || [], clases: data?.clases || [], metas: data?.metas || [], nombre: data?.nombre || '' };
-}
-
-async function workerUpdate(gistId, pArr, rArr, cArr, mArr, nom) {
-  const res = await fetch(`${WORKER_URL}/gist/${gistId}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: { pozos: pArr, retos: rArr, clases: cArr || [], metas: mArr || [], nombre: nom || '' } })
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const err = new Error(body.error || `HTTP ${res.status}`);
-    err.status = res.status;
-    throw err;
-  }
+// ---------- Firestore helpers ----------
+function userDoc() {
+  return db.collection('users').doc(auth.currentUser.uid);
 }
 
 // ---------- Sync status UI ----------
@@ -1323,15 +1310,18 @@ setInterval(() => {
 
 // ---------- Sync ----------
 async function syncDown() {
-  if (!settings) return;
+  if (!auth.currentUser) return;
   setStatus('syncing');
   try {
-    const remote = await workerFetch(settings.gistId);
-    pozos = remote.pozos.map(migrate);
-    retos = (remote.retos || []).map(migrateReto);
-    clases = (remote.clases || []).map(migrateClase);
-    metas = remote.metas || [];
-    nombre = remote.nombre || '';
+    const snap = await userDoc().get();
+    if (snap.exists) {
+      const data = snap.data();
+      pozos = (data.pozos || []).map(migrate);
+      retos = (data.retos || []).map(migrateReto);
+      clases = (data.clases || []).map(migrateClase);
+      metas = data.metas || [];
+      nombre = data.nombre || '';
+    }
     saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
     lastError = null;
@@ -1339,41 +1329,37 @@ async function syncDown() {
     render();
   } catch (e) {
     lastError = e;
-    handleSyncError(e, 'down');
+    if (!navigator.onLine) {
+      setStatus('offline', 'sin conexión');
+      showToast('Sin conexión · usando datos locales', '', 3000);
+    } else {
+      setStatus('error', e.message || 'falló');
+      showToast('Error al sincronizar · ' + (e.message || ''), 'error', 3500);
+    }
   }
 }
 
 async function syncUp() {
-  if (!settings || syncing) return;
+  if (!auth.currentUser || syncing) return;
   syncing = true;
   setStatus('syncing');
   try {
-    await workerUpdate(settings.gistId, pozos, retos, clases, metas, nombre);
+    await userDoc().set({ pozos, retos, clases, metas, nombre });
     saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
     lastError = null;
     setStatus('synced', timeAgo(lastSyncedAt));
   } catch (e) {
     lastError = e;
-    handleSyncError(e, 'up');
+    if (!navigator.onLine) {
+      setStatus('offline', 'sin conexión');
+      showToast('Sin conexión · cambios guardados localmente', '', 3000);
+    } else {
+      setStatus('error', e.message || 'falló');
+      showToast('Error al guardar · ' + (e.message || ''), 'error', 3500);
+    }
   } finally {
     syncing = false;
-  }
-}
-
-function handleSyncError(e, dir) {
-  if (e.status === 401) {
-    setStatus('error', 'token inválido');
-    showToast('Token inválido o sin permisos · revisá ajustes', 'error', 4000);
-  } else if (e.status === 404) {
-    setStatus('error', 'gist no encontrado');
-    showToast('Gist no encontrado · revisá el ID en ajustes', 'error', 4000);
-  } else if (!navigator.onLine) {
-    setStatus('offline', 'cambios locales sin guardar');
-    showToast('Sin conexión · cambios guardados localmente', '', 3000);
-  } else {
-    setStatus('error', e.message || 'falló');
-    showToast('Error de sincronización · ' + (e.message || ''), 'error', 3500);
   }
 }
 
@@ -1724,75 +1710,157 @@ function togglePartner() { const tipo = document.querySelector('input[name="tipo
 // ---------- Settings modal ----------
 function openSettings() {
   $('#settingsNombre').value = nombre || '';
-  $('#settingsGist').value = settings ? settings.gistId : '';
+  $('#settingsEmail').value = auth.currentUser?.email || '';
   $('#settingsModalBg').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function closeSettings() { $('#settingsModalBg').classList.remove('open'); document.body.style.overflow = ''; }
 
-// ---------- Setup flow ----------
-async function doSetup(gistId) {
+// ---------- Auth flow ----------
+async function doAuth(email, password, isRegister) {
   const errBox = $('#setupError');
   const btn = $('#setupBtn');
   errBox.hidden = true;
   btn.disabled = true;
-  btn.textContent = 'Conectando…';
+  btn.textContent = isRegister ? 'Creando cuenta…' : 'Ingresando…';
   try {
-    const remote = await workerFetch(gistId);
-    settings = { gistId };
-    saveSettingsLocal(settings);
-    pozos = remote.pozos.map(migrate);
-    retos = (remote.retos || []).map(migrateReto);
-    clases = (remote.clases || []).map(migrateClase);
-    metas = remote.metas || [];
-    nombre = remote.nombre || '';
-    saveCache(pozos, retos, clases, metas);
-    lastSyncedAt = new Date();
-    $('#setupScreen').hidden = true;
-    $('#app').hidden = false;
-    setStatus('synced', timeAgo(lastSyncedAt));
-    render();
-    showToast('¡Conectado!');
+    if (isRegister) {
+      const confirm = $('#setupPasswordConfirm').value;
+      if (password !== confirm) {
+        errBox.textContent = 'Las contraseñas no coinciden.';
+        errBox.hidden = false;
+        btn.disabled = false;
+        btn.textContent = 'Crear cuenta';
+        return;
+      }
+      await auth.createUserWithEmailAndPassword(email, password);
+    } else {
+      await auth.signInWithEmailAndPassword(email, password);
+    }
+    // onAuthStateChanged handles the rest
   } catch (e) {
-    let msg;
-    if (e.status === 404) msg = 'Gist no encontrado. Verificá que el ID sea correcto.';
-    else if (!navigator.onLine) msg = 'Sin conexión a internet.';
-    else msg = 'Error: ' + (e.message || 'desconocido');
-    errBox.textContent = msg;
+    const msgs = {
+      'auth/user-not-found': 'No existe una cuenta con ese email.',
+      'auth/wrong-password': 'Contraseña incorrecta.',
+      'auth/email-already-in-use': 'Ya existe una cuenta con ese email.',
+      'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+      'auth/invalid-email': 'El email no es válido.',
+      'auth/invalid-credential': 'Email o contraseña incorrectos.',
+    };
+    errBox.textContent = msgs[e.code] || ('Error: ' + e.message);
     errBox.hidden = false;
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Conectar';
+    const mode = document.querySelector('input[name="authMode"]:checked').value;
+    btn.textContent = mode === 'register' ? 'Crear cuenta' : 'Ingresar';
   }
 }
 
 // ---------- Init ----------
-async function init() {
-  settings = loadSettings();
-  if (!settings) {
-    $('#loadingOverlay').hidden = true;
-    $('#setupScreen').hidden = false;
-    return;
-  }
-  // Mostrar primero datos cacheados, después intentar sync
-  const cached = loadCache();
-  pozos = cached.pozos.map(migrate);
-  retos = cached.retos.map(migrateReto);
-  clases = (cached.clases || []).map(migrateClase);
-  metas = cached.metas || [];
-  $('#loadingOverlay').hidden = true;
-  $('#app').hidden = false;
-  render();
-  if (pozos.length) setStatus('syncing', 'cargando…');
-  await syncDown();
+function init() {
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      $('#loadingOverlay').hidden = true;
+      $('#setupScreen').hidden = true;
+      $('#app').hidden = false;
+      const cached = loadCache();
+      pozos = cached.pozos.map(migrate);
+      retos = cached.retos.map(migrateReto);
+      clases = (cached.clases || []).map(migrateClase);
+      metas = cached.metas || [];
+      render();
+      await syncDown();
+    } else {
+      $('#loadingOverlay').hidden = true;
+      $('#setupScreen').hidden = false;
+      $('#app').hidden = true;
+    }
+  });
 }
 
 // ---------- Event wiring ----------
+$('#googleBtn').addEventListener('click', async () => {
+  const errBox = $('#setupError');
+  errBox.hidden = true;
+  try {
+    const isNative = window.Capacitor && window.Capacitor.isNativePlatform();
+    if (isNative) {
+      // Plugin nativo — funciona en Android sin restricciones de WebView
+      const { FirebaseAuthentication } = window.Capacitor.Plugins;
+      const result = await FirebaseAuthentication.signInWithGoogle();
+      const credential = firebase.auth.GoogleAuthProvider.credential(result.credential?.idToken);
+      await auth.signInWithCredential(credential);
+    } else {
+      // Web — usa popup normal
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(provider);
+    }
+  } catch (e) {
+    if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
+      errBox.textContent = 'Error con Google: ' + (e.message || e.code);
+      errBox.hidden = false;
+    }
+  }
+});
+
+// Mostrar/ocultar contraseña
+function togglePasswordVisibility(inputId, btn) {
+  const input = $(inputId);
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  btn.querySelector('svg').innerHTML = isHidden
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+$('#forgotBtn').addEventListener('click', async () => {
+  const email = $('#setupEmail').value.trim();
+  if (!email) {
+    showToast('Ingresá tu email primero', 'error', 2500);
+    return;
+  }
+  try {
+    const methods = await auth.fetchSignInMethodsForEmail(email);
+    if (methods.length === 0) {
+      showToast('No hay ningún usuario asociado a este correo.', 'error', 3500);
+      return;
+    }
+    await auth.sendPasswordResetEmail(email);
+    showToast('Email de recuperación enviado · revisá tu bandeja y la carpeta de spam', '', 5000);
+  } catch (e) {
+    const msgs = {
+      'auth/user-not-found': 'No existe una cuenta con ese email.',
+      'auth/invalid-email': 'El email no es válido.',
+    };
+    showToast(msgs[e.code] || 'Error: ' + e.message, 'error', 3500);
+  }
+});
+
+// Mostrar "olvidé contraseña" solo en modo ingresar
+document.querySelectorAll('input[name="authMode"]').forEach(r => {
+  r.addEventListener('change', () => {
+    $('#forgotWrap').hidden = r.value === 'register';
+  });
+});
+
+$('#togglePassword').addEventListener('click', () => togglePasswordVisibility('#setupPassword', $('#togglePassword')));
+$('#togglePasswordConfirm').addEventListener('click', () => togglePasswordVisibility('#setupPasswordConfirm', $('#togglePasswordConfirm')));
+
+// Mostrar campo de confirmar contraseña solo al registrarse
+document.querySelectorAll('input[name="authMode"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const isRegister = r.value === 'register';
+    $('#setupBtn').textContent = isRegister ? 'Crear cuenta' : 'Ingresar';
+    $('#confirmPasswordField').hidden = !isRegister;
+    $('#setupPasswordConfirm').required = isRegister;
+  });
+});
+
 $('#setupForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  const gistId = $('#setupGist').value.trim();
-  if (!gistId) return;
-  doSetup(gistId);
+  const email = $('#setupEmail').value.trim();
+  const password = $('#setupPassword').value;
+  const isRegister = document.querySelector('input[name="authMode"]:checked').value === 'register';
+  doAuth(email, password, isRegister);
 });
 
 $('#cancelBtn').addEventListener('click', closeModal);
@@ -1869,46 +1937,63 @@ $('#settingsModalBg').addEventListener('click', (e) => { if (e.target === $('#se
 
 $('#settingsForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const newGist = $('#settingsGist').value.trim() || settings.gistId;
-  const newNombre = $('#settingsNombre').value.trim();
-  try {
-    await workerFetch(newGist);
-    settings = { gistId: newGist };
-    saveSettingsLocal(settings);
-    nombre = newNombre;
-    closeSettings();
-    showToast('Ajustes actualizados');
-    await syncUp();
-    renderRetos();
-  } catch (err) {
-    showToast('Gist no encontrado. Verificá el ID.', 'error', 3500);
-  }
+  nombre = $('#settingsNombre').value.trim();
+  closeSettings();
+  showToast('Ajustes actualizados');
+  await syncUp();
+  renderRetos();
 });
 
-$('#disconnectBtn').addEventListener('click', () => {
-  if (!confirm('¿Desconectar? Se borra el caché de este dispositivo. Los datos del Gist quedan intactos.')) return;
-  clearSettings();
-  settings = null;
-  pozos = [];
+$('#disconnectBtn').addEventListener('click', async () => {
+  if (!confirm('¿Cerrar sesión? Los datos quedan guardados en la nube.')) return;
+  clearCache();
+  pozos = []; retos = []; clases = []; metas = []; nombre = '';
   closeSettings();
-  $('#app').hidden = true;
-  $('#setupScreen').hidden = false;
-  $('#setupGist').value = '';
+  await auth.signOut();
 });
 
 $('#exportBtn').addEventListener('click', () => {
-  if (!pozos.length) { showToast('No hay datos para exportar'); return; }
-  const blob = new Blob([JSON.stringify(pozos, null, 2)], { type: 'application/json' });
+  const allData = { pozos, retos, clases, metas, nombre };
+  const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `pozos_${todayISO()}.json`; a.click();
+  a.href = url; a.download = `ipadel_backup_${todayISO()}.json`; a.click();
   URL.revokeObjectURL(url);
-  showToast('JSON exportado');
+  showToast('Backup exportado');
 });
 
 $('#exportTopBtn').addEventListener('click', () => exportPDF());
 
-window.addEventListener('online', () => { if (settings) syncDown(); });
+$('#importBtn').addEventListener('click', () => $('#fileInput').click());
+
+$('#fileInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    // Soporta formato viejo (array de pozos) y nuevo (objeto completo)
+    if (Array.isArray(parsed)) {
+      pozos = parsed.map(migrate);
+    } else {
+      pozos = (parsed.pozos || []).map(migrate);
+      retos = (parsed.retos || []).map(migrateReto);
+      clases = (parsed.clases || []).map(migrateClase);
+      metas = parsed.metas || [];
+      nombre = parsed.nombre || nombre;
+    }
+    saveCache(pozos, retos, clases, metas);
+    render();
+    closeSettings();
+    showToast(`Importado: ${pozos.length} pozos, ${retos.length} retos, ${clases.length} clases`);
+    await syncUp();
+  } catch (err) {
+    showToast('Error al importar: archivo inválido', 'error', 3500);
+  }
+  e.target.value = '';
+});
+
+window.addEventListener('online', () => { if (auth.currentUser) syncDown(); });
 
 // ---------- Sort event handlers ----------
 $('#sortToggle').addEventListener('click', () => {
@@ -3460,7 +3545,26 @@ self.addEventListener('fetch', e => {
 }
 
 initPWA();
-init();
+</script>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9kTzh6YnfD3NhGz1__9R1qosGzrKi0Ac",
+    authDomain: "ipadel-6e90e.firebaseapp.com",
+    projectId: "ipadel-6e90e",
+    storageBucket: "ipadel-6e90e.firebasestorage.app",
+    messagingSenderId: "297391372660",
+    appId: "1:297391372660:web:b71120bb2d02e329cc1421"
+  };
+  firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.firestore();
+  db.enablePersistence().catch(() => {}); // offline cache
+  init();
 </script>
 </body>
 </html>
