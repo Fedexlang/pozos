@@ -710,7 +710,8 @@ body { max-width: 720px; margin: 0 auto; }
       </div>
       <div class="divider-label">Otros</div>
       <div class="modal-actions col">
-        <button type="button" class="btn btn-secondary" id="exportBtn">Exportar JSON (backup)</button>
+        <button type="button" class="btn btn-secondary" id="exportBtn">Exportar JSON</button>
+        <button type="button" class="btn btn-secondary" id="exportPdfBtn">Exportar PDF</button>
         <button type="button" class="btn btn-secondary" id="importBtn">Importar JSON</button>
         <button type="button" class="btn btn-danger" id="disconnectBtn">Cerrar sesión</button>
       </div>
@@ -1946,6 +1947,8 @@ $('#disconnectBtn').addEventListener('click', async () => {
   closeSettings();
   await auth.signOut();
 });
+
+$('#exportPdfBtn').addEventListener('click', () => { closeSettings(); exportPDF(); });
 
 $('#exportBtn').addEventListener('click', () => {
   const allData = { pozos, retos, clases, metas, nombre };
