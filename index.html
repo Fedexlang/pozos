@@ -3363,10 +3363,19 @@ async function exportPDF() {
   };
 
   // ── PORTADA ──
+  let logoDataUrl = null;
+  try {
+    const resp = await fetch('icon.png');
+    const blob = await resp.blob();
+    logoDataUrl = await new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(blob); });
+  } catch(e) {}
   doc.setFillColor(10, 16, 12);
   doc.rect(0, 0, W, 55, 'F');
   doc.setFillColor(74, 222, 128);
   doc.rect(0, 0, 5, 55, 'F');
+  if (logoDataUrl) {
+    doc.addImage(logoDataUrl, 'PNG', W / 2 - 18, 7, 36, 36);
+  }
   doc.setFont('helvetica', 'bold'); doc.setFontSize(28); doc.setTextColor(240, 244, 237);
   doc.text('PLUS', 14, 28);
   doc.setTextColor(74, 222, 128);
@@ -3388,7 +3397,7 @@ async function exportPDF() {
   const top1 = pozos.filter(p => p.posicion === 1).length;
   const top3 = pozos.filter(p => p.posicion <= 3).length;
   const top4 = pozos.filter(p => p.posicion <= 4).length;
-  const gananciaNet = s.totalPremio - s.totalCosto;
+  const costoNeto = s.totalCosto - s.totalPremio;
   let rv = 0, re = 0, rd = 0;
   retos.forEach(r => { const res = calcRetoResultado(r.sets); if (res === 'V') rv++; else if (res === 'D') rd++; else if (res === 'E') re++; });
   const totalCalClases = clases.reduce((s, c) => s + (Number(c.calorias) || 0), 0);
@@ -3398,7 +3407,7 @@ async function exportPDF() {
   statBox('Pozos', pozos.length, 'jugados', margin, bw4);
   statBox('Mejor pos.', bestPos != null ? `${bestPos}°` : '—', '', margin + bw4, bw4, [45, 134, 89]);
   statBox('Win rate', `${s.winRate}%`, `${s.v}V · ${s.e}E · ${s.d}D`, margin + bw4 * 2, bw4);
-  statBox('Ganancia', `${gananciaNet >= 0 ? '+' : ''}$${gananciaNet}`, `$${s.totalPremio} ganado`, margin + bw4 * 3, bw4, gananciaNet >= 0 ? [45, 134, 89] : [200, 60, 60]);
+  statBox('Costo', costoNeto > 0 ? `$${costoNeto}` : `-$${Math.abs(costoNeto)}`, `$${s.totalPremio} ganado`, margin + bw4 * 3, bw4, costoNeto > 0 ? [200, 60, 60] : [45, 134, 89]);
   y += 24; lh(3);
 
   const bw3 = contentW / 3;
@@ -3457,13 +3466,13 @@ async function exportPDF() {
     if (mesKeys.length > 1) {
       newPageIfNeeded(mesKeys.length * 9 + 20);
       doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
-      doc.text('Ganancia neta por mes (últimos 8)', margin, y); y += 6;
-      const ganancias = mesKeys.map(m => meses[m].premio - meses[m].costo);
+      doc.text('Costo neto por mes (últimos 8)', margin, y); y += 6;
+      const ganancias = mesKeys.map(m => meses[m].costo - meses[m].premio);
       const maxG = Math.max(...ganancias.map(Math.abs), 1);
       mesKeys.forEach((m, i) => {
         const g = ganancias[i];
         const label = m.slice(5) + '/' + m.slice(2, 4);
-        hBar(label, `${g >= 0 ? '+' : ''}$${g}`, maxG, g >= 0 ? [74, 222, 128] : [220, 80, 80]);
+        hBar(label, g > 0 ? `$${g}` : `-$${Math.abs(g)}`, maxG, g > 0 ? [220, 80, 80] : [74, 222, 128]);
       });
       lh(3);
     }
@@ -3492,9 +3501,9 @@ async function exportPDF() {
       const recLine = `${p.victorias || 0}V  ${p.empates || 0}E  ${p.derrotas || 0}D${p.puntaje != null ? '  ·  ' + p.puntaje + ' pts' : ''}${p.calorias ? '  ·  ' + p.calorias + ' kcal' : ''}${p.tipo === 'pareja' && p.companero ? '  ·  Con ' + p.companero : ''}`;
       doc.text(recLine, margin + 3, y + 18);
       if (hasFinanzas) {
-        const ganancia = (Number(p.premio) || 0) - (Number(p.costo) || 0);
-        const finLine = `Costo: $${p.costo ?? '—'}  ·  Premio: $${p.premio ?? '—'}  ·  Neto: ${ganancia >= 0 ? '+' : ''}$${ganancia}`;
-        doc.setTextColor(ganancia >= 0 ? 45 : 200, ganancia >= 0 ? 134 : 60, ganancia >= 0 ? 89 : 60);
+        const costoP = (Number(p.costo) || 0) - (Number(p.premio) || 0);
+        const finLine = `Costo: $${p.costo ?? '—'}  ·  Premio: $${p.premio ?? '—'}  ·  Neto: ${costoP > 0 ? '$' + costoP : '-$' + Math.abs(costoP)}`;
+        doc.setTextColor(costoP > 0 ? 200 : 45, costoP > 0 ? 60 : 134, costoP > 0 ? 60 : 89);
         doc.text(finLine, margin + 3, y + 25);
       }
       if (p.notas) {
