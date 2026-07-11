@@ -3440,6 +3440,59 @@ async function exportPDF() {
     hBar('9° o más', pRest, maxP, [200, 220, 205]);
     lh(3);
 
+    // Posición relativa en el tiempo
+    const datedPct = [...pozos].filter(p => p.fecha && pozoPercentualPos(p) !== null)
+                               .sort((a, b) => a.fecha.localeCompare(b.fecha));
+    if (datedPct.length >= 2) {
+      newPageIfNeeded(72);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
+      doc.text('Posición relativa en el tiempo', margin, y); y += 5;
+      const cLeft = margin + 18; const cRight = margin + contentW;
+      const cTop = y; const cH = 52; const cBottom = y + cH; const cInnerW = cRight - cLeft;
+      doc.setFillColor(248, 252, 249); doc.rect(cLeft, cTop, cInnerW, cH, 'F');
+      const yTicksR = [0, 25, 50, 75, 100];
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(5.5); doc.setTextColor(150, 170, 155);
+      yTicksR.forEach(t => {
+        const cy = cTop + ((100 - t) / 100) * cH;
+        doc.setDrawColor(210, 228, 215); doc.setLineWidth(0.15);
+        doc.line(cLeft, cy, cRight, cy);
+        doc.text(t + '%', cLeft - 1.5, cy + 1, { align: 'right' });
+      });
+      const minDateR = new Date(datedPct[0].fecha + 'T12:00:00').getTime();
+      const maxDateR = new Date(datedPct[datedPct.length - 1].fecha + 'T12:00:00').getTime();
+      const dateRangeR = maxDateR - minDateR || 86400000;
+      const xPosR = (iso) => cLeft + ((new Date(iso + 'T12:00:00').getTime() - minDateR) / dateRangeR) * cInnerW;
+      const yPosR = (pct) => cTop + ((100 - pct) / 100) * cH;
+      doc.setDrawColor(100, 180, 130); doc.setLineWidth(0.4);
+      for (let i = 1; i < datedPct.length; i++) {
+        doc.line(xPosR(datedPct[i - 1].fecha), yPosR(pozoPercentualPos(datedPct[i - 1])),
+                 xPosR(datedPct[i].fecha), yPosR(pozoPercentualPos(datedPct[i])));
+      }
+      datedPct.forEach(p => {
+        const pct = pozoPercentualPos(p);
+        const rgb = p.tipo === 'individual' ? [74, 222, 128] : [251, 191, 36];
+        doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+        const cx = xPosR(p.fecha), cy = yPosR(pct);
+        doc.roundedRect(cx - 1.8, cy - 1.8, 3.6, 3.6, 1.8, 1.8, 'F');
+      });
+      const fmtSh = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('es-CR', { day: '2-digit', month: 'short' });
+      y = cBottom + 2;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(6); doc.setTextColor(120, 140, 125);
+      doc.text(fmtSh(datedPct[0].fecha), cLeft, y + 3, { align: 'left' });
+      doc.text(fmtSh(datedPct[datedPct.length - 1].fecha), cRight, y + 3, { align: 'right' });
+      if (datedPct.length >= 5) {
+        const midPR = datedPct[Math.floor(datedPct.length / 2)];
+        doc.text(fmtSh(midPR.fecha), xPosR(midPR.fecha), y + 3, { align: 'center' });
+      }
+      y += 6;
+      doc.setFontSize(6.5);
+      doc.setFillColor(74, 222, 128); doc.roundedRect(margin + 0.5, y - 1, 3, 3, 1.5, 1.5, 'F');
+      doc.setTextColor(80, 100, 85); doc.text('Individual', margin + 5, y + 1);
+      doc.setFillColor(251, 191, 36); doc.roundedRect(margin + 30.5, y - 1, 3, 3, 1.5, 1.5, 'F');
+      doc.text('Pareja', margin + 35, y + 1);
+      y += 7; lh(2);
+    }
+
     // Win rate por categoría
     const cats = [...new Set(pozos.map(p => p.categoria).filter(Boolean))].sort();
     if (cats.length > 1) {
