@@ -53,7 +53,7 @@ body { max-width: 720px; margin: 0 auto; }
 .app-bar h1 { font-family: 'Bebas Neue', sans-serif; font-size: 42px; letter-spacing: 0.02em; line-height: 0.9; }
 .app-bar h1 .accent { color: var(--court-bright); }
 .app-bar .sub { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-muted); letter-spacing: 0.2em; margin-top: 6px; text-transform: uppercase; }
-.bar-actions { display: flex; gap: 8px; position: relative; z-index: 1; }
+.bar-actions { display: flex; gap: 8px; position: relative; z-index: 1; align-items: center; }
 
 .icon-btn { width: 38px; height: 38px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer; transition: all .2s; flex-shrink: 0; }
 .icon-btn:hover, .icon-btn:active { color: var(--ink); border-color: var(--border-strong); }
@@ -521,8 +521,8 @@ body { max-width: 720px; margin: 0 auto; }
       <button class="icon-btn" id="exportTopBtn" data-i18n-title="exportPDF" title="Exportar PDF">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-        <div style="display:flex;gap:3px">
+      <div style="position:relative">
+        <div style="position:absolute;bottom:calc(100% + 3px);left:50%;transform:translateX(-50%);display:flex;gap:3px;white-space:nowrap">
           <button type="button" class="lang-pill lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
           <button type="button" class="lang-pill lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
         </div>
@@ -719,9 +719,9 @@ body { max-width: 720px; margin: 0 auto; }
       </div>
       <div class="divider-label" data-i18n="labelOtros">Otros</div>
       <div class="modal-actions col">
-        <button type="button" class="btn btn-secondary" id="exportBtn" data-i18n="exportJSON">Exportar JSON</button>
         <button type="button" class="btn btn-secondary" id="exportPdfBtn" data-i18n="exportPDF">Exportar PDF</button>
-        <button type="button" class="btn btn-secondary" id="importBtn" data-i18n="importJSON">Importar JSON</button>
+        <button type="button" class="btn btn-secondary" id="exportBtn" data-i18n="crearBackup">Crear backup</button>
+        <button type="button" class="btn btn-secondary" id="importBtn" data-i18n="importarDatos">Importar datos</button>
         <button type="button" class="btn btn-danger" id="disconnectBtn" data-i18n="cerrarSesion">Cerrar sesión</button>
       </div>
     </form>
@@ -968,7 +968,7 @@ const TRANSLATIONS = {
     claseCard:'Clase', claseNeedMore:'Necesitás al menos 2 clases para ver evolución',
     labelEjercicios:'ejercicios', labelParticipantes:'participantes',
     settingsTitle:'Ajustes', tuNombre:'Tu nombre', nombrePH:'ej: Juan', nombreHint:'Se muestra en los retos como "Juan / compañero vs rival".',
-    labelCuenta:'Cuenta', labelOtros:'Otros', exportJSON:'Exportar JSON', exportPDF:'Exportar PDF', importJSON:'Importar JSON',
+    labelCuenta:'Cuenta', labelOtros:'Otros', crearBackup:'Copia de seguridad', exportPDF:'Exportar PDF', importarDatos:'Importar datos',
     cerrarSesion:'Cerrar sesión', confirmLogout:'¿Cerrar sesión? Los datos quedan guardados en la nube.',
     guardar:'Guardar', cancelar:'Cancelar', settingsUpdated:'Ajustes actualizados', backupExported:'Backup exportado',
     importError:'Error al importar: archivo inválido', labelIdioma:'Idioma',
@@ -1040,7 +1040,7 @@ const TRANSLATIONS = {
     claseCard:'Training', claseNeedMore:'You need at least 2 training sessions to see a timeline',
     labelEjercicios:'exercises', labelParticipantes:'participants',
     settingsTitle:'Settings', tuNombre:'Your name', nombrePH:'e.g. John', nombreHint:'Shown in matches as "John / partner vs rival".',
-    labelCuenta:'Account', labelOtros:'Other', exportJSON:'Export JSON', exportPDF:'Export PDF', importJSON:'Import JSON',
+    labelCuenta:'Account', labelOtros:'Other', crearBackup:'Create backup', exportPDF:'Export PDF', importarDatos:'Import data',
     cerrarSesion:'Log out', confirmLogout:'Log out? Your data is saved in the cloud.',
     guardar:'Save', cancelar:'Cancel', settingsUpdated:'Settings updated', backupExported:'Backup exported',
     importError:'Import error: invalid file', labelIdioma:'Language',
