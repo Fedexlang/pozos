@@ -141,6 +141,9 @@ body { max-width: 720px; margin: 0 auto; }
 /* Sort pills */
 .sort-options { display: flex; flex-wrap: wrap; gap: 6px; }
 .sort-pill { background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-muted); padding: 9px 12px; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all .15s; letter-spacing: 0.02em; }
+.lang-pill { background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-muted); padding: 3px 7px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; cursor: pointer; letter-spacing: 0.08em; transition: all .15s; }
+.lang-pill:hover { color: var(--ink); border-color: var(--border-strong); }
+.lang-pill.active { background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.45); color: var(--court-bright); }
 .sort-pill:hover { color: var(--ink); border-color: var(--border-strong); }
 .sort-pill.active { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.4); color: var(--court-bright); }
 .sort-pill .arrow { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; min-width: 8px; }
@@ -512,13 +515,17 @@ body { max-width: 720px; margin: 0 auto; }
       <span class="sub" data-i18n="tagline">Torneos · Retos · Clases</span>
     </div>
     <div class="bar-actions">
-      <button class="icon-btn" id="refreshBtn" title="Recargar desde Gist" aria-label="Recargar">
+      <div class="lang-toggle" style="display:flex;gap:3px;align-items:center;margin-right:4px">
+        <button type="button" class="lang-pill lang-btn" data-lang="es" onclick="setLang('es')">ES</button>
+        <button type="button" class="lang-pill lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      </div>
+      <button class="icon-btn" id="refreshBtn" data-i18n-title="titleRecargar" title="Recargar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       </button>
-      <button class="icon-btn" id="exportTopBtn" title="Exportar PDF" aria-label="Exportar PDF">
+      <button class="icon-btn" id="exportTopBtn" data-i18n-title="exportPDF" title="Exportar PDF">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
-      <button class="icon-btn" id="settingsBtn" title="Ajustes" aria-label="Ajustes">
+      <button class="icon-btn" id="settingsBtn" data-i18n-title="settingsTitle" title="Ajustes">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
@@ -707,13 +714,6 @@ body { max-width: 720px; margin: 0 auto; }
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="settingsCancelBtn" data-i18n="cancelar">Cancelar</button>
         <button type="submit" class="btn btn-primary" data-i18n="guardar">Guardar</button>
-      </div>
-      <div class="field" style="margin-top:8px">
-        <label data-i18n="labelIdioma">Idioma</label>
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <button type="button" class="btn btn-secondary lang-btn" data-lang="es" onclick="setLang('es')" style="flex:1">🇦🇷 Español</button>
-          <button type="button" class="btn btn-secondary lang-btn" data-lang="en" onclick="setLang('en')" style="flex:1">🇺🇸 English</button>
-        </div>
       </div>
       <div class="divider-label" data-i18n="labelOtros">Otros</div>
       <div class="modal-actions col">
@@ -992,7 +992,7 @@ const TRANSLATIONS = {
     preDesc_top1:'Llegar 1° en un pozo', preDesc_top4x3:'3 veces top 4 en pozos', preDesc_retos3:'Ganar 3 retos consecutivos', preDesc_clases2mes:'2 clases este mes',
     chartPositions:'Posiciones', chartAbsolute:'Absoluta', chartRelative:'% Relativa',
     chartNeed2Pozos:'Necesitás al menos 2 pozos para ver tendencia', chartPosRelTime:'Posición relativa en el tiempo',
-    shareTitle:'Compartir', downloadImg:'Descargar imagen',
+    shareTitle:'Compartir', downloadImg:'Descargar imagen', titleRecargar:'Recargar',
     syncOffline:'Sin conexión · usando datos locales', syncError:'Error al sincronizar · ', syncOfflineSave:'Sin conexión · cambios guardados localmente', syncErrorSave:'Error al guardar · ',
     importedMsg:(p,r,c)=>`Importado: ${p} pozos, ${r} retos, ${c} clases`,
     ejercicios:['Volea derecha','Volea revés','Bandeja','Víbora','Rulo','Remate x3','Smash','Doble vidrio def.','Saque','Recepción de saque','Defensa con vidrio','Defensa'],
@@ -1064,7 +1064,7 @@ const TRANSLATIONS = {
     preDesc_top1:'Reach 1st in a tournament', preDesc_top4x3:'Top 4 three times in tournaments', preDesc_retos3:'Win 3 consecutive matches', preDesc_clases2mes:'2 training sessions this month',
     chartPositions:'Positions', chartAbsolute:'Absolute', chartRelative:'% Relative',
     chartNeed2Pozos:'You need at least 2 tournaments to see a trend', chartPosRelTime:'Relative position over time',
-    shareTitle:'Share', downloadImg:'Download image',
+    shareTitle:'Share', downloadImg:'Download image', titleRecargar:'Reload',
     syncOffline:'Offline · using local data', syncError:'Sync error · ', syncOfflineSave:'Offline · changes saved locally', syncErrorSave:'Save error · ',
     importedMsg:(p,r,c)=>`Imported: ${p} tournaments, ${r} matches, ${c} training sessions`,
     ejercicios:['Forehand volley','Backhand volley','Bandeja','Víbora','Rulo','Smash x3','Smash','Glass defense','Serve','Return of serve','Defense with glass','Defense'],
@@ -1090,6 +1090,7 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-i18n-title]').forEach(el => { el.title = t(el.dataset.i18nTitle); el.setAttribute('aria-label', t(el.dataset.i18nTitle)); });
   document.querySelectorAll('.lang-btn').forEach(btn => { btn.classList.toggle('active', btn.dataset.lang === appLang); });
   const sl = document.querySelector('#sortLabel');
   if (sl && typeof sortBy !== 'undefined') {
