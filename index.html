@@ -449,22 +449,22 @@ body { max-width: 720px; margin: 0 auto; }
 <!-- Loading inicial -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loader"></div>
-  <span>Cargando…</span>
+  <span data-i18n="loading">Cargando…</span>
 </div>
 
 <!-- Pantalla de setup (primera vez) -->
 <div class="setup" id="setupScreen" hidden>
   <div class="setup-card">
     <h1>PLUS<span class="accent">PADEL</span></h1>
-    <div class="tagline">Torneos · Retos · Clases</div>
-    <p class="intro">Creá tu cuenta o ingresá para <strong>sincronizar tus datos</strong> entre dispositivos.</p>
+    <div class="tagline" data-i18n="tagline">Torneos · Retos · Clases</div>
+    <p class="intro" data-i18n-html="setupIntro">Creá tu cuenta o ingresá para <strong>sincronizar tus datos</strong> entre dispositivos.</p>
 
     <form id="setupForm">
       <div class="seg" style="margin-bottom:14px">
         <input type="radio" name="authMode" id="modeLogin" value="login" checked>
-        <label for="modeLogin">Ingresar</label>
+        <label for="modeLogin" data-i18n="authLogin">Ingresar</label>
         <input type="radio" name="authMode" id="modeRegister" value="register">
-        <label for="modeRegister">Registrarse</label>
+        <label for="modeRegister" data-i18n="authRegister">Registrarse</label>
       </div>
       <div class="field">
         <label>Email</label>
@@ -473,7 +473,7 @@ body { max-width: 720px; margin: 0 auto; }
       <div class="field">
         <label>Contraseña</label>
         <div style="position:relative">
-          <input type="password" id="setupPassword" placeholder="mínimo 6 caracteres" autocomplete="current-password" required style="width:100%;padding-right:44px">
+          <input type="password" id="setupPassword" data-i18n-ph="authPwPH" placeholder="mínimo 6 caracteres" autocomplete="current-password" required style="width:100%;padding-right:44px">
           <button type="button" id="togglePassword" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--ink-muted);cursor:pointer;padding:4px" aria-label="Mostrar contraseña">
             <svg id="eyeIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
@@ -482,7 +482,7 @@ body { max-width: 720px; margin: 0 auto; }
       <div class="field" id="confirmPasswordField" hidden>
         <label>Confirmar contraseña</label>
         <div style="position:relative">
-          <input type="password" id="setupPasswordConfirm" placeholder="repetí la contraseña" autocomplete="new-password" style="width:100%;padding-right:44px">
+          <input type="password" id="setupPasswordConfirm" data-i18n-ph="authConfirmPwPH" placeholder="repetí la contraseña" autocomplete="new-password" style="width:100%;padding-right:44px">
           <button type="button" id="togglePasswordConfirm" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--ink-muted);cursor:pointer;padding:4px" aria-label="Mostrar contraseña">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
@@ -490,15 +490,15 @@ body { max-width: 720px; margin: 0 auto; }
       </div>
       <div id="setupError" class="setup-error" hidden></div>
       <div class="modal-actions">
-        <button type="submit" class="btn btn-primary" id="setupBtn">Ingresar</button>
+        <button type="submit" class="btn btn-primary" id="setupBtn" data-i18n="authLogin">Ingresar</button>
       </div>
       <div id="forgotWrap" style="text-align:center;margin-top:10px">
-        <button type="button" id="forgotBtn" style="background:none;border:none;color:var(--ink-muted);font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit">¿Olvidaste tu contraseña?</button>
+        <button type="button" id="forgotBtn" data-i18n="authForgot" style="background:none;border:none;color:var(--ink-muted);font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit">¿Olvidaste tu contraseña?</button>
       </div>
       <div class="divider-label">o</div>
       <button type="button" id="googleBtn" class="btn btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%">
         <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        Continuar con Google
+        <span data-i18n="authGoogle">Continuar con Google</span>
       </button>
     </form>
   </div>
@@ -509,7 +509,7 @@ body { max-width: 720px; margin: 0 auto; }
   <header class="app-bar">
     <div>
       <h1>PLUS<span class="accent">PADEL</span></h1>
-      <span class="sub">Torneos · Retos · Clases</span>
+      <span class="sub" data-i18n="tagline">Torneos · Retos · Clases</span>
     </div>
     <div class="bar-actions">
       <button class="icon-btn" id="refreshBtn" title="Recargar desde Gist" aria-label="Recargar">
@@ -533,19 +533,19 @@ body { max-width: 720px; margin: 0 auto; }
   <div class="tab-bar">
     <button class="tab active" id="tabHome">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Home
+      <span data-i18n="tabHome">Home</span>
     </button>
     <button class="tab" id="tabPozos">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-      Pozos
+      <span data-i18n="tabPozos">Pozos</span>
     </button>
     <button class="tab" id="tabRetos">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg>
-      Retos
+      <span data-i18n="tabRetos">Retos</span>
     </button>
     <button class="tab" id="tabClases">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      Clases
+      <span data-i18n="tabClases">Clases</span>
     </button>
   </div>
 
@@ -560,7 +560,7 @@ body { max-width: 720px; margin: 0 auto; }
   <div class="stats-note" id="statsNote" hidden></div>
 
   <div class="section-title">
-    <h2>Historial</h2>
+    <h2 data-i18n="historial">Historial</h2>
     <button class="filter-toggle" id="sortToggle">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
       <span id="sortLabel">Ordenar</span>
@@ -570,12 +570,12 @@ body { max-width: 720px; margin: 0 auto; }
 
   <div class="filters-panel hidden" id="sortPanel">
     <div class="filter-group">
-      <div class="filter-group-label">Ordenar por</div>
+      <div class="filter-group-label" data-i18n="sort">Ordenar por</div>
       <div class="sort-options">
-        <button type="button" class="sort-pill" data-sort="fecha">Fecha <span class="arrow"></span></button>
-        <button type="button" class="sort-pill" data-sort="posicion">Posición <span class="arrow"></span></button>
-        <button type="button" class="sort-pill" data-sort="puntaje">Puntaje <span class="arrow"></span></button>
-        <button type="button" class="sort-pill" data-sort="winRate">Win rate <span class="arrow"></span></button>
+        <button type="button" class="sort-pill" data-sort="fecha"><span data-i18n="sortFecha">Fecha</span> <span class="arrow"></span></button>
+        <button type="button" class="sort-pill" data-sort="posicion"><span data-i18n="sortPosicion">Posición</span> <span class="arrow"></span></button>
+        <button type="button" class="sort-pill" data-sort="puntaje"><span data-i18n="sortPuntaje">Puntaje</span> <span class="arrow"></span></button>
+        <button type="button" class="sort-pill" data-sort="winRate"><span data-i18n="sortWinRate">Win rate</span> <span class="arrow"></span></button>
       </div>
     </div>
   </div>
@@ -584,7 +584,7 @@ body { max-width: 720px; margin: 0 auto; }
 
   <div class="search-bar" style="margin: 12px 20px;">
     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="searchInput" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
+    <input type="text" id="searchInput" data-i18n-ph="searchPH" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
     <button type="button" class="search-clear" id="searchClear" hidden aria-label="Limpiar">×</button>
   </div>
 
@@ -596,12 +596,12 @@ body { max-width: 720px; margin: 0 auto; }
     <section class="retos-stats" id="retosStats"></section>
     <div id="retosChart"></div>
     <div class="section-title">
-      <h2>Retos</h2>
+      <h2 data-i18n="retosLabel">Retos</h2>
       <span class="count" id="retosCount">0 retos</span>
     </div>
     <div class="search-bar" style="margin: 0 20px 12px;">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="retoSearchInput" placeholder="Buscar… vs Pedro · con Eduardo · + para OR · & para AND" autocomplete="off">
+      <input type="text" id="retoSearchInput" data-i18n-ph="retosSearchPH" placeholder="Buscar… vs Pedro · con Eduardo · + para OR · & para AND" autocomplete="off">
       <button type="button" class="search-clear" id="retoSearchClear" hidden aria-label="Limpiar">×</button>
     </div>
     <div id="retosWrap"></div>
@@ -612,12 +612,12 @@ body { max-width: 720px; margin: 0 auto; }
     <section class="clases-stats" id="clasesStats"></section>
     <div id="clasesChart"></div>
     <div class="section-title">
-      <h2>Clases</h2>
+      <h2 data-i18n="clasesLabel">Clases</h2>
       <span class="count" id="clasesCount">0 clases</span>
     </div>
     <div class="search-bar" style="margin: 0 20px 12px;">
       <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="claseSearchInput" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
+      <input type="text" id="claseSearchInput" data-i18n-ph="clasesSearchPH" placeholder="Buscar… usar + para OR, & para AND" autocomplete="off">
       <button type="button" class="search-clear" id="claseSearchClear" hidden aria-label="Limpiar">×</button>
     </div>
     <div id="clasesWrap"></div>
@@ -640,46 +640,46 @@ body { max-width: 720px; margin: 0 auto; }
     </div>
     <form id="pozoForm">
       <div class="field-row">
-        <div class="field"><label>Fecha</label><input type="date" id="fecha" required></div>
-        <div class="field"><label>Categoría</label><input type="text" id="categoria" placeholder="ej: 5ta, B" required></div>
+        <div class="field"><label data-i18n="fieldFecha">Fecha</label><input type="date" id="fecha" required></div>
+        <div class="field"><label data-i18n="fieldCategoria">Categoría</label><input type="text" id="categoria" data-i18n-ph="fieldCategoriaPH" placeholder="ej: 5ta, B" required></div>
       </div>
-      <div class="field"><label>Club</label><input type="text" id="club" placeholder="opcional" autocomplete="off" list="clubList"><datalist id="clubList"></datalist></div>
+      <div class="field"><label data-i18n="labelClub">Club</label><input type="text" id="club" data-i18n-ph="fieldClubPH" placeholder="opcional" autocomplete="off" list="clubList"><datalist id="clubList"></datalist></div>
       <div class="field">
-        <label>Tipo</label>
+        <label data-i18n="fieldTipo">Tipo</label>
         <div class="seg">
           <input type="radio" name="tipo" id="t-ind" value="individual">
-          <label for="t-ind">Individual</label>
+          <label for="t-ind" data-i18n="fieldIndividual">Individual</label>
           <input type="radio" name="tipo" id="t-par" value="pareja" checked>
-          <label for="t-par">Pareja</label>
+          <label for="t-par" data-i18n="fieldPareja">Pareja</label>
         </div>
       </div>
       <div class="partner-wrap" id="partnerWrap">
-        <div class="field"><label>Compañero</label><input type="text" id="companero" placeholder="Nombre del compañero"></div>
+        <div class="field"><label data-i18n="fieldCompanero">Compañero</label><input type="text" id="companero" data-i18n-ph="fieldCompaneroPH" placeholder="Nombre del compañero"></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Participantes</label><input type="number" id="participantes" min="2" inputmode="numeric" required></div>
-        <div class="field"><label>Posición final</label><input type="number" id="posicion" min="1" inputmode="numeric" required></div>
+        <div class="field"><label data-i18n="fieldParticipantes">Participantes</label><input type="number" id="participantes" min="2" inputmode="numeric" required></div>
+        <div class="field"><label data-i18n="fieldPosicion">Posición final</label><input type="number" id="posicion" min="1" inputmode="numeric" required></div>
       </div>
       <div class="field">
-        <label>Resultados de partidos</label>
+        <label data-i18n="fieldResultados">Resultados de partidos</label>
         <div class="ved-grid">
-          <div class="ved-cell v"><label for="victorias">Victorias</label><input type="number" id="victorias" min="0" value="0" inputmode="numeric"></div>
-          <div class="ved-cell e"><label for="empates">Empates</label><input type="number" id="empates" min="0" value="0" inputmode="numeric"></div>
-          <div class="ved-cell d"><label for="derrotas">Derrotas</label><input type="number" id="derrotas" min="0" value="0" inputmode="numeric"></div>
+          <div class="ved-cell v"><label for="victorias" data-i18n="fieldVictorias">Victorias</label><input type="number" id="victorias" min="0" value="0" inputmode="numeric"></div>
+          <div class="ved-cell e"><label for="empates" data-i18n="fieldEmpates">Empates</label><input type="number" id="empates" min="0" value="0" inputmode="numeric"></div>
+          <div class="ved-cell d"><label for="derrotas" data-i18n="fieldDerrotas">Derrotas</label><input type="number" id="derrotas" min="0" value="0" inputmode="numeric"></div>
         </div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Puntaje</label><input type="number" id="puntaje" step="any" inputmode="decimal" placeholder="opcional"></div>
-        <div class="field"><label>Calorías (kcal)</label><input type="number" id="calorias" min="0" inputmode="numeric" placeholder="opcional"></div>
+        <div class="field"><label data-i18n="fieldPuntaje">Puntaje</label><input type="number" id="puntaje" step="any" inputmode="decimal" placeholder="opcional"></div>
+        <div class="field"><label data-i18n="fieldCalorias">Calorías (kcal)</label><input type="number" id="calorias" min="0" inputmode="numeric" placeholder="opcional"></div>
       </div>
       <div class="field-row">
-        <div class="field"><label>Costo ($)</label><input type="number" id="costo" step="any" min="0" inputmode="decimal" placeholder="0"></div>
-        <div class="field"><label>Premio ($)</label><input type="number" id="premio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+        <div class="field"><label data-i18n="fieldCosto">Costo ($)</label><input type="number" id="costo" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+        <div class="field"><label data-i18n="fieldPremio">Premio ($)</label><input type="number" id="premio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
       </div>
-      <div class="field"><label>Notas</label><textarea id="notas" rows="2" placeholder="Opcional"></textarea></div>
+      <div class="field"><label data-i18n="fieldNotas">Notas</label><textarea id="notas" rows="2" data-i18n-ph="fieldNotasPH" placeholder="Opcional"></textarea></div>
       <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" id="cancelBtn" data-i18n="cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primary" data-i18n="guardar">Guardar</button>
       </div>
     </form>
   </div>
@@ -689,31 +689,38 @@ body { max-width: 720px; margin: 0 auto; }
 <div class="modal-bg" id="settingsModalBg">
   <div class="modal">
     <div class="modal-header">
-      <h3>Ajustes</h3>
+      <h3 data-i18n="settingsTitle">Ajustes</h3>
       <button class="icon-btn" id="closeSettings" aria-label="Cerrar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <form id="settingsForm">
       <div class="field">
-        <label>Tu nombre</label>
-        <input type="text" id="settingsNombre" placeholder="ej: Juan" autocomplete="off">
-        <div class="hint">Se muestra en los retos como "Juan / compañero vs rival".</div>
+        <label data-i18n="tuNombre">Tu nombre</label>
+        <input type="text" id="settingsNombre" data-i18n-ph="nombrePH" placeholder="ej: Juan" autocomplete="off">
+        <div class="hint" data-i18n="nombreHint">Se muestra en los retos como "Juan / compañero vs rival".</div>
       </div>
       <div class="field">
-        <label>Cuenta</label>
+        <label data-i18n="labelCuenta">Cuenta</label>
         <input type="email" id="settingsEmail" class="mono" readonly style="opacity:0.6;cursor:default">
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" id="settingsCancelBtn">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" id="settingsCancelBtn" data-i18n="cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primary" data-i18n="guardar">Guardar</button>
       </div>
-      <div class="divider-label">Otros</div>
+      <div class="field" style="margin-top:8px">
+        <label data-i18n="labelIdioma">Idioma</label>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <button type="button" class="btn btn-secondary lang-btn" data-lang="es" onclick="setLang('es')" style="flex:1">🇦🇷 Español</button>
+          <button type="button" class="btn btn-secondary lang-btn" data-lang="en" onclick="setLang('en')" style="flex:1">🇺🇸 English</button>
+        </div>
+      </div>
+      <div class="divider-label" data-i18n="labelOtros">Otros</div>
       <div class="modal-actions col">
-        <button type="button" class="btn btn-secondary" id="exportBtn">Exportar JSON</button>
-        <button type="button" class="btn btn-secondary" id="exportPdfBtn">Exportar PDF</button>
-        <button type="button" class="btn btn-secondary" id="importBtn">Importar JSON</button>
-        <button type="button" class="btn btn-danger" id="disconnectBtn">Cerrar sesión</button>
+        <button type="button" class="btn btn-secondary" id="exportBtn" data-i18n="exportJSON">Exportar JSON</button>
+        <button type="button" class="btn btn-secondary" id="exportPdfBtn" data-i18n="exportPDF">Exportar PDF</button>
+        <button type="button" class="btn btn-secondary" id="importBtn" data-i18n="importJSON">Importar JSON</button>
+        <button type="button" class="btn btn-danger" id="disconnectBtn" data-i18n="cerrarSesion">Cerrar sesión</button>
       </div>
     </form>
   </div>
@@ -733,27 +740,27 @@ body { max-width: 720px; margin: 0 auto; }
     </div>
     <form id="retoForm">
       <div class="field-row">
-        <div class="field"><label>Fecha</label><input type="date" id="retoFecha" required></div>
-        <div class="field"><label>Club</label><input type="text" id="retoClub" placeholder="opcional" autocomplete="off" list="retoClubList"><datalist id="retoClubList"></datalist></div>
+        <div class="field"><label data-i18n="fieldFecha">Fecha</label><input type="date" id="retoFecha" required></div>
+        <div class="field"><label data-i18n="labelClub">Club</label><input type="text" id="retoClub" data-i18n-ph="fieldClubPH" placeholder="opcional" autocomplete="off" list="retoClubList"><datalist id="retoClubList"></datalist></div>
       </div>
-      <div class="field"><label>Compañero</label><input type="text" id="retoCompanero" placeholder="Nombre del compañero"></div>
+      <div class="field"><label data-i18n="fieldCompanero">Compañero</label><input type="text" id="retoCompanero" data-i18n-ph="fieldCompaneroPH" placeholder="Nombre del compañero"></div>
       <div class="field-row">
-        <div class="field"><label>Rival 1</label><input type="text" id="retoRival1" placeholder="Nombre" required></div>
-        <div class="field"><label>Rival 2</label><input type="text" id="retoRival2" placeholder="Nombre"></div>
+        <div class="field"><label data-i18n="labelRival1">Rival 1</label><input type="text" id="retoRival1" data-i18n-ph="fieldNombrePH" placeholder="Nombre" required></div>
+        <div class="field"><label data-i18n="labelRival2">Rival 2</label><input type="text" id="retoRival2" data-i18n-ph="fieldNombrePH" placeholder="Nombre"></div>
       </div>
       <div class="field">
-        <label>Sets</label>
+        <label data-i18n="fieldSets">Sets</label>
         <div class="sets-form-wrap" id="setsContainer"></div>
-        <button type="button" class="add-set-btn" id="addSetBtn">+ Agregar set</button>
+        <button type="button" class="add-set-btn" id="addSetBtn" data-i18n="addSet">+ Agregar set</button>
       </div>
       <div class="field-row">
-        <div class="field"><label>Calorías (kcal)</label><input type="number" id="retoCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
-        <div class="field"><label>Precio ($)</label><input type="number" id="retoPrecio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+        <div class="field"><label data-i18n="fieldCalorias">Calorías (kcal)</label><input type="number" id="retoCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
+        <div class="field"><label data-i18n="fieldPrecio">Precio ($)</label><input type="number" id="retoPrecio" step="any" min="0" inputmode="decimal" placeholder="0"></div>
       </div>
-      <div class="field"><label>Notas</label><textarea id="retoNotas" rows="2" placeholder="Opcional"></textarea></div>
+      <div class="field"><label data-i18n="fieldNotas">Notas</label><textarea id="retoNotas" rows="2" data-i18n-ph="fieldNotasPH" placeholder="Opcional"></textarea></div>
       <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" id="cancelRetoBtn">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" id="cancelRetoBtn" data-i18n="cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primary" data-i18n="guardar">Guardar</button>
       </div>
     </form>
   </div>
@@ -770,28 +777,28 @@ body { max-width: 720px; margin: 0 auto; }
     </div>
     <form id="claseForm">
       <div class="field-row">
-        <div class="field"><label>Fecha</label><input type="date" id="claseFecha" required></div>
-        <div class="field"><label>Duración (min)</label><input type="number" id="claseDuracion" min="1" inputmode="numeric" placeholder="60"></div>
+        <div class="field"><label data-i18n="fieldFecha">Fecha</label><input type="date" id="claseFecha" required></div>
+        <div class="field"><label data-i18n="fieldDuracion">Duración (min)</label><input type="number" id="claseDuracion" min="1" inputmode="numeric" placeholder="60"></div>
       </div>
-      <div class="field"><label>Club / lugar</label><input type="text" id="claseClub" placeholder="opcional" autocomplete="off" list="claseClubList"><datalist id="claseClubList"></datalist></div>
+      <div class="field"><label data-i18n="fieldClubLugar">Club / lugar</label><input type="text" id="claseClub" data-i18n-ph="fieldClubPH" placeholder="opcional" autocomplete="off" list="claseClubList"><datalist id="claseClubList"></datalist></div>
       <div class="field-row">
-        <div class="field"><label>Profesor / coach</label><input type="text" id="claseProfesor" placeholder="opcional"></div>
-        <div class="field"><label>Calorías (kcal)</label><input type="number" id="claseCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
+        <div class="field"><label data-i18n="fieldProfesor">Profesor / coach</label><input type="text" id="claseProfesor" data-i18n-ph="opcionalPH" placeholder="opcional"></div>
+        <div class="field"><label data-i18n="fieldCalorias">Calorías (kcal)</label><input type="number" id="claseCalorias" min="0" inputmode="numeric" placeholder="opcional"></div>
       </div>
       <div class="field">
-        <label>Participantes</label>
+        <label data-i18n="fieldParticipantes">Participantes</label>
         <div class="sets-form-wrap" id="participantesContainer"></div>
-        <button type="button" class="add-set-btn" id="addParticipanteBtn">+ Agregar participante</button>
+        <button type="button" class="add-set-btn" id="addParticipanteBtn" data-i18n="addParticipante">+ Agregar participante</button>
       </div>
-      <div class="field"><label>Costo ($)</label><input type="number" id="claseCosto" step="any" min="0" inputmode="decimal" placeholder="0"></div>
+      <div class="field"><label data-i18n="fieldCosto">Costo ($)</label><input type="number" id="claseCosto" step="any" min="0" inputmode="decimal" placeholder="0"></div>
       <div class="field">
-        <label>Ejercicios</label>
+        <label data-i18n="fieldEjercicios">Ejercicios</label>
         <div class="checklist-field" id="claseChecklist"></div>
       </div>
-      <div class="field"><label>Notas</label><textarea id="claseNotas" rows="2" placeholder="Opcional"></textarea></div>
+      <div class="field"><label data-i18n="fieldNotas">Notas</label><textarea id="claseNotas" rows="2" data-i18n-ph="fieldNotasPH" placeholder="Opcional"></textarea></div>
       <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" id="cancelClaseBtn">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" id="cancelClaseBtn" data-i18n="cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primary" data-i18n="guardar">Guardar</button>
       </div>
     </form>
   </div>
@@ -801,7 +808,7 @@ body { max-width: 720px; margin: 0 auto; }
 <div class="modal-bg" id="shareModalBg">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="shareModalTitle">Compartir</h3>
+      <h3 id="shareModalTitle" data-i18n="shareTitle">Compartir</h3>
       <button class="icon-btn" id="closeShareModal" aria-label="Cerrar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -810,7 +817,7 @@ body { max-width: 720px; margin: 0 auto; }
       <canvas id="shareCanvas" width="600" height="340"></canvas>
     </div>
     <div class="share-actions">
-      <button class="btn btn-secondary" id="shareDownloadBtn">Descargar imagen</button>
+      <button class="btn btn-secondary" id="shareDownloadBtn" data-i18n="downloadImg">Descargar imagen</button>
       <button class="btn btn-primary" id="shareWhatsappBtn">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right:4px"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.777.463 3.448 1.27 4.9L2 22l5.256-1.249A9.953 9.953 0 0 0 12 22c5.522 0 10-4.477 10-10S17.522 2 12 2z" fill-rule="evenodd" clip-rule="evenodd"/></svg>
         WhatsApp
@@ -823,7 +830,7 @@ body { max-width: 720px; margin: 0 auto; }
 <div class="modal-bg" id="metaModalBg">
   <div class="modal">
     <div class="modal-header">
-      <h3>Nueva meta</h3>
+      <h3 data-i18n="nuevaMeta">Nueva meta</h3>
       <button class="icon-btn" id="closeMetaModal" aria-label="Cerrar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -831,62 +838,62 @@ body { max-width: 720px; margin: 0 auto; }
     <form id="metaForm">
       <!-- Tipo de meta -->
       <div class="field">
-        <label>Tipo de meta</label>
+        <label data-i18n="tipoMeta">Tipo de meta</label>
         <div class="seg" style="grid-template-columns:1fr 1fr">
           <input type="radio" name="metaTipo" id="metaTipoPersonal" value="personal" checked>
-          <label for="metaTipoPersonal">Personalizada</label>
+          <label for="metaTipoPersonal" data-i18n="personalizada">Personalizada</label>
           <input type="radio" name="metaTipo" id="metaTipoPredefinida" value="predefinida">
-          <label for="metaTipoPredefinida">Predefinida</label>
+          <label for="metaTipoPredefinida" data-i18n="predefinida">Predefinida</label>
         </div>
       </div>
 
       <!-- Opciones predefinidas (se muestran solo si tipo = predefinida) -->
       <div class="field" id="metaPredefinidaWrap" hidden>
-        <label>Elegí una meta</label>
+        <label data-i18n="elegirMeta">Elegí una meta</label>
         <select id="metaPredefinidaSelect">
-          <option value="">— Seleccioná —</option>
-          <option value="top1">🏆 Llegar 1° en un pozo</option>
-          <option value="top4x3">🎯 3 veces top 4 en pozos</option>
-          <option value="retos3">⚔️ Ganar 3 retos consecutivos</option>
-          <option value="clases2mes">📚 2 clases en el mes</option>
+          <option value="" data-i18n="selectPH">— Seleccioná —</option>
+          <option value="top1" data-i18n="preTop1">🏆 Llegar 1° en un pozo</option>
+          <option value="top4x3" data-i18n="preTop4x3">🎯 3 veces top 4 en pozos</option>
+          <option value="retos3" data-i18n="preRetos3">⚔️ Ganar 3 retos consecutivos</option>
+          <option value="clases2mes" data-i18n="preClases2mes">📚 2 clases en el mes</option>
         </select>
         <div class="field" style="margin-top:10px;margin-bottom:0">
-          <label>Mes objetivo</label>
+          <label data-i18n="mesObjetivo">Mes objetivo</label>
           <input type="month" id="metaMesObjetivo" placeholder="ej: 2026-05">
-          <div class="hint">El progreso se evalúa solo con actividades de ese mes.</div>
+          <div class="hint" data-i18n="mesHint">El progreso se evalúa solo con actividades de ese mes.</div>
         </div>
       </div>
 
       <!-- Campos personalizados (solo si tipo = personal) -->
       <div id="metaPersonalWrap">
         <div class="field">
-          <label>Descripción</label>
-          <input type="text" id="metaDesc" placeholder="Ej: Llegar top 5 en el próximo pozo" autocomplete="off">
+          <label data-i18n="fieldDesc">Descripción</label>
+          <input type="text" id="metaDesc" data-i18n-ph="fieldDescPH" placeholder="Ej: Llegar top 5 en el próximo pozo" autocomplete="off">
         </div>
         <div class="field-row">
           <div class="field">
-            <label>Progreso actual</label>
+            <label data-i18n="progresoActual">Progreso actual</label>
             <input type="number" id="metaActual" min="0" value="0" inputmode="numeric">
           </div>
           <div class="field">
-            <label>Meta (total)</label>
+            <label data-i18n="metaTotal">Meta (total)</label>
             <input type="number" id="metaTotal" min="1" value="10" inputmode="numeric">
           </div>
         </div>
         <div class="field">
-          <label>Unidad (opcional)</label>
-          <input type="text" id="metaUnidad" placeholder="Ej: retos, pozos, clases…" autocomplete="off">
+          <label data-i18n="fieldUnidad">Unidad (opcional)</label>
+          <input type="text" id="metaUnidad" data-i18n-ph="fieldUnidadPH" placeholder="Ej: retos, pozos, clases…" autocomplete="off">
         </div>
         <div class="field">
-          <label>Fecha límite (opcional)</label>
+          <label data-i18n="fieldFechaLimite">Fecha límite (opcional)</label>
           <input type="date" id="metaFechaLimite">
-          <div class="hint">Si definís una fecha, se muestra cuántos días faltan.</div>
+          <div class="hint" data-i18n="fechaLimiteHint">Si definís una fecha, se muestra cuántos días faltan.</div>
         </div>
       </div>
 
       <div class="modal-actions">
-        <button type="button" class="btn btn-secondary" id="cancelMetaBtn">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Agregar</button>
+        <button type="button" class="btn btn-secondary" id="cancelMetaBtn" data-i18n="cancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primary" data-i18n="agregar">Agregar</button>
       </div>
     </form>
   </div>
@@ -914,13 +921,201 @@ let lastError = null;
 // Firebase refs (set after SDK loads)
 let auth, db;
 
+// ---------- i18n ----------
+let appLang = localStorage.getItem('pp_lang') || 'es';
+
+const TRANSLATIONS = {
+  es: {
+    tagline:'Torneos · Retos · Clases', setupIntro:'Creá tu cuenta o ingresá para <strong>sincronizar tus datos</strong> entre dispositivos.',
+    authLogin:'Ingresar', authRegister:'Registrarse', authCreateAccount:'Crear cuenta', authCreating:'Creando cuenta…', authLogging:'Ingresando…',
+    authForgot:'¿Olvidaste tu contraseña?', authGoogle:'Continuar con Google', authPwPH:'mínimo 6 caracteres', authConfirmPwPH:'repetí la contraseña',
+    authErrNotFound:'No existe una cuenta con ese email.', authErrWrongPw:'Contraseña incorrecta.', authErrEmailInUse:'Ya existe una cuenta con ese email.',
+    authErrWeakPw:'La contraseña debe tener al menos 6 caracteres.', authErrInvalidEmail:'El email no es válido.', authErrInvalidCred:'Email o contraseña incorrectos.',
+    authErrPwMismatch:'Las contraseñas no coinciden.', authErrEmailFirst:'Ingresá tu email primero',
+    authResetSent:'Email de recuperación enviado · revisá tu bandeja y la carpeta de spam', authErrNoUser:'No hay ningún usuario asociado a este correo.',
+    authGoogleError:'Error con Google: ', loading:'Cargando…',
+    tabHome:'Home', tabPozos:'Pozos', tabRetos:'Retos', tabClases:'Clases',
+    fabHome:'Nueva meta', fabPozos:'Nuevo pozo', fabRetos:'Nuevo reto', fabClases:'Nueva clase',
+    statusSynced:'● sincronizado', statusSyncing:'● sincronizando…', statusError:'● error', statusOffline:'● sin conexión',
+    timeRecent:'recién', timeAgoSec:(s)=>`hace ${s}s`, timeAgoMin:(m)=>`hace ${m}m`, timeAgoHour:(h)=>`hace ${h}h`, timeAgoDay:(d)=>`hace ${d}d`,
+    last30:'Últimos 30 días', kpiPozos:'Pozos', kpiRetos:'Retos', kpiClases:'Clases', kpiCalorias:'Calorías', kpiPremios:'Premios', kpiGasto:'Gasto',
+    kpiKcal:'kcal quemadas', kpiInPozos:'en pozos', kpiPeriod:'total del período', kpiTotalSuffix:'total',
+    totalHistoricos:'Totales históricos', gastoTotal:'Gasto total', noPrizes:'sin premios', prizes:'premios',
+    rachaTop4:'Racha top 4', bestRecord:'récord histórico', rachaRetos:'Racha de retos',
+    streakWins:'🟢 victorias consecutivas', streakLosses:'🔴 derrotas consecutivas', streakDraws:'🟡 empates consecutivos',
+    metas:'Metas', addGoal:'+ Agregar', noActivity:'Sin actividad registrada', eventPozo:'Pozo', eventReto:'Reto',
+    historial:'Historial', sort:'Ordenar', sortFecha:'Fecha', sortPosicion:'Posición', sortPuntaje:'Puntaje', sortWinRate:'Win rate',
+    searchPH:'Buscar… usar + para OR, & para AND', emptyPozos:'Agregá tu primer pozo con el botón verde',
+    emptyArt:'— vacío —', noMatchArt:'— sin match —',
+    posChip:'POSICIÓN', labelCosto:'Costo', labelPremio:'Premio', labelPuntaje:'Puntaje', labelPosRel:'Pos. relativa',
+    labelCalorias:'Calorías', labelClub:'Club', labelNotas:'Notas', labelEditar:'Editar', labelCompartir:'Compartir', labelEliminar:'Eliminar',
+    confirmDeletePozo:'¿Eliminar este pozo?', activitiesSuffix:'actividades',
+    statPozos:'Pozos', statPartidos:'partidos', statWinRate:'Win rate', statPremios:'Premios', statGasto:'Gasto', statCalorias:'Calorías',
+    statAcumulado:'acumulado', statKcal:'kcal quemadas',
+    filterShowing:(s,t)=>`↑ mostrando ${s} de ${t} pozos`,
+    retosLabel:'Retos', retosSearchPH:'Buscar… vs Pedro · con Eduardo · + para OR · & para AND',
+    emptyRetos:'Agregá tu primer reto con el botón verde', confirmDeleteReto:'¿Eliminar este reto?',
+    labelCompanero:'Compañero', labelRival1:'Rival 1', labelRival2:'Rival 2', labelPrecio:'Precio',
+    resVictoria:'Victoria', resDerrota:'Derrota', resEmpate:'Empate', sinSets:'Sin sets', statJugados:'jugados',
+    retosChartPartner:'Compañero', retosChartRival:'Rival', retosNeedMore:'Necesitás al menos 2 retos con resultado',
+    retosNoWR:'Sin retos con resultados', wrLabel:'WR acumulado',
+    clasesLabel:'Clases', clasesSearchPH:'Buscar… usar + para OR, & para AND',
+    emptyClases:'Agregá tu primera clase con el botón verde', confirmDeleteClase:'¿Eliminar esta clase?',
+    statTiempo:'Tiempo', statClases:'Clases', statRegistradas:'registradas',
+    ejerciciosLabel:'Ejercicios', frecuencia:'Frecuencia', evolucion:'Evolución', practicado:'Practicado', noPracticado:'No practicado',
+    claseCard:'Clase', claseNeedMore:'Necesitás al menos 2 clases para ver evolución',
+    labelEjercicios:'ejercicios', labelParticipantes:'participantes',
+    settingsTitle:'Ajustes', tuNombre:'Tu nombre', nombrePH:'ej: Juan', nombreHint:'Se muestra en los retos como "Juan / compañero vs rival".',
+    labelCuenta:'Cuenta', labelOtros:'Otros', exportJSON:'Exportar JSON', exportPDF:'Exportar PDF', importJSON:'Importar JSON',
+    cerrarSesion:'Cerrar sesión', confirmLogout:'¿Cerrar sesión? Los datos quedan guardados en la nube.',
+    guardar:'Guardar', cancelar:'Cancelar', settingsUpdated:'Ajustes actualizados', backupExported:'Backup exportado',
+    importError:'Error al importar: archivo inválido', labelIdioma:'Idioma',
+    nuevoPozo:'Nuevo pozo', editarPozo:'Editar pozo', fieldFecha:'Fecha', fieldCategoria:'Categoría', fieldCategoriaPH:'ej: 5ta, B',
+    fieldClubPH:'opcional', fieldTipo:'Tipo', fieldIndividual:'Individual', fieldPareja:'Pareja',
+    fieldCompanero:'Compañero', fieldCompaneroPH:'Nombre del compañero', fieldNombrePH:'Nombre', opcionalPH:'opcional', fieldParticipantes:'Participantes',
+    fieldPosicion:'Posición final', fieldResultados:'Resultados de partidos', fieldVictorias:'Victorias',
+    fieldEmpates:'Empates', fieldDerrotas:'Derrotas', fieldPuntaje:'Puntaje', fieldCalorias:'Calorías (kcal)',
+    fieldCosto:'Costo ($)', fieldPremio:'Premio ($)', fieldNotas:'Notas', fieldNotasPH:'Opcional',
+    nuevoReto:'Nuevo reto', editarReto:'Editar reto', fieldSets:'Sets', addSet:'+ Agregar set', fieldPrecio:'Precio ($)',
+    nuevaClase:'Nueva clase', editarClase:'Editar clase', fieldDuracion:'Duración (min)', fieldClubLugar:'Club / lugar',
+    fieldProfesor:'Profesor / coach', addParticipante:'+ Agregar participante',
+    nuevaMeta:'Nueva meta', tipoMeta:'Tipo de meta', personalizada:'Personalizada', predefinida:'Predefinida',
+    elegirMeta:'Elegí una meta', selectPH:'— Seleccioná —',
+    preTop1:'🏆 Llegar 1° en un pozo', preTop4x3:'🎯 3 veces top 4 en pozos', preRetos3:'⚔️ Ganar 3 retos consecutivos', preClases2mes:'📚 2 clases en el mes',
+    mesObjetivo:'Mes objetivo', mesHint:'El progreso se evalúa solo con actividades de ese mes.',
+    fieldDesc:'Descripción', fieldDescPH:'Ej: Llegar top 5 en el próximo pozo', progresoActual:'Progreso actual', metaTotal:'Meta (total)',
+    fieldUnidad:'Unidad (opcional)', fieldUnidadPH:'Ej: retos, pozos, clases…', fieldFechaLimite:'Fecha límite (opcional)',
+    fechaLimiteHint:'Si definís una fecha, se muestra cuántos días faltan.',
+    agregar:'Agregar', confirmDeleteMeta:'¿Eliminar esta meta?', noPresetSelected:'Elegí una meta predefinida',
+    metaAlreadyExists:'Ya tenés esa meta para ese mes', firstMeta:'+ Definí tu primera meta', addMetaExtra:'+ Agregar meta',
+    deadlineExpired:(d)=>`vencida hace ${d}d`, deadlineToday:'vence hoy', deadlineDays:(d)=>`${d}d restantes`,
+    preDesc_top1:'Llegar 1° en un pozo', preDesc_top4x3:'3 veces top 4 en pozos', preDesc_retos3:'Ganar 3 retos consecutivos', preDesc_clases2mes:'2 clases este mes',
+    chartPositions:'Posiciones', chartAbsolute:'Absoluta', chartRelative:'% Relativa',
+    chartNeed2Pozos:'Necesitás al menos 2 pozos para ver tendencia', chartPosRelTime:'Posición relativa en el tiempo',
+    shareTitle:'Compartir', downloadImg:'Descargar imagen',
+    syncOffline:'Sin conexión · usando datos locales', syncError:'Error al sincronizar · ', syncOfflineSave:'Sin conexión · cambios guardados localmente', syncErrorSave:'Error al guardar · ',
+    importedMsg:(p,r,c)=>`Importado: ${p} pozos, ${r} retos, ${c} clases`,
+    ejercicios:['Volea derecha','Volea revés','Bandeja','Víbora','Rulo','Remate x3','Smash','Doble vidrio def.','Saque','Recepción de saque','Defensa con vidrio','Defensa'],
+  },
+  en: {
+    tagline:'Tournaments · Matches · Training', setupIntro:'Create an account or log in to <strong>sync your data</strong> across devices.',
+    authLogin:'Log in', authRegister:'Sign up', authCreateAccount:'Create account', authCreating:'Creating account…', authLogging:'Logging in…',
+    authForgot:'Forgot your password?', authGoogle:'Continue with Google', authPwPH:'at least 6 characters', authConfirmPwPH:'repeat password',
+    authErrNotFound:'No account found with that email.', authErrWrongPw:'Wrong password.', authErrEmailInUse:'An account already exists with that email.',
+    authErrWeakPw:'Password must be at least 6 characters.', authErrInvalidEmail:'Email is not valid.', authErrInvalidCred:'Incorrect email or password.',
+    authErrPwMismatch:'Passwords do not match.', authErrEmailFirst:'Enter your email first',
+    authResetSent:'Recovery email sent · check your inbox and spam folder', authErrNoUser:'No user associated with this email.',
+    authGoogleError:'Google error: ', loading:'Loading…',
+    tabHome:'Home', tabPozos:'Tournaments', tabRetos:'Matches', tabClases:'Training',
+    fabHome:'New goal', fabPozos:'New tournament', fabRetos:'New match', fabClases:'New training',
+    statusSynced:'● synced', statusSyncing:'● syncing…', statusError:'● error', statusOffline:'● offline',
+    timeRecent:'just now', timeAgoSec:(s)=>`${s}s ago`, timeAgoMin:(m)=>`${m}m ago`, timeAgoHour:(h)=>`${h}h ago`, timeAgoDay:(d)=>`${d}d ago`,
+    last30:'Last 30 days', kpiPozos:'Tournaments', kpiRetos:'Matches', kpiClases:'Training', kpiCalorias:'Calories', kpiPremios:'Prizes', kpiGasto:'Spending',
+    kpiKcal:'kcal burned', kpiInPozos:'in tournaments', kpiPeriod:'total in period', kpiTotalSuffix:'total',
+    totalHistoricos:'All-time totals', gastoTotal:'Total spending', noPrizes:'no prizes', prizes:'prizes',
+    rachaTop4:'Top 4 streak', bestRecord:'all-time record', rachaRetos:'Match streak',
+    streakWins:'🟢 consecutive wins', streakLosses:'🔴 consecutive losses', streakDraws:'🟡 consecutive draws',
+    metas:'Goals', addGoal:'+ Add', noActivity:'No activity recorded', eventPozo:'Tournament', eventReto:'Match',
+    historial:'History', sort:'Sort', sortFecha:'Date', sortPosicion:'Position', sortPuntaje:'Score', sortWinRate:'Win rate',
+    searchPH:'Search… use + for OR, & for AND', emptyPozos:'Add your first tournament with the green button',
+    emptyArt:'— empty —', noMatchArt:'— no match —',
+    posChip:'POSITION', labelCosto:'Cost', labelPremio:'Prize', labelPuntaje:'Score', labelPosRel:'Rel. position',
+    labelCalorias:'Calories', labelClub:'Club', labelNotas:'Notes', labelEditar:'Edit', labelCompartir:'Share', labelEliminar:'Delete',
+    confirmDeletePozo:'Delete this tournament?', activitiesSuffix:'activities',
+    statPozos:'Tournaments', statPartidos:'matches played', statWinRate:'Win rate', statPremios:'Prizes', statGasto:'Spending', statCalorias:'Calories',
+    statAcumulado:'accumulated', statKcal:'kcal burned',
+    filterShowing:(s,t)=>`↑ showing ${s} of ${t} tournaments`,
+    retosLabel:'Matches', retosSearchPH:'Search… vs Pedro · with Eduardo · + for OR · & for AND',
+    emptyRetos:'Add your first match with the green button', confirmDeleteReto:'Delete this match?',
+    labelCompanero:'Partner', labelRival1:'Rival 1', labelRival2:'Rival 2', labelPrecio:'Price',
+    resVictoria:'Win', resDerrota:'Loss', resEmpate:'Draw', sinSets:'No sets', statJugados:'played',
+    retosChartPartner:'Partner', retosChartRival:'Rival', retosNeedMore:'You need at least 2 matches with a result',
+    retosNoWR:'No matches with results', wrLabel:'Running WR',
+    clasesLabel:'Training', clasesSearchPH:'Search… use + for OR, & for AND',
+    emptyClases:'Add your first training session with the green button', confirmDeleteClase:'Delete this training session?',
+    statTiempo:'Time', statClases:'Training', statRegistradas:'sessions',
+    ejerciciosLabel:'Exercises', frecuencia:'Frequency', evolucion:'Timeline', practicado:'Practiced', noPracticado:'Not practiced',
+    claseCard:'Training', claseNeedMore:'You need at least 2 training sessions to see a timeline',
+    labelEjercicios:'exercises', labelParticipantes:'participants',
+    settingsTitle:'Settings', tuNombre:'Your name', nombrePH:'e.g. John', nombreHint:'Shown in matches as "John / partner vs rival".',
+    labelCuenta:'Account', labelOtros:'Other', exportJSON:'Export JSON', exportPDF:'Export PDF', importJSON:'Import JSON',
+    cerrarSesion:'Log out', confirmLogout:'Log out? Your data is saved in the cloud.',
+    guardar:'Save', cancelar:'Cancel', settingsUpdated:'Settings updated', backupExported:'Backup exported',
+    importError:'Import error: invalid file', labelIdioma:'Language',
+    nuevoPozo:'New tournament', editarPozo:'Edit tournament', fieldFecha:'Date', fieldCategoria:'Category', fieldCategoriaPH:'e.g. B, C',
+    fieldClubPH:'optional', fieldTipo:'Type', fieldIndividual:'Individual', fieldPareja:'Doubles',
+    fieldCompanero:'Partner', fieldCompaneroPH:'Partner name', fieldNombrePH:'Name', opcionalPH:'optional', fieldParticipantes:'Participants',
+    fieldPosicion:'Final position', fieldResultados:'Match results', fieldVictorias:'Wins',
+    fieldEmpates:'Draws', fieldDerrotas:'Losses', fieldPuntaje:'Score', fieldCalorias:'Calories (kcal)',
+    fieldCosto:'Cost ($)', fieldPremio:'Prize ($)', fieldNotas:'Notes', fieldNotasPH:'Optional',
+    nuevoReto:'New match', editarReto:'Edit match', fieldSets:'Sets', addSet:'+ Add set', fieldPrecio:'Price ($)',
+    nuevaClase:'New training', editarClase:'Edit training', fieldDuracion:'Duration (min)', fieldClubLugar:'Club / venue',
+    fieldProfesor:'Coach / instructor', addParticipante:'+ Add participant',
+    nuevaMeta:'New goal', tipoMeta:'Goal type', personalizada:'Custom', predefinida:'Preset',
+    elegirMeta:'Choose a goal', selectPH:'— Select —',
+    preTop1:'🏆 Reach 1st in a tournament', preTop4x3:'🎯 Top 4 three times in tournaments', preRetos3:'⚔️ Win 3 consecutive matches', preClases2mes:'📚 2 training sessions in the month',
+    mesObjetivo:'Target month', mesHint:'Progress is evaluated only with activities from that month.',
+    fieldDesc:'Description', fieldDescPH:'E.g. Reach top 5 in the next tournament', progresoActual:'Current progress', metaTotal:'Goal (total)',
+    fieldUnidad:'Unit (optional)', fieldUnidadPH:'E.g. matches, tournaments, sessions…', fieldFechaLimite:'Deadline (optional)',
+    fechaLimiteHint:'If you set a date, days remaining will be shown.',
+    agregar:'Add', confirmDeleteMeta:'Delete this goal?', noPresetSelected:'Choose a preset goal',
+    metaAlreadyExists:'You already have that goal for that month', firstMeta:'+ Set your first goal', addMetaExtra:'+ Add goal',
+    deadlineExpired:(d)=>`expired ${d}d ago`, deadlineToday:'due today', deadlineDays:(d)=>`${d}d left`,
+    preDesc_top1:'Reach 1st in a tournament', preDesc_top4x3:'Top 4 three times in tournaments', preDesc_retos3:'Win 3 consecutive matches', preDesc_clases2mes:'2 training sessions this month',
+    chartPositions:'Positions', chartAbsolute:'Absolute', chartRelative:'% Relative',
+    chartNeed2Pozos:'You need at least 2 tournaments to see a trend', chartPosRelTime:'Relative position over time',
+    shareTitle:'Share', downloadImg:'Download image',
+    syncOffline:'Offline · using local data', syncError:'Sync error · ', syncOfflineSave:'Offline · changes saved locally', syncErrorSave:'Save error · ',
+    importedMsg:(p,r,c)=>`Imported: ${p} tournaments, ${r} matches, ${c} training sessions`,
+    ejercicios:['Forehand volley','Backhand volley','Bandeja','Víbora','Rulo','Smash x3','Smash','Glass defense','Serve','Return of serve','Defense with glass','Defense'],
+  }
+};
+
+const t = (key, ...args) => {
+  const lang = TRANSLATIONS[appLang] || TRANSLATIONS.es;
+  const val = lang[key] ?? TRANSLATIONS.es[key] ?? key;
+  return typeof val === 'function' ? val(...args) : val;
+};
+
+function getEJ() { return t('ejercicios'); }
+
+function setLang(lang) {
+  appLang = lang;
+  localStorage.setItem('pp_lang', lang);
+  applyLang();
+  render();
+}
+
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  document.querySelectorAll('.lang-btn').forEach(btn => { btn.classList.toggle('active', btn.dataset.lang === appLang); });
+  const sl = document.querySelector('#sortLabel');
+  if (sl && typeof sortBy !== 'undefined') {
+    const SL = { fecha:t('sortFecha'), posicion:t('sortPosicion'), puntaje:t('sortPuntaje'), winRate:t('sortWinRate') };
+    sl.textContent = `${SL[sortBy.field]} ${sortBy.dir === 'asc' ? '↑' : '↓'}`;
+  }
+  // Auth screen dynamic text
+  const setupBtn = document.querySelector('#setupBtn');
+  if (setupBtn) {
+    const mode = document.querySelector('input[name="authMode"]:checked')?.value;
+    setupBtn.textContent = mode === 'register' ? t('authCreateAccount') : t('authLogin');
+  }
+  // Fab label
+  if (typeof activeTab !== 'undefined') {
+    const fl = document.querySelector('#fabLabel');
+    if (fl) fl.textContent = t({ home:'fabHome', pozos:'fabPozos', retos:'fabRetos', clases:'fabClases' }[activeTab] || 'fabHome');
+  }
+}
+
 const $ = (q) => document.querySelector(q);
 
 // ---------- Helpers ----------
 const todayISO = () => { const d = new Date(); const tz = d.getTimezoneOffset() * 60000; return new Date(d - tz).toISOString().split('T')[0]; };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 const fmtMoney = (n) => (n === null || n === undefined || n === '' || isNaN(n)) ? '—' : '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
-const fmtDate = (iso) => { if (!iso) return ''; const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' }); };
+const fmtDate = (iso) => { if (!iso) return ''; const d = new Date(iso + 'T12:00:00'); return d.toLocaleDateString(appLang === 'en' ? 'en-US' : 'es-CR', { day: '2-digit', month: 'short', year: 'numeric' }); };
 const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function showToast(msg, type = '', ms = 2500) {
@@ -1025,10 +1220,10 @@ function renderRetosChart() {
   container.innerHTML = `
     <div class="retos-chart-wrap">
       <div class="chart-header">
-        <h3>Estadísticas</h3>
+        <h3>${t('retosLabel')}</h3>
         <div class="clases-chart-tabs">
-          <button id="rtChartWR" class="${!isTimeline ? 'active' : ''}">Win rate</button>
-          <button id="rtChartTL" class="${isTimeline ? 'active' : ''}">Evolución</button>
+          <button id="rtChartWR" class="${!isTimeline ? 'active' : ''}">${t('sortWinRate')}</button>
+          <button id="rtChartTL" class="${isTimeline ? 'active' : ''}">${t('evolucion')}</button>
         </div>
       </div>
       <div id="rtChartBody"></div>
@@ -1069,7 +1264,7 @@ function renderRetosChart() {
     }).sort((a, b) => (b.conTotal + b.vsTotal) - (a.conTotal + a.vsTotal));
 
     if (!entries.length) {
-      body.innerHTML = `<div class="timeline-empty">Sin retos con resultados</div>`;
+      body.innerHTML = `<div class="timeline-empty">${t('retosNoWR')}</div>`;
       return;
     }
 
@@ -1101,8 +1296,8 @@ function renderRetosChart() {
       return rows.join('');
     }).join('') + `
       <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em"><span class="reto-person-role con" style="font-size:8px">con</span>Compañero</div>
-        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em"><span class="reto-person-role vs" style="font-size:8px">vs</span>Rival</div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em"><span class="reto-person-role con" style="font-size:8px">con</span>${t('retosChartPartner')}</div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em"><span class="reto-person-role vs" style="font-size:8px">vs</span>${t('retosChartRival')}</div>
       </div>`;
 
   } else {
@@ -1110,7 +1305,7 @@ function renderRetosChart() {
     const sorted = [...source].sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
     const withResult = sorted.filter(r => calcRetoResultado(r.sets));
     if (withResult.length < 2) {
-      body.innerHTML = `<div class="timeline-empty">Necesitás al menos 2 retos con resultado</div>`;
+      body.innerHTML = `<div class="timeline-empty">${t('retosNeedMore')}</div>`;
       return;
     }
     const n = withResult.length;
@@ -1149,12 +1344,12 @@ function renderRetosChart() {
         ${dots}
       </svg>
       <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap">
-        ${[['var(--court-bright)','Victoria'],['var(--amber)','Empate'],['var(--crimson)','Derrota']].map(([c,l])=>`
+        ${[[`var(--court-bright)`,t('resVictoria')],[`var(--amber)`,t('resEmpate')],[`var(--crimson)`,t('resDerrota')]].map(([c,l])=>`
         <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em">
           <svg width="10" height="10"><circle cx="5" cy="5" r="4" fill="${c}" opacity=".9"/></svg>${l}
         </div>`).join('')}
         <div style="display:flex;align-items:center;gap:5px;font-family:JetBrains Mono,monospace;font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em">
-          <svg width="18" height="6"><line x1="0" y1="3" x2="18" y2="3" stroke="var(--court-bright)" stroke-width="1.5" stroke-dasharray="3 2" opacity=".4"/></svg>WR acumulado
+          <svg width="18" height="6"><line x1="0" y1="3" x2="18" y2="3" stroke="var(--court-bright)" stroke-width="1.5" stroke-dasharray="3 2" opacity=".4"/></svg>${t('wrLabel')}
         </div>
       </div>
     </div>`;
@@ -1176,10 +1371,10 @@ function renderRetosStats() {
   const wr = partidos ? Math.round(v / partidos * 100) : 0;
   const shown = filtered.length;
   $('#retosStats').innerHTML = `
-    <div class="stat"><div class="stat-label">Retos</div><div class="stat-value">${shown === total ? total : shown + '<span style="font-size:14px"> / ' + total + '</span>'}</div><div class="stat-extra">${partidos} jugados</div></div>
-    <div class="stat"><div class="stat-label">Win rate</div><div class="stat-value green">${wr}<span style="font-size:18px">%</span></div><div class="stat-extra">${v}V · ${e}E · ${d}D</div></div>
-    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${cals ? cals.toLocaleString() : '—'}</div><div class="stat-extra">kcal</div></div>
-    <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(gasto)}</div><div class="stat-extra">acumulado</div></div>
+    <div class="stat"><div class="stat-label">${t('retosLabel')}</div><div class="stat-value">${shown === total ? total : shown + '<span style="font-size:14px"> / ' + total + '</span>'}</div><div class="stat-extra">${partidos} ${t('statJugados')}</div></div>
+    <div class="stat"><div class="stat-label">${t('statWinRate')}</div><div class="stat-value green">${wr}<span style="font-size:18px">%</span></div><div class="stat-extra">${v}V · ${e}E · ${d}D</div></div>
+    <div class="stat"><div class="stat-label">${t('statCalorias')}</div><div class="stat-value">${cals ? cals.toLocaleString() : '—'}</div><div class="stat-extra">kcal</div></div>
+    <div class="stat"><div class="stat-label">${t('statGasto')}</div><div class="stat-value red">${fmtMoney(gasto)}</div><div class="stat-extra">${t('statAcumulado')}</div></div>
   `;
 }
 
@@ -1198,18 +1393,18 @@ function renderRetos() {
     : `${total} ${total === 1 ? 'reto' : 'retos'}`;
   const wrap = $('#retosWrap');
   if (!total) {
-    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— vacío —</div><p>Agregá tu primer reto con el botón verde</p></div>`;
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">${t('emptyArt')}</div><p>${t('emptyRetos')}</p></div>`;
     return;
   }
   if (!shown) {
-    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— sin match —</div><p>Ningún reto coincide con "${escapeHtml(retoSearchQuery)}"</p><p style="font-size:12px;color:var(--ink-dim);margin-top:8px">Tip: usá <strong>vs Pedro</strong> para buscar por rival, <strong>con Eduardo</strong> para compañero</p></div>`;
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">${t('noMatchArt')}</div><p>${t('noMatchArt')}</p></div>`;
     return;
   }
   const sorted = [...filtered].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
   wrap.innerHTML = `<div class="list">${sorted.map(r => {
     const res = calcRetoResultado(r.sets);
     const outcome = retoOutcome(r);
-    const resLabel = res === 'V' ? 'Victoria' : res === 'D' ? 'Derrota' : res === 'E' ? 'Empate' : null;
+    const resLabel = res === 'V' ? t('resVictoria') : res === 'D' ? t('resDerrota') : res === 'E' ? t('resEmpate') : null;
     const resChipClass = res === 'V' ? 'wr-good' : res === 'D' ? 'wr-bad' : 'wr-mid';
     const rivals = [r.rival1, r.rival2].filter(Boolean).join(' / ');
     const setsHtml = (r.sets || []).map(s => {
@@ -1232,7 +1427,7 @@ function renderRetos() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         </button>
       </div>
-      <div class="sets-display" style="margin-top:10px">${setsHtml || '<span style="font-size:12px;color:var(--ink-dim)">Sin sets</span>'}</div>
+      <div class="sets-display" style="margin-top:10px">${setsHtml || `<span style="font-size:12px;color:var(--ink-dim)">${t('sinSets')}</span>`}</div>
       <div class="pozo-row" style="margin-top:8px">
         ${resLabel ? `<span class="chip ${resChipClass}"><strong>${resLabel}</strong></span>` : ''}
         ${r.calorias ? `<span class="chip"><strong>${Number(r.calorias).toLocaleString()}</strong> kcal</span>` : ''}
@@ -1240,16 +1435,16 @@ function renderRetos() {
       </div>
       <div class="reto-detail">
         <div class="detail-grid">
-          <div class="detail-item"><div class="label">Compañero</div><div class="value">${escapeHtml(r.companero || '—')}</div></div>
-          <div class="detail-item"><div class="label">Rival 1</div><div class="value">${escapeHtml(r.rival1 || '—')}</div></div>
-          ${r.rival2 ? `<div class="detail-item"><div class="label">Rival 2</div><div class="value">${escapeHtml(r.rival2)}</div></div>` : ''}
-          <div class="detail-item"><div class="label">Precio</div><div class="value mono">${fmtMoney(r.precio)}</div></div>
-          ${r.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(r.notas)}</div></div>` : ''}
+          <div class="detail-item"><div class="label">${t('labelCompanero')}</div><div class="value">${escapeHtml(r.companero || '—')}</div></div>
+          <div class="detail-item"><div class="label">${t('labelRival1')}</div><div class="value">${escapeHtml(r.rival1 || '—')}</div></div>
+          ${r.rival2 ? `<div class="detail-item"><div class="label">${t('labelRival2')}</div><div class="value">${escapeHtml(r.rival2)}</div></div>` : ''}
+          <div class="detail-item"><div class="label">${t('labelPrecio')}</div><div class="value mono">${fmtMoney(r.precio)}</div></div>
+          ${r.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">${t('labelNotas')}</div><div class="value">${escapeHtml(r.notas)}</div></div>` : ''}
         </div>
         <div class="detail-actions">
-          <button data-action="editReto" data-id="${r.id}">Editar</button>
-          <button data-action="shareReto" data-id="${r.id}" style="color:var(--court-bright)">Compartir</button>
-          <button class="danger" data-action="deleteReto" data-id="${r.id}">Eliminar</button>
+          <button data-action="editReto" data-id="${r.id}">${t('labelEditar')}</button>
+          <button data-action="shareReto" data-id="${r.id}" style="color:var(--court-bright)">${t('labelCompartir')}</button>
+          <button class="danger" data-action="deleteReto" data-id="${r.id}">${t('labelEliminar')}</button>
         </div>
       </div>
     </div>`;
@@ -1284,23 +1479,23 @@ function setStatus(state, extra = '') {
   const text = $('#statusText');
   const ex = $('#statusExtra');
   bar.classList.remove('synced', 'syncing', 'error', 'offline');
-  if (state === 'synced') { bar.classList.add('synced'); text.textContent = '● sincronizado'; }
-  else if (state === 'syncing') { bar.classList.add('syncing'); text.textContent = '● sincronizando…'; }
-  else if (state === 'error') { bar.classList.add('error'); text.textContent = '● error'; }
-  else if (state === 'offline') { bar.classList.add('offline'); text.textContent = '● sin conexión'; }
+  if (state === 'synced') { bar.classList.add('synced'); text.textContent = t('statusSynced'); }
+  else if (state === 'syncing') { bar.classList.add('syncing'); text.textContent = t('statusSyncing'); }
+  else if (state === 'error') { bar.classList.add('error'); text.textContent = t('statusError'); }
+  else if (state === 'offline') { bar.classList.add('offline'); text.textContent = t('statusOffline'); }
   ex.textContent = extra;
 }
 
 function timeAgo(date) {
   if (!date) return '';
   const s = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (s < 5) return 'recién';
-  if (s < 60) return `hace ${s}s`;
+  if (s < 5) return t('timeRecent');
+  if (s < 60) return t('timeAgoSec', s);
   const m = Math.floor(s / 60);
-  if (m < 60) return `hace ${m}m`;
+  if (m < 60) return t('timeAgoMin', m);
   const h = Math.floor(m / 60);
-  if (h < 24) return `hace ${h}h`;
-  return `hace ${Math.floor(h/24)}d`;
+  if (h < 24) return t('timeAgoHour', h);
+  return t('timeAgoDay', Math.floor(h/24));
 }
 
 setInterval(() => {
@@ -1331,11 +1526,11 @@ async function syncDown() {
   } catch (e) {
     lastError = e;
     if (!navigator.onLine) {
-      setStatus('offline', 'sin conexión');
-      showToast('Sin conexión · usando datos locales', '', 3000);
+      setStatus('offline');
+      showToast(t('syncOffline'), '', 3000);
     } else {
-      setStatus('error', e.message || 'falló');
-      showToast('Error al sincronizar · ' + (e.message || ''), 'error', 3500);
+      setStatus('error', e.message || '');
+      showToast(t('syncError') + (e.message || ''), 'error', 3500);
     }
   }
 }
@@ -1353,11 +1548,11 @@ async function syncUp() {
   } catch (e) {
     lastError = e;
     if (!navigator.onLine) {
-      setStatus('offline', 'sin conexión');
-      showToast('Sin conexión · cambios guardados localmente', '', 3000);
+      setStatus('offline');
+      showToast(t('syncOfflineSave'), '', 3000);
     } else {
-      setStatus('error', e.message || 'falló');
-      showToast('Error al guardar · ' + (e.message || ''), 'error', 3500);
+      setStatus('error', e.message || '');
+      showToast(t('syncErrorSave') + (e.message || ''), 'error', 3500);
     }
   } finally {
     syncing = false;
@@ -1386,16 +1581,16 @@ function renderStats() {
   const note = $('#statsNote');
   if (isFiltered) {
     note.hidden = false;
-    note.textContent = `↑ mostrando ${filtered.length} de ${pozos.length} pozos`;
+    note.textContent = t('filterShowing', filtered.length, pozos.length);
   } else {
     note.hidden = true;
   }
   $('#stats').innerHTML = `
-    <div class="stat"><div class="stat-label">Pozos</div><div class="stat-value">${s.total}</div><div class="stat-extra">${s.partidos} partidos</div></div>
-    <div class="stat"><div class="stat-label">Win rate</div><div class="stat-value green">${s.winRate}<span style="font-size:18px">%</span></div><div class="stat-extra">${s.v}V · ${s.e}E · ${s.d}D</div></div>
-    <div class="stat"><div class="stat-label">Premios</div><div class="stat-value gold">${fmtMoney(s.totalPremio)}</div><div class="stat-extra">acumulado</div></div>
-    <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(s.totalCosto)}</div><div class="stat-extra">acumulado</div></div>
-    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${s.totalCalorias ? s.totalCalorias.toLocaleString() : '—'}</div><div class="stat-extra">kcal quemadas</div></div>
+    <div class="stat"><div class="stat-label">${t('statPozos')}</div><div class="stat-value">${s.total}</div><div class="stat-extra">${s.partidos} ${t('statPartidos')}</div></div>
+    <div class="stat"><div class="stat-label">${t('statWinRate')}</div><div class="stat-value green">${s.winRate}<span style="font-size:18px">%</span></div><div class="stat-extra">${s.v}V · ${s.e}E · ${s.d}D</div></div>
+    <div class="stat"><div class="stat-label">${t('statPremios')}</div><div class="stat-value gold">${fmtMoney(s.totalPremio)}</div><div class="stat-extra">${t('statAcumulado')}</div></div>
+    <div class="stat"><div class="stat-label">${t('statGasto')}</div><div class="stat-value red">${fmtMoney(s.totalCosto)}</div><div class="stat-extra">${t('statAcumulado')}</div></div>
+    <div class="stat"><div class="stat-label">${t('statCalorias')}</div><div class="stat-value">${s.totalCalorias ? s.totalCalorias.toLocaleString() : '—'}</div><div class="stat-extra">${t('statKcal')}</div></div>
   `;
 }
 
@@ -1449,7 +1644,7 @@ function pozoSearchText(p) {
 // ---------- Ordenamiento ----------
 let sortBy = { field: 'fecha', dir: 'desc' };
 const SORT_DEFAULT_DIR = { fecha: 'desc', posicion: 'asc', puntaje: 'desc', winRate: 'desc' };
-const SORT_LABELS = { fecha: 'Fecha', posicion: 'Posición', puntaje: 'Puntaje', winRate: 'Win rate' };
+const SORT_LABELS = () => ({ fecha: t('sortFecha'), posicion: t('sortPosicion'), puntaje: t('sortPuntaje'), winRate: t('sortWinRate') });
 
 function pozoWinRate(p) {
   const v = p.victorias || 0, e = p.empates || 0, d = p.derrotas || 0;
@@ -1491,7 +1686,7 @@ function updateSortUI() {
     const arrow = pill.querySelector('.arrow');
     if (arrow) arrow.textContent = isActive ? (sortBy.dir === 'asc' ? '↑' : '↓') : '';
   });
-  $('#sortLabel').textContent = `${SORT_LABELS[sortBy.field]} ${sortBy.dir === 'asc' ? '↑' : '↓'}`;
+  $('#sortLabel').textContent = `${SORT_LABELS()[sortBy.field]} ${sortBy.dir === 'asc' ? '↑' : '↓'}`;
 }
 
 function pozoPercentualPos(p) {
@@ -1514,11 +1709,11 @@ function renderChart() {
   const dated = source.filter(p => p.fecha).sort((a, b) => a.fecha.localeCompare(b.fecha));
 
   if (dated.length === 0) {
-    container.innerHTML = searchQuery ? `<div class="chart-wrap"><div class="chart-header"><h3>Posiciones</h3><span class="chart-meta">sin resultados</span></div><div class="chart-empty">Ningún pozo coincide con la búsqueda</div></div>` : '';
+    container.innerHTML = searchQuery ? `<div class="chart-wrap"><div class="chart-header"><h3>${t('chartPositions')}</h3><span class="chart-meta">${t('noMatchArt')}</span></div><div class="chart-empty">${t('noMatchArt')}</div></div>` : '';
     return;
   }
   if (dated.length === 1) {
-    container.innerHTML = `<div class="chart-wrap"><div class="chart-header"><h3>Posiciones</h3><span class="chart-meta">1 pozo</span></div><div class="chart-empty">Necesitás al menos 2 pozos para ver tendencia</div></div>`;
+    container.innerHTML = `<div class="chart-wrap"><div class="chart-header"><h3>${t('chartPositions')}</h3><span class="chart-meta">1</span></div><div class="chart-empty">${t('chartNeed2Pozos')}</div></div>`;
     return;
   }
 
@@ -1571,10 +1766,10 @@ function renderChart() {
   container.innerHTML = `
     <div class="chart-wrap">
       <div class="chart-header">
-        <h3>Posiciones</h3>
+        <h3>${t('chartPositions')}</h3>
         <div class="chart-toggle">
-          <button id="chartModeAbs" class="${!isPercentual?'active':''}">Absoluta</button>
-          <button id="chartModePct" class="${isPercentual?'active':''}">% Relativa</button>
+          <button id="chartModeAbs" class="${!isPercentual?'active':''}">${t('chartAbsolute')}</button>
+          <button id="chartModePct" class="${isPercentual?'active':''}">${t('chartRelative')}</button>
         </div>
       </div>
       <svg class="chart-svg" viewBox="0 0 ${W} ${H}">
@@ -1584,8 +1779,8 @@ function renderChart() {
         ${xFirst}${xMid}${xLast}
       </svg>
       <div class="chart-legend">
-        <div class="item"><span class="dot" style="background:#fbbf24"></span>Pareja</div>
-        <div class="item"><span class="dot" style="background:#4ade80"></span>Individual</div>
+        <div class="item"><span class="dot" style="background:#fbbf24"></span>${t('fieldPareja')}</div>
+        <div class="item"><span class="dot" style="background:#4ade80"></span>${t('fieldIndividual')}</div>
       </div>
     </div>
   `;
@@ -1614,11 +1809,11 @@ function renderList() {
 
   const wrap = $('#listWrap');
   if (!total) {
-    wrap.innerHTML = `<div class="empty"><div class="empty-art">— vacío —</div><p>Agregá tu primer pozo con el botón verde</p></div>`;
+    wrap.innerHTML = `<div class="empty"><div class="empty-art">${t('emptyArt')}</div><p>${t('emptyPozos')}</p></div>`;
     return;
   }
   if (!shown) {
-    wrap.innerHTML = `<div class="empty"><div class="empty-art">— sin match —</div><p>Ningún pozo coincide con "${escapeHtml(searchQuery)}"</p></div>`;
+    wrap.innerHTML = `<div class="empty"><div class="empty-art">${t('noMatchArt')}</div><p>${t('filterShowing', shown, total)}</p></div>`;
     return;
   }
   const sorted = sortPozos(filtered);
@@ -1641,7 +1836,7 @@ function renderList() {
           <button class="pozo-edit-btn" data-action="edit" data-id="${p.id}" aria-label="Editar">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
           </button>
-          <div class="pozo-pos"><small>POSICIÓN</small>${p.posicion}<span class="total">/${p.participantes}</span></div>
+          <div class="pozo-pos"><small>${t('posChip')}</small>${p.posicion}<span class="total">/${p.participantes}</span></div>
         </div>
       </div>
       <div class="pozo-row">
@@ -1656,18 +1851,18 @@ function renderList() {
       </div>
       <div class="pozo-detail">
         <div class="detail-grid">
-          <div class="detail-item"><div class="label">Costo</div><div class="value mono">${fmtMoney(p.costo)}</div></div>
-          <div class="detail-item"><div class="label">Premio</div><div class="value mono">${fmtMoney(p.premio)}</div></div>
-          <div class="detail-item"><div class="label">Puntaje</div><div class="value mono">${p.puntaje ?? '—'}</div></div>
-          <div class="detail-item"><div class="label">Pos. relativa</div><div class="value mono ${pctClass}">${pct !== null ? pct + '%' : '—'}</div></div>
-          <div class="detail-item"><div class="label">Calorías</div><div class="value mono">${p.calorias ? Number(p.calorias).toLocaleString() + ' kcal' : '—'}</div></div>
-          ${p.club ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Club</div><div class="value">${escapeHtml(p.club)}</div></div>` : ''}
-          ${p.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(p.notas)}</div></div>` : ''}
+          <div class="detail-item"><div class="label">${t('labelCosto')}</div><div class="value mono">${fmtMoney(p.costo)}</div></div>
+          <div class="detail-item"><div class="label">${t('labelPremio')}</div><div class="value mono">${fmtMoney(p.premio)}</div></div>
+          <div class="detail-item"><div class="label">${t('labelPuntaje')}</div><div class="value mono">${p.puntaje ?? '—'}</div></div>
+          <div class="detail-item"><div class="label">${t('labelPosRel')}</div><div class="value mono ${pctClass}">${pct !== null ? pct + '%' : '—'}</div></div>
+          <div class="detail-item"><div class="label">${t('labelCalorias')}</div><div class="value mono">${p.calorias ? Number(p.calorias).toLocaleString() + ' kcal' : '—'}</div></div>
+          ${p.club ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">${t('labelClub')}</div><div class="value">${escapeHtml(p.club)}</div></div>` : ''}
+          ${p.notas ? `<div class="detail-item" style="grid-column:1/-1"><div class="label">${t('labelNotas')}</div><div class="value">${escapeHtml(p.notas)}</div></div>` : ''}
         </div>
         <div class="detail-actions">
-          <button data-action="edit" data-id="${p.id}">Editar</button>
-          <button data-action="sharePozo" data-id="${p.id}" style="color:var(--court-bright)">Compartir</button>
-          <button class="danger" data-action="delete" data-id="${p.id}">Eliminar</button>
+          <button data-action="edit" data-id="${p.id}">${t('labelEditar')}</button>
+          <button data-action="sharePozo" data-id="${p.id}" style="color:var(--court-bright)">${t('labelCompartir')}</button>
+          <button class="danger" data-action="delete" data-id="${p.id}">${t('labelEliminar')}</button>
         </div>
       </div>
     </div>`;
@@ -1681,7 +1876,7 @@ function openModal(pozo = null) {
   const form = $('#pozoForm');
   form.reset();
   editingId = pozo ? pozo.id : null;
-  $('#modalTitle').textContent = pozo ? 'Editar pozo' : 'Nuevo pozo';
+  $('#modalTitle').textContent = pozo ? t('editarPozo') : t('nuevoPozo');
   $('#fecha').value = pozo ? pozo.fecha : todayISO();
   $('#categoria').value = pozo ? pozo.categoria : '';
   $('#club').value = pozo ? (pozo.club || '') : '';
@@ -1723,15 +1918,15 @@ async function doAuth(email, password, isRegister) {
   const btn = $('#setupBtn');
   errBox.hidden = true;
   btn.disabled = true;
-  btn.textContent = isRegister ? 'Creando cuenta…' : 'Ingresando…';
+  btn.textContent = isRegister ? t('authCreating') : t('authLogging');
   try {
     if (isRegister) {
       const confirm = $('#setupPasswordConfirm').value;
       if (password !== confirm) {
-        errBox.textContent = 'Las contraseñas no coinciden.';
+        errBox.textContent = t('authErrPwMismatch');
         errBox.hidden = false;
         btn.disabled = false;
-        btn.textContent = 'Crear cuenta';
+        btn.textContent = t('authCreateAccount');
         return;
       }
       await auth.createUserWithEmailAndPassword(email, password);
@@ -1741,19 +1936,19 @@ async function doAuth(email, password, isRegister) {
     // onAuthStateChanged handles the rest
   } catch (e) {
     const msgs = {
-      'auth/user-not-found': 'No existe una cuenta con ese email.',
-      'auth/wrong-password': 'Contraseña incorrecta.',
-      'auth/email-already-in-use': 'Ya existe una cuenta con ese email.',
-      'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
-      'auth/invalid-email': 'El email no es válido.',
-      'auth/invalid-credential': 'Email o contraseña incorrectos.',
+      'auth/user-not-found': t('authErrNotFound'),
+      'auth/wrong-password': t('authErrWrongPw'),
+      'auth/email-already-in-use': t('authErrEmailInUse'),
+      'auth/weak-password': t('authErrWeakPw'),
+      'auth/invalid-email': t('authErrInvalidEmail'),
+      'auth/invalid-credential': t('authErrInvalidCred'),
     };
     errBox.textContent = msgs[e.code] || ('Error: ' + e.message);
     errBox.hidden = false;
   } finally {
     btn.disabled = false;
     const mode = document.querySelector('input[name="authMode"]:checked').value;
-    btn.textContent = mode === 'register' ? 'Crear cuenta' : 'Ingresar';
+    btn.textContent = mode === 'register' ? t('authCreateAccount') : t('authLogin');
   }
 }
 
@@ -1798,7 +1993,7 @@ $('#googleBtn').addEventListener('click', async () => {
     }
   } catch (e) {
     if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
-      errBox.textContent = 'Error con Google: ' + (e.message || e.code);
+      errBox.textContent = t('authGoogleError') + (e.message || e.code);
       errBox.hidden = false;
     }
   }
@@ -1816,16 +2011,16 @@ function togglePasswordVisibility(inputId, btn) {
 $('#forgotBtn').addEventListener('click', async () => {
   const email = $('#setupEmail').value.trim();
   if (!email) {
-    showToast('Ingresá tu email primero', 'error', 2500);
+    showToast(t('authErrEmailFirst'), 'error', 2500);
     return;
   }
   try {
     await auth.sendPasswordResetEmail(email);
-    showToast('Email de recuperación enviado · revisá tu bandeja y la carpeta de spam', '', 5000);
+    showToast(t('authResetSent'), '', 5000);
   } catch (e) {
     const msgs = {
-      'auth/user-not-found': 'No hay ningún usuario asociado a este correo.',
-      'auth/invalid-email': 'El email no es válido.',
+      'auth/user-not-found': t('authErrNoUser'),
+      'auth/invalid-email': t('authErrInvalidEmail'),
     };
     showToast(msgs[e.code] || 'Error: ' + e.message, 'error', 3500);
   }
@@ -1845,7 +2040,7 @@ $('#togglePasswordConfirm').addEventListener('click', () => togglePasswordVisibi
 document.querySelectorAll('input[name="authMode"]').forEach(r => {
   r.addEventListener('change', () => {
     const isRegister = r.value === 'register';
-    $('#setupBtn').textContent = isRegister ? 'Crear cuenta' : 'Ingresar';
+    $('#setupBtn').textContent = isRegister ? t('authCreateAccount') : t('authLogin');
     $('#confirmPasswordField').hidden = !isRegister;
     $('#setupPasswordConfirm').required = isRegister;
   });
@@ -1903,7 +2098,7 @@ document.addEventListener('click', async (e) => {
     const id = action.dataset.id;
     if (act === 'edit') { const p = pozos.find(x => x.id === id); if (p) openModal(p); }
     else if (act === 'delete') {
-      if (confirm('¿Eliminar este pozo?')) {
+      if (confirm(t('confirmDeletePozo'))) {
         pozos = pozos.filter(x => x.id !== id);
         saveCache(pozos, retos, clases, metas);
         render();
@@ -1935,13 +2130,13 @@ $('#settingsForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   nombre = $('#settingsNombre').value.trim();
   closeSettings();
-  showToast('Ajustes actualizados');
+  showToast(t('settingsUpdated'));
   await syncUp();
   renderRetos();
 });
 
 $('#disconnectBtn').addEventListener('click', async () => {
-  if (!confirm('¿Cerrar sesión? Los datos quedan guardados en la nube.')) return;
+  if (!confirm(t('confirmLogout'))) return;
   clearCache();
   pozos = []; retos = []; clases = []; metas = []; nombre = '';
   closeSettings();
@@ -1957,7 +2152,7 @@ $('#exportBtn').addEventListener('click', () => {
   const a = document.createElement('a');
   a.href = url; a.download = `ipadel_backup_${todayISO()}.json`; a.click();
   URL.revokeObjectURL(url);
-  showToast('Backup exportado');
+  showToast(t('backupExported'));
 });
 
 $('#exportTopBtn').addEventListener('click', () => exportPDF());
@@ -1983,10 +2178,10 @@ $('#fileInput').addEventListener('change', async (e) => {
     saveCache(pozos, retos, clases, metas);
     render();
     closeSettings();
-    showToast(`Importado: ${pozos.length} pozos, ${retos.length} retos, ${clases.length} clases`);
+    showToast(t('importedMsg', pozos.length, retos.length, clases.length));
     await syncUp();
   } catch (err) {
-    showToast('Error al importar: archivo inválido', 'error', 3500);
+    showToast(t('importError'), 'error', 3500);
   }
   e.target.value = '';
 });
@@ -2041,8 +2236,7 @@ function switchTab(tab) {
   $('#pozosView').hidden = tab !== 'pozos';
   $('#retosView').hidden = tab !== 'retos';
   $('#clasesView').hidden = tab !== 'clases';
-  const fabLabels = { home: 'Nueva meta', pozos: 'Nuevo pozo', retos: 'Nuevo reto', clases: 'Nueva clase' };
-  $('#fabLabel').textContent = fabLabels[tab] || 'Agregar';
+  $('#fabLabel').textContent = t({ home:'fabHome', pozos:'fabPozos', retos:'fabRetos', clases:'fabClases' }[tab] || 'fabHome');
 }
 
 $('#tabHome').addEventListener('click', () => switchTab('home'));
@@ -2066,7 +2260,7 @@ function addSetRow(mine = '', rival = '') {
   row.className = 'set-row';
   row.dataset.set = setCount;
   row.innerHTML = `
-    <span class="set-num">Set ${$('#setsContainer').children.length + 1}</span>
+    <span class="set-num">${t('fieldSets')} ${$('#setsContainer').children.length + 1}</span>
     <input type="number" class="set-mine" min="0" inputmode="numeric" placeholder="0" value="${mine}">
     <span class="set-dash">–</span>
     <input type="number" class="set-rival" min="0" inputmode="numeric" placeholder="0" value="${rival}">
@@ -2094,7 +2288,7 @@ function getSets() {
 
 function openRetoModal(reto = null) {
   editingRetoId = reto ? reto.id : null;
-  $('#retoModalTitle').textContent = reto ? 'Editar reto' : 'Nuevo reto';
+  $('#retoModalTitle').textContent = reto ? t('editarReto') : t('nuevoReto');
   $('#retoFecha').value = reto ? reto.fecha : todayISO();
   $('#retoClub').value = reto ? (reto.club || '') : '';
   $('#retoCompanero').value = reto ? (reto.companero || '') : '';
@@ -2176,7 +2370,7 @@ document.addEventListener('click', async (e) => {
     }
     if (act === 'deleteReto') {
       e.stopPropagation();
-      if (confirm('¿Eliminar este reto?')) {
+      if (confirm(t('confirmDeleteReto'))) {
         retos = retos.filter(x => x.id !== action.dataset.id);
         renderRetosAll();
         await syncUp();
@@ -2240,7 +2434,7 @@ function claseSearchText(c) {
     c.club || '', c.profesor || '', c.notas || '', c.fecha || '',
     String(c.duracion || ''),
     ...(Array.isArray(c.participantes) ? c.participantes : []),
-    ...(c.ejercicios || []).map((v, i) => v ? EJERCICIOS[i] : ''),
+    ...(c.ejercicios || []).map((v, i) => v ? getEJ()[i] : ''),
   ];
   if (c.fecha) {
     try {
@@ -2280,10 +2474,10 @@ function renderClasesChart() {
   const toggleHtml = `
     <div class="clases-chart-wrap">
       <div class="chart-header">
-        <h3>Ejercicios</h3>
+        <h3>${t('ejerciciosLabel')}</h3>
         <div class="clases-chart-tabs">
-          <button id="clChartFreq" class="${!isTimeline ? 'active' : ''}">Frecuencia</button>
-          <button id="clChartTime" class="${isTimeline ? 'active' : ''}">Evolución</button>
+          <button id="clChartFreq" class="${!isTimeline ? 'active' : ''}">${t('frecuencia')}</button>
+          <button id="clChartTime" class="${isTimeline ? 'active' : ''}">${t('evolucion')}</button>
         </div>
       </div>
       <div id="clChartBody"></div>
@@ -2297,12 +2491,12 @@ function renderClasesChart() {
 
   if (!isTimeline) {
     // ── Barras de frecuencia ──────────────────────────────────────
-    const counts = EJERCICIOS.map((_, i) =>
+    const counts = getEJ().map((_, i) =>
       source.filter(c => c.ejercicios && c.ejercicios[i]).length
     );
     const max = Math.max(...counts, 1);
     body.innerHTML = `<div style="padding:4px 0">` +
-      EJERCICIOS.map((ej, i) => `
+      getEJ().map((ej, i) => `
         <div class="freq-bar-row">
           <span class="freq-bar-label" title="${escapeHtml(ej)}">${escapeHtml(ej)}</span>
           <div class="freq-bar-track">
@@ -2313,11 +2507,11 @@ function renderClasesChart() {
   } else {
     // ── Evolución temporal (SVG grid) ─────────────────────────────
     if (sorted.length < 2) {
-      body.innerHTML = `<div class="timeline-empty">Necesitás al menos 2 clases para ver evolución</div>`;
+      body.innerHTML = `<div class="timeline-empty">${t('claseNeedMore')}</div>`;
       return;
     }
     const n = sorted.length;
-    const m = EJERCICIOS.length;
+    const m = getEJ().length;
     const cellW = 22, cellH = 18, labelW = 112, padTop = 8, dotR = 5;
     const W = labelW + n * cellW + 16;
     const H = padTop + m * cellH + 28;
@@ -2333,7 +2527,7 @@ function renderClasesChart() {
       return `<text x="${x}" y="${padTop - 2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="var(--ink-dim)">${escapeHtml(h)}</text>`;
     }).join('');
 
-    const rows = EJERCICIOS.map((ej, ri) => {
+    const rows = getEJ().map((ej, ri) => {
       const y = padTop + ri * cellH + cellH / 2;
       const label = `<text x="${labelW - 6}" y="${y + 1}" text-anchor="end" dominant-baseline="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="var(--ink-muted)">${escapeHtml(ej)}</text>`;
       const dots = sorted.map((c, ci) => {
@@ -2371,10 +2565,10 @@ function renderClasesStats() {
   const totalCosto = filtered.reduce((s, c) => s + (Number(c.costo) || 0), 0);
   const totalMin = filtered.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
   $('#clasesStats').innerHTML = `
-    <div class="stat"><div class="stat-label">Clases</div><div class="stat-value">${shown === total ? total : shown + '<span style="font-size:14px"> / ' + total + '</span>'}</div><div class="stat-extra">registradas</div></div>
-    <div class="stat"><div class="stat-label">Tiempo</div><div class="stat-value">${totalMin ? Math.round(totalMin / 60) + '<span style="font-size:18px">h</span>' : '—'}</div><div class="stat-extra">${totalMin} min</div></div>
-    <div class="stat"><div class="stat-label">Calorías</div><div class="stat-value">${totalCals ? totalCals.toLocaleString() : '—'}</div><div class="stat-extra">kcal</div></div>
-    <div class="stat"><div class="stat-label">Gasto</div><div class="stat-value red">${fmtMoney(totalCosto)}</div><div class="stat-extra">acumulado</div></div>
+    <div class="stat"><div class="stat-label">${t('statClases')}</div><div class="stat-value">${shown === total ? total : shown + '<span style="font-size:14px"> / ' + total + '</span>'}</div><div class="stat-extra">${t('statRegistradas')}</div></div>
+    <div class="stat"><div class="stat-label">${t('statTiempo')}</div><div class="stat-value">${totalMin ? Math.round(totalMin / 60) + '<span style="font-size:18px">h</span>' : '—'}</div><div class="stat-extra">${totalMin} min</div></div>
+    <div class="stat"><div class="stat-label">${t('statCalorias')}</div><div class="stat-value">${totalCals ? totalCals.toLocaleString() : '—'}</div><div class="stat-extra">kcal</div></div>
+    <div class="stat"><div class="stat-label">${t('statGasto')}</div><div class="stat-value red">${fmtMoney(totalCosto)}</div><div class="stat-extra">${t('statAcumulado')}</div></div>
   `;
 }
 
@@ -2388,18 +2582,18 @@ function renderClases() {
 
   const wrap = $('#clasesWrap');
   if (!total) {
-    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— vacío —</div><p>Agregá tu primera clase con el botón verde</p></div>`;
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">${t('emptyArt')}</div><p>${t('emptyClases')}</p></div>`;
     return;
   }
   if (!shown) {
-    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">— sin match —</div><p>Ninguna clase coincide con "${escapeHtml(claseSearchQuery)}"</p></div>`;
+    wrap.innerHTML = `<div class="empty" style="margin:16px 20px"><div class="empty-art">${t('noMatchArt')}</div><p>${t('noMatchArt')}</p></div>`;
     return;
   }
   const sorted = [...filtered].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
   wrap.innerHTML = `<div class="list">${sorted.map(c => {
     const done = (c.ejercicios || []).filter(Boolean).length;
-    const totalEj = EJERCICIOS.length;
-    const chipsHtml = EJERCICIOS.map((ej, i) => {
+    const totalEj = getEJ().length;
+    const chipsHtml = getEJ().map((ej, i) => {
       const checked = c.ejercicios && c.ejercicios[i];
       return `<span class="ejercicio-chip ${checked ? 'done' : ''}">${escapeHtml(ej)}</span>`;
     }).join('');
@@ -2408,26 +2602,26 @@ function renderClases() {
       <div class="pozo-head">
         <div>
           <div class="pozo-meta">${fmtDate(c.fecha)}${c.club ? ' · ' + escapeHtml(c.club) : ''}</div>
-          <div class="pozo-title">${c.profesor ? escapeHtml(c.profesor) : 'Clase'}</div>
+          <div class="pozo-title">${c.profesor ? escapeHtml(c.profesor) : t('claseCard')}</div>
         </div>
         <button class="pozo-edit-btn" data-action="editClase" data-id="${c.id}" aria-label="Editar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         </button>
       </div>
       <div class="pozo-row" style="margin-top:8px">
-        <span class="chip"><strong>${done}/${totalEj}</strong> ejercicios</span>
-        ${c.participantes && c.participantes.length ? `<span class="chip"><strong>${c.participantes.length}</strong> participantes</span>` : ''}
+        <span class="chip"><strong>${done}/${totalEj}</strong> ${t('labelEjercicios')}</span>
+        ${c.participantes && c.participantes.length ? `<span class="chip"><strong>${c.participantes.length}</strong> ${t('labelParticipantes')}</span>` : ''}
         ${c.duracion ? `<span class="chip"><strong>${c.duracion}</strong> min</span>` : ''}
         ${c.calorias ? `<span class="chip"><strong>${Number(c.calorias).toLocaleString()}</strong> kcal</span>` : ''}
         ${c.costo ? `<span class="chip gold"><strong>${fmtMoney(c.costo)}</strong></span>` : ''}
       </div>
       <div class="clase-detail">
         <div class="clase-checklist-preview">${chipsHtml}</div>
-        ${c.participantes && c.participantes.length ? `<div style="margin-top:10px"><div class="detail-item"><div class="label" style="font-family:JetBrains Mono,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--ink-dim);margin-bottom:6px">Participantes</div><div style="display:flex;flex-wrap:wrap;gap:4px">${c.participantes.map(n => `<span class="chip">${escapeHtml(n)}</span>`).join('')}</div></div></div>` : ''}
-        ${c.notas ? `<div class="detail-grid" style="margin-top:12px"><div class="detail-item" style="grid-column:1/-1"><div class="label">Notas</div><div class="value">${escapeHtml(c.notas)}</div></div></div>` : ''}
+        ${c.participantes && c.participantes.length ? `<div style="margin-top:10px"><div class="detail-item"><div class="label" style="font-family:JetBrains Mono,monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--ink-dim);margin-bottom:6px">${t('fieldParticipantes')}</div><div style="display:flex;flex-wrap:wrap;gap:4px">${c.participantes.map(n => `<span class="chip">${escapeHtml(n)}</span>`).join('')}</div></div></div>` : ''}
+        ${c.notas ? `<div class="detail-grid" style="margin-top:12px"><div class="detail-item" style="grid-column:1/-1"><div class="label">${t('labelNotas')}</div><div class="value">${escapeHtml(c.notas)}</div></div></div>` : ''}
         <div class="detail-actions" style="margin-top:12px">
-          <button data-action="editClase" data-id="${c.id}">Editar</button>
-          <button class="danger" data-action="deleteClase" data-id="${c.id}">Eliminar</button>
+          <button data-action="editClase" data-id="${c.id}">${t('labelEditar')}</button>
+          <button class="danger" data-action="deleteClase" data-id="${c.id}">${t('labelEliminar')}</button>
         </div>
       </div>
     </div>`;
@@ -2444,7 +2638,7 @@ function renderClasesAll() {
 function buildChecklist(ejerciciosGuardados) {
   const container = $('#claseChecklist');
   container.innerHTML = '';
-  EJERCICIOS.forEach((ej, i) => {
+  getEJ().forEach((ej, i) => {
     const checked = Array.isArray(ejerciciosGuardados) ? !!ejerciciosGuardados[i] : false;
     const item = document.createElement('label');
     item.className = 'checklist-item' + (checked ? ' checked' : '');
@@ -2497,7 +2691,7 @@ function getParticipantes() {
 
 function openClaseModal(clase = null) {
   editingClaseId = clase ? clase.id : null;
-  $('#claseModalTitle').textContent = clase ? 'Editar clase' : 'Nueva clase';
+  $('#claseModalTitle').textContent = clase ? t('editarClase') : t('nuevaClase');
   $('#claseFecha').value = clase ? clase.fecha : todayISO();
   $('#claseDuracion').value = clase && clase.duracion ? clase.duracion : '';
   $('#claseClub').value = clase ? (clase.club || '') : '';
@@ -2576,7 +2770,7 @@ document.addEventListener('click', async (e) => {
     }
     if (act === 'deleteClase') {
       e.stopPropagation();
-      if (confirm('¿Eliminar esta clase?')) {
+      if (confirm(t('confirmDeleteClase'))) {
         clases = clases.filter(x => x.id !== action.dataset.id);
         renderClasesAll();
         await syncUp();
@@ -2617,8 +2811,8 @@ function renderHome() {
   // Label
   const [ymY, ymM] = thisMonth.split('-').map(Number);
   const monthLabel = isLast30
-    ? 'Últimos 30 días'
-    : new Date(ymY, ymM - 1, 1).toLocaleDateString('es-CR', { month: 'long', year: 'numeric' });
+    ? t('last30')
+    : new Date(ymY, ymM - 1, 1).toLocaleDateString(appLang === 'en' ? 'en-US' : 'es-CR', { month: 'long', year: 'numeric' });
 
   // ── KPIs ──
   // Pozos
@@ -2694,8 +2888,8 @@ function renderHome() {
       return `<div class="dash-event" data-goto="pozos">
         <div class="dash-event-dot ${dot}"></div>
         <div class="dash-event-body">
-          <div class="dash-event-title">${escapeHtml(p.categoria || 'Pozo')}${p.club ? ' · ' + escapeHtml(p.club) : ''}</div>
-          <div class="dash-event-meta">${fmtDate(p.fecha)} · Pozo${p.tipo === 'pareja' && p.companero ? ' · con ' + escapeHtml(p.companero) : ''}</div>
+          <div class="dash-event-title">${escapeHtml(p.categoria || t('eventPozo'))}${p.club ? ' · ' + escapeHtml(p.club) : ''}</div>
+          <div class="dash-event-meta">${fmtDate(p.fecha)} · ${t('eventPozo')}${p.tipo === 'pareja' && p.companero ? ' · con ' + escapeHtml(p.companero) : ''}</div>
         </div>
         <div class="dash-event-badge ${badgeCls}">${badge}</div>
       </div>`;
@@ -2710,7 +2904,7 @@ function renderHome() {
         <div class="dash-event-dot ${dot}"></div>
         <div class="dash-event-body">
           <div class="dash-event-title">vs ${escapeHtml(rivals || '—')}${r.companero ? ' · con ' + escapeHtml(r.companero) : ''}</div>
-          <div class="dash-event-meta">${fmtDate(r.fecha)} · Reto</div>
+          <div class="dash-event-meta">${fmtDate(r.fecha)} · ${t('eventReto')}</div>
         </div>
         <div class="dash-event-badge ${badgeCls}">${res || '—'}</div>
       </div>`;
@@ -2721,12 +2915,12 @@ function renderHome() {
     return `<div class="dash-event" data-goto="clases">
       <div class="dash-event-dot clase"></div>
       <div class="dash-event-body">
-        <div class="dash-event-title">${escapeHtml(c.profesor || 'Clase')}${c.club ? ' · ' + escapeHtml(c.club) : ''}</div>
-        <div class="dash-event-meta">${fmtDate(c.fecha)} · ${done}/${EJERCICIOS.length} ejercicios</div>
+        <div class="dash-event-title">${escapeHtml(c.profesor || t('claseCard'))}${c.club ? ' · ' + escapeHtml(c.club) : ''}</div>
+        <div class="dash-event-meta">${fmtDate(c.fecha)} · ${done}/${getEJ().length} ${t('labelEjercicios')}</div>
       </div>
       <div class="dash-event-badge" style="color:var(--court-bright);font-size:14px">${done > 0 ? '✓' : ''}</div>
     </div>`;
-  }).join('') : `<div style="padding:20px;text-align:center;color:var(--ink-dim);font-size:13px">Sin actividad registrada</div>`;
+  }).join('') : `<div style="padding:20px;text-align:center;color:var(--ink-dim);font-size:13px">${t('noActivity')}</div>`;
 
   // ── Metas completadas ──
   const metasCompletadas = metas.filter(m => {
@@ -2751,21 +2945,21 @@ function renderHome() {
         <button id="dashMonthNext" style="background:none;border:none;color:${isCurrentMonth?'var(--ink-dim)':'var(--ink-muted)'};cursor:${isCurrentMonth?'default':'pointer'};font-size:18px;padding:0 6px;line-height:1;flex-shrink:0" aria-label="Período siguiente" ${isCurrentMonth?'disabled':''}>›</button>
       </div>
       <div class="dash-grid">
-        <div class="dash-kpi"><div class="kpi-label">Pozos</div><div class="kpi-value">${pozosThisMonth}</div><div class="kpi-extra">${pozosCount} total</div></div>
-        <div class="dash-kpi"><div class="kpi-label">Retos</div><div class="kpi-value">${retosThisMonth}</div><div class="kpi-extra">${retosCount} total</div></div>
-        <div class="dash-kpi"><div class="kpi-label">Clases</div><div class="kpi-value">${clasesThisMonth}</div><div class="kpi-extra">${clasesCount} total</div></div>
-        <div class="dash-kpi ${kcalThisMonth > 0 ? 'accent' : ''}"><div class="kpi-label">Calorías</div><div class="kpi-value">${kcalThisMonth ? kcalThisMonth.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
-        <div class="dash-kpi"><div class="kpi-label">Premios</div><div class="kpi-value gold">${premiosThisMonth ? fmtMoney(premiosThisMonth) : '—'}</div><div class="kpi-extra">en pozos</div></div>
-        <div class="dash-kpi"><div class="kpi-label">Gasto</div><div class="kpi-value red">${gastoThisMonth ? fmtMoney(gastoThisMonth) : '—'}</div><div class="kpi-extra">total del período</div></div>
+        <div class="dash-kpi"><div class="kpi-label">${t('kpiPozos')}</div><div class="kpi-value">${pozosThisMonth}</div><div class="kpi-extra">${pozosCount} ${t('kpiTotalSuffix')}</div></div>
+        <div class="dash-kpi"><div class="kpi-label">${t('kpiRetos')}</div><div class="kpi-value">${retosThisMonth}</div><div class="kpi-extra">${retosCount} ${t('kpiTotalSuffix')}</div></div>
+        <div class="dash-kpi"><div class="kpi-label">${t('kpiClases')}</div><div class="kpi-value">${clasesThisMonth}</div><div class="kpi-extra">${clasesCount} ${t('kpiTotalSuffix')}</div></div>
+        <div class="dash-kpi ${kcalThisMonth > 0 ? 'accent' : ''}"><div class="kpi-label">${t('kpiCalorias')}</div><div class="kpi-value">${kcalThisMonth ? kcalThisMonth.toLocaleString() : '—'}</div><div class="kpi-extra">${t('kpiKcal')}</div></div>
+        <div class="dash-kpi"><div class="kpi-label">${t('kpiPremios')}</div><div class="kpi-value gold">${premiosThisMonth ? fmtMoney(premiosThisMonth) : '—'}</div><div class="kpi-extra">${t('kpiInPozos')}</div></div>
+        <div class="dash-kpi"><div class="kpi-label">${t('kpiGasto')}</div><div class="kpi-value red">${gastoThisMonth ? fmtMoney(gastoThisMonth) : '—'}</div><div class="kpi-extra">${t('kpiPeriod')}</div></div>
       </div>
     </div>
 
     <div class="dash-section" style="padding-top:12px">
-      <div class="dash-section-title">Totales históricos <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-muted);font-weight:400;letter-spacing:0.05em">${totalActividades} actividades</span></div>
+      <div class="dash-section-title">${t('totalHistoricos')} <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-muted);font-weight:400;letter-spacing:0.05em">${totalActividades} ${t('activitiesSuffix')}</span></div>
       <div class="dash-grid">
-        <div class="dash-kpi"><div class="kpi-label">Calorías</div><div class="kpi-value" style="font-size:22px">${totalKcal ? totalKcal.toLocaleString() : '—'}</div><div class="kpi-extra">kcal quemadas</div></div>
-        <div class="dash-kpi"><div class="kpi-label">Gasto total</div><div class="kpi-value red" style="font-size:22px">${fmtMoney(totalGasto)}</div><div class="kpi-extra">${totalPremios ? fmtMoney(totalPremios) + ' premios' : 'sin premios'}</div></div>
-        <div class="dash-kpi ${curPozStreakNow >= 3 ? 'accent' : ''}"><div class="kpi-label">Racha top 4</div><div class="kpi-value">${curPozStreakNow}</div><div class="kpi-extra">${bestPozStreak} récord histórico</div></div>
+        <div class="dash-kpi"><div class="kpi-label">${t('kpiCalorias')}</div><div class="kpi-value" style="font-size:22px">${totalKcal ? totalKcal.toLocaleString() : '—'}</div><div class="kpi-extra">${t('kpiKcal')}</div></div>
+        <div class="dash-kpi"><div class="kpi-label">${t('gastoTotal')}</div><div class="kpi-value red" style="font-size:22px">${fmtMoney(totalGasto)}</div><div class="kpi-extra">${totalPremios ? fmtMoney(totalPremios) + ' ' + t('prizes') : t('noPrizes')}</div></div>
+        <div class="dash-kpi ${curPozStreakNow >= 3 ? 'accent' : ''}"><div class="kpi-label">${t('rachaTop4')}</div><div class="kpi-value">${curPozStreakNow}</div><div class="kpi-extra">${bestPozStreak} ${t('bestRecord')}</div></div>
       </div>
     </div>
 
@@ -2774,8 +2968,8 @@ function renderHome() {
       <div class="dash-streak">
         <div class="dash-streak-num">${rachaActual}</div>
         <div class="dash-streak-info">
-          <div class="label">Racha de retos</div>
-          <div class="sub">${rachaType === 'V' ? '🟢 victorias consecutivas' : rachaType === 'D' ? '🔴 derrotas consecutivas' : '🟡 empates consecutivos'}</div>
+          <div class="label">${t('rachaRetos')}</div>
+          <div class="sub">${rachaType === 'V' ? t('streakWins') : rachaType === 'D' ? t('streakLosses') : t('streakDraws')}</div>
         </div>
       </div>
     </div>` : ''}
@@ -2783,7 +2977,7 @@ function renderHome() {
     <div class="dash-section" style="padding-top:12px">
       <div class="dash-section-title" style="align-items:center;gap:10px">
         <span style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
-          Metas
+          ${t('metas')}
           ${metasTotal > 0 ? `
           <span style="display:flex;align-items:center;gap:6px;flex:1;max-width:120px">
             <span style="flex:1;height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden">
@@ -2792,13 +2986,13 @@ function renderHome() {
             <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:${metasCompletadas===metasTotal&&metasTotal>0?'var(--court-bright)':'var(--ink-dim)'};letter-spacing:.06em;white-space:nowrap">${metasCompletadas}/${metasTotal}</span>
           </span>` : ''}
         </span>
-        <a id="addMetaLink">+ Agregar</a>
+        <a id="addMetaLink">${t('addGoal')}</a>
       </div>
       ${metasHtml}
     </div>
 
     <div class="dash-section" style="padding-top:12px;padding-bottom:20px">
-      <div class="dash-section-title">Actividad reciente</div>
+      <div class="dash-section-title">${t('historial')}</div>
       <div class="dash-events">${eventHtml}</div>
     </div>`;
 
@@ -2888,7 +3082,7 @@ function calcProgresoPredefinida(preBaseKey, mesObjetivo) {
 }
 
 function renderMetasInline() {
-  if (!metas.length) return `<button class="add-meta-btn" id="addMetaBtnEmpty">+ Definí tu primera meta</button>`;
+  if (!metas.length) return `<button class="add-meta-btn" id="addMetaBtnEmpty">${t('firstMeta')}</button>`;
 
   const renderCard = (m) => {
     const isPre = !!m.preKey;
@@ -2909,7 +3103,7 @@ function renderMetasInline() {
     if (!isPre && m.fechaLimite) {
       const diff = Math.ceil((new Date(m.fechaLimite + 'T12:00:00') - new Date()) / 86400000);
       const color = diff < 0 ? 'var(--crimson)' : diff <= 3 ? 'var(--amber)' : 'var(--ink-dim)';
-      const label = diff < 0 ? `vencida hace ${Math.abs(diff)}d` : diff === 0 ? 'vence hoy' : `${diff}d restantes`;
+      const label = diff < 0 ? t('deadlineExpired', Math.abs(diff)) : diff === 0 ? t('deadlineToday') : t('deadlineDays', diff);
       deadlineHtml = `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:${color};letter-spacing:.06em">${label}</span>`;
     }
 
@@ -2945,7 +3139,7 @@ function renderMetasInline() {
   };
 
   return metas.map(m => renderCard(m)).join('') +
-    `<button class="add-meta-btn" style="margin-top:4px" id="addMetaBtnExtra">+ Agregar meta</button>`;
+    `<button class="add-meta-btn" style="margin-top:4px" id="addMetaBtnExtra">${t('addMetaExtra')}</button>`;
 }
 
 async function changeMeta(id, delta) {
@@ -2955,7 +3149,7 @@ async function changeMeta(id, delta) {
 }
 
 async function deleteMeta(id) {
-  if (!confirm('¿Eliminar esta meta?')) return;
+  if (!confirm(t('confirmDeleteMeta'))) return;
   metas = metas.filter(m => m.id !== id);
   renderHome();
   await syncUp();
@@ -3006,12 +3200,12 @@ $('#cancelMetaBtn').addEventListener('click', closeMetaModal);
 $('#metaModalBg').addEventListener('click', e => { if (e.target === $('#metaModalBg')) closeMetaModal(); });
 
 // Map of predefined presets → meta definition
-const METAS_PREDEFINIDAS_MAP = {
-  top1:     { desc: 'Llegar 1° en un pozo',        total: 1, unidad: null,    preKey: 'pre_top1' },
-  top4x3:   { desc: '3 veces top 4 en pozos',      total: 3, unidad: 'veces', preKey: 'pre_top4x3' },
-  retos3:   { desc: 'Ganar 3 retos consecutivos',  total: 3, unidad: 'retos', preKey: 'pre_retos3' },
-  clases2mes: { desc: '2 clases este mes',          total: 2, unidad: 'clases', preKey: 'pre_clases2' },
-};
+const METAS_PREDEFINIDAS_MAP = () => ({
+  top1:     { desc: t('preDesc_top1'),    total: 1, unidad: null,    preKey: 'pre_top1' },
+  top4x3:   { desc: t('preDesc_top4x3'), total: 3, unidad: t('labelEjercicios'), preKey: 'pre_top4x3' },
+  retos3:   { desc: t('preDesc_retos3'), total: 3, unidad: t('retosLabel'), preKey: 'pre_retos3' },
+  clases2mes: { desc: t('preDesc_clases2mes'), total: 2, unidad: t('clasesLabel'), preKey: 'pre_clases2' },
+});
 
 $('#metaForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -3019,15 +3213,15 @@ $('#metaForm').addEventListener('submit', async e => {
 
   if (tipo === 'predefinida') {
     const key = $('#metaPredefinidaSelect').value;
-    if (!key) { showToast('Elegí una meta predefinida', 'error'); return; }
+    if (!key) { showToast(t('noPresetSelected'), 'error'); return; }
     const mes = $('#metaMesObjetivo').value || null;
-    const preset = METAS_PREDEFINIDAS_MAP[key];
+    const preset = METAS_PREDEFINIDAS_MAP()[key];
     // Allow same preKey with different month
     const preKeyWithMes = preset.preKey + (mes ? '_' + mes.replace('-','') : '');
     if (metas.some(m => m.preKey === preKeyWithMes)) {
-      showToast('Ya tenés esa meta para ese mes', 'error'); return;
+      showToast(t('metaAlreadyExists'), 'error'); return;
     }
-    const mesLabel = mes ? (() => { try { return new Date(mes + '-01T12:00:00').toLocaleDateString('es-CR', { month: 'long', year: 'numeric' }); } catch(e) { return mes; } })() : null;
+    const mesLabel = mes ? (() => { try { return new Date(mes + '-01T12:00:00').toLocaleDateString(appLang === 'en' ? 'en-US' : 'es-CR', { month: 'long', year: 'numeric' }); } catch(e) { return mes; } })() : null;
     metas.push({
       id: uid(),
       preKey: preKeyWithMes,
@@ -3040,7 +3234,7 @@ $('#metaForm').addEventListener('submit', async e => {
     });
   } else {
     const desc = $('#metaDesc').value.trim();
-    if (!desc) { showToast('Escribí una descripción', 'error'); return; }
+    if (!desc) { showToast(t('fieldDesc') + '…', 'error'); return; }
     metas.push({
       id: uid(),
       desc,
@@ -3391,7 +3585,7 @@ async function exportPDF() {
   y = 68;
 
   // ── RESUMEN GENERAL ──
-  sectionTitle('Resumen general');
+  sectionTitle(t('totalHistoricos'));
   const s = calcStats(pozos);
   const bestPos = pozos.length ? Math.min(...pozos.map(p => p.posicion || 999).filter(x => x < 999)) : null;
   const top1 = pozos.filter(p => p.posicion === 1).length;
@@ -3404,31 +3598,31 @@ async function exportPDF() {
   const totalMinClases = clases.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
 
   const bw4 = contentW / 4;
-  statBox('Pozos', pozos.length, 'jugados', margin, bw4);
-  statBox('Mejor pos.', bestPos != null ? `${bestPos}°` : '—', '', margin + bw4, bw4, [45, 134, 89]);
-  statBox('Win rate', `${s.winRate}%`, `${s.v}V · ${s.e}E · ${s.d}D`, margin + bw4 * 2, bw4);
-  statBox('Costo', costoNeto > 0 ? `$${costoNeto}` : `-$${Math.abs(costoNeto)}`, `$${s.totalPremio} ganado`, margin + bw4 * 3, bw4, costoNeto > 0 ? [200, 60, 60] : [45, 134, 89]);
+  statBox(t('statPozos'), pozos.length, t('statPartidos'), margin, bw4);
+  statBox(appLang === 'en' ? 'Best pos.' : 'Mejor pos.', bestPos != null ? `${bestPos}°` : '—', '', margin + bw4, bw4, [45, 134, 89]);
+  statBox(t('statWinRate'), `${s.winRate}%`, `${s.v}V · ${s.e}E · ${s.d}D`, margin + bw4 * 2, bw4);
+  statBox(appLang === 'en' ? 'Cost' : 'Costo', costoNeto > 0 ? `$${costoNeto}` : `-$${Math.abs(costoNeto)}`, `$${s.totalPremio} ${appLang === 'en' ? 'earned' : 'ganado'}`, margin + bw4 * 3, bw4, costoNeto > 0 ? [200, 60, 60] : [45, 134, 89]);
   y += 24; lh(3);
 
   const bw3 = contentW / 3;
-  statBox('Top 1°', top1, `${pozos.length ? Math.round(top1/pozos.length*100) : 0}% de pozos`, margin, bw3, [45, 134, 89]);
-  statBox('Top 3', top3, `${pozos.length ? Math.round(top3/pozos.length*100) : 0}% de pozos`, margin + bw3, bw3);
-  statBox('Top 4', top4, `${pozos.length ? Math.round(top4/pozos.length*100) : 0}% de pozos`, margin + bw3 * 2, bw3);
+  statBox('Top 1°', top1, `${pozos.length ? Math.round(top1/pozos.length*100) : 0}% ${appLang === 'en' ? 'of tournaments' : 'de pozos'}`, margin, bw3, [45, 134, 89]);
+  statBox('Top 3', top3, `${pozos.length ? Math.round(top3/pozos.length*100) : 0}% ${appLang === 'en' ? 'of tournaments' : 'de pozos'}`, margin + bw3, bw3);
+  statBox('Top 4', top4, `${pozos.length ? Math.round(top4/pozos.length*100) : 0}% ${appLang === 'en' ? 'of tournaments' : 'de pozos'}`, margin + bw3 * 2, bw3);
   y += 24; lh(3);
 
   const bw3b = contentW / 3;
-  statBox('Calorías', s.totalCalorias ? s.totalCalorias.toLocaleString() : '—', 'kcal en pozos', margin, bw3b);
-  statBox('Retos', retos.length, `${rv}V · ${re}E · ${rd}D`, margin + bw3b, bw3b);
-  statBox('Clases', clases.length, totalMinClases ? `${Math.round(totalMinClases/60)}h entrenadas` : '', margin + bw3b * 2, bw3b);
+  statBox(t('statCalorias'), s.totalCalorias ? s.totalCalorias.toLocaleString() : '—', `${t('statKcal')}`, margin, bw3b);
+  statBox(t('retosLabel'), retos.length, `${rv}V · ${re}E · ${rd}D`, margin + bw3b, bw3b);
+  statBox(t('clasesLabel'), clases.length, totalMinClases ? `${Math.round(totalMinClases/60)}h` : '', margin + bw3b * 2, bw3b);
   y += 24; lh(4);
 
   // ── ESTADÍSTICAS ──
-  sectionTitle('Estadísticas');
+  sectionTitle(appLang === 'en' ? 'Statistics' : 'Estadísticas');
 
   // Distribución de posiciones
   if (pozos.length) {
     doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
-    doc.text('Distribución de posiciones', margin, y); y += 6;
+    doc.text(appLang === 'en' ? 'Position distribution' : 'Distribución de posiciones', margin, y); y += 6;
     const p1 = pozos.filter(p => p.posicion === 1).length;
     const p23 = pozos.filter(p => p.posicion >= 2 && p.posicion <= 3).length;
     const p48 = pozos.filter(p => p.posicion >= 4 && p.posicion <= 8).length;
@@ -3446,7 +3640,7 @@ async function exportPDF() {
     if (datedPct.length >= 2) {
       newPageIfNeeded(72);
       doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
-      doc.text('Posición relativa en el tiempo', margin, y); y += 5;
+      doc.text(t('chartPosRelTime'), margin, y); y += 5;
       const cLeft = margin + 18; const cRight = margin + contentW;
       const cTop = y; const cH = 52; const cBottom = y + cH; const cInnerW = cRight - cLeft;
       doc.setFillColor(248, 252, 249); doc.rect(cLeft, cTop, cInnerW, cH, 'F');
@@ -3534,7 +3728,7 @@ async function exportPDF() {
   // ── POZOS ──
   if (pozos.length) {
     newPageIfNeeded(30);
-    sectionTitle('Pozos');
+    sectionTitle(t('kpiPozos'));
     const sorted = [...pozos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
     sorted.forEach(p => {
       const hasFinanzas = p.costo != null || p.premio != null;
@@ -3571,7 +3765,7 @@ async function exportPDF() {
   // ── RETOS ──
   if (retos.length) {
     newPageIfNeeded(30);
-    sectionTitle('Retos');
+    sectionTitle(t('retosLabel'));
     const sortedR = [...retos].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
     sortedR.forEach(r => {
       newPageIfNeeded(38);
@@ -3598,8 +3792,8 @@ async function exportPDF() {
   // ── CLASES ──
   if (clases.length) {
     newPageIfNeeded(30);
-    sectionTitle('Clases');
-    const EJERCICIOS_NAMES = ['Volea derecha','Volea revés','Bandeja','Vibora','Rulo','Remate x3','Smash','Doble vidrio def.','Saque','Recepción de saque','Defensa con vidrio','Defensa'];
+    sectionTitle(t('clasesLabel'));
+    const EJERCICIOS_NAMES = getEJ();
     const sortedC = [...clases].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
 
     // Stats de clases
@@ -3607,14 +3801,14 @@ async function exportPDF() {
     const totalMinC = clases.reduce((s, c) => s + (Number(c.duracion) || 0), 0);
     const totalCostoC = clases.reduce((s, c) => s + (Number(c.costo) || 0), 0);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(80, 100, 85);
-    doc.text(`Total: ${clases.length} clases  ·  ${Math.round(totalMinC/60)}h entrenadas  ·  ${totalCalC.toLocaleString()} kcal  ·  Gasto: $${totalCostoC}`, margin, y);
+    doc.text(`Total: ${clases.length} ${t('clasesLabel').toLowerCase()}  ·  ${Math.round(totalMinC/60)}h  ·  ${totalCalC.toLocaleString()} kcal  ·  ${appLang === 'en' ? 'Cost' : 'Gasto'}: $${totalCostoC}`, margin, y);
     y += 8;
 
     // Ejercicios frecuencia
     const ejercFreq = EJERCICIOS_NAMES.map((n, i) => ({ n, count: clases.filter(c => c.ejercicios && c.ejercicios[i]).length })).filter(x => x.count > 0).sort((a, b) => b.count - a.count);
     if (ejercFreq.length) {
       doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(40, 60, 45);
-      doc.text('Ejercicios más practicados', margin, y); y += 6;
+      doc.text(appLang === 'en' ? 'Most practiced exercises' : 'Ejercicios más practicados', margin, y); y += 6;
       const maxE = ejercFreq[0].count;
       ejercFreq.slice(0, 8).forEach(e => hBar(e.n, e.count, maxE, [74, 222, 128], 50));
       lh(3);
@@ -3647,7 +3841,7 @@ async function exportPDF() {
   // ── METAS ──
   if (metas.length) {
     newPageIfNeeded(30);
-    sectionTitle('Metas');
+    sectionTitle(t('metas'));
     metas.forEach(m => {
       newPageIfNeeded(26);
       const pct = m.total > 0 ? Math.min(100, Math.round(m.actual / m.total * 100)) : 0;
@@ -3748,6 +3942,7 @@ initPWA();
   auth = firebase.auth();
   db = firebase.firestore();
   db.enablePersistence().catch(() => {}); // offline cache
+  applyLang();
   init();
 </script>
 </body>
