@@ -484,6 +484,10 @@ body { max-width: 720px; margin: 0 auto; }
 .ronda-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .ronda-title { font-size: 16px; font-weight: 700; color: var(--ink); }
 .ronda-nav { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
+.ronda-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; margin-bottom: 14px; scrollbar-width: none; }
+.ronda-pills::-webkit-scrollbar { display: none; }
+.ronda-pill { flex-shrink: 0; padding: 5px 12px; border-radius: 999px; border: 1.5px solid var(--border); background: none; color: var(--ink-muted); font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all .15s; }
+.ronda-pill.active { background: var(--court-bright); border-color: var(--court-bright); color: var(--bg); }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
 .torneo-open-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.42); }
 </style>
@@ -4082,6 +4086,7 @@ let torneo = null;
 let torneoJugadoresList = [];
 let torneoFormato = 'americano';
 let torneoTipo = 'individual';
+let torneoRondaVista = 0;
 
 function loadTorneoFromLS() {
   try {
@@ -4225,6 +4230,7 @@ function generarRonda() {
   }
 
   torneo.rondas.push({ numero: torneo.rondas.length + 1, partidos, descansan });
+  torneoRondaVista = torneo.rondas.length - 1;
 }
 
 function calcularStats() {
@@ -4261,9 +4267,22 @@ function mostrarTorneoTab(tab) {
 }
 
 function renderRondaActual() {
-  const ronda = torneo.rondas[torneo.rondas.length - 1];
-  const completos = todosScoresCompletos();
-  let html = `<div class="ronda-header">
+  const totalRondas = torneo.rondas.length;
+  if (torneoRondaVista >= totalRondas) torneoRondaVista = totalRondas - 1;
+  const ronda = torneo.rondas[torneoRondaVista];
+  const esUltimaRonda = torneoRondaVista === totalRondas - 1;
+  const completos = esUltimaRonda && todosScoresCompletos();
+
+  let html = '';
+  if (totalRondas > 1) {
+    html += `<div class="ronda-pills">`;
+    for (let r = 0; r < totalRondas; r++) {
+      html += `<button class="ronda-pill${r === torneoRondaVista ? ' active' : ''}" data-rv="${r}">R${r + 1}</button>`;
+    }
+    html += `</div>`;
+  }
+
+  html += `<div class="ronda-header">
     <div class="ronda-title">Ronda ${ronda.numero}</div>
     <div class="ronda-nav">${torneo.formato.toUpperCase()} · ${torneo.jugadores.length} jugadores</div>
   </div>`;
@@ -4280,7 +4299,7 @@ function renderRondaActual() {
     const s1 = partido.score1 !== null ? partido.score1 : '';
     const s2 = partido.score2 !== null ? partido.score2 : '';
     const done = partido.score1 !== null && partido.score2 !== null;
-    const ri = torneo.rondas.length - 1;
+    const ri = torneoRondaVista;
     const labelP1 = esParejas ? p1[0] : `${p1[0]} <span>+</span> ${p1[1]}`;
     const labelP2 = esParejas ? p2[0] : `${p2[0]} <span>+</span> ${p2[1]}`;
     html += `<div class="cancha-card">
@@ -4305,6 +4324,10 @@ function renderRondaActual() {
 
   $('#torneoRondaView').innerHTML = html;
 
+  $('#torneoRondaView').querySelectorAll('.ronda-pill').forEach(btn => {
+    btn.addEventListener('click', () => { torneoRondaVista = +btn.dataset.rv; renderRondaActual(); });
+  });
+
   $('#torneoRondaView').querySelectorAll('.score-input').forEach(inp => {
     inp.addEventListener('input', () => {
       const val = parseInt(inp.value);
@@ -4312,7 +4335,7 @@ function renderRondaActual() {
       if (+inp.dataset.side === 1) p.score1 = isNaN(val) ? null : val;
       else p.score2 = isNaN(val) ? null : val;
       saveTorneoToLS();
-      if (todosScoresCompletos()) renderRondaActual();
+      if (esUltimaRonda && todosScoresCompletos()) renderRondaActual();
     });
   });
 
