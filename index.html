@@ -445,6 +445,48 @@ body { max-width: 720px; margin: 0 auto; }
 .freq-bar-fill { height: 100%; background: var(--court-bright); border-radius: 4px; transition: width .4s; opacity: 0.85; }
 .freq-bar-count { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-dim); min-width: 22px; }
 .timeline-empty { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); text-align: center; padding: 30px 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ═══ Torneo ═══ */
+.torneo-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 200; overflow-y: auto; flex-direction: column; }
+.torneo-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 1; }
+.torneo-header h2 { font-size: 15px; font-weight: 700; flex: 1; letter-spacing: -0.01em; }
+.torneo-body { padding: 20px 16px; max-width: 560px; margin: 0 auto; width: 100%; }
+.torneo-ttabs { display: flex; gap: 4px; background: var(--surface-2); border-radius: 10px; padding: 3px; margin-bottom: 20px; }
+.torneo-ttab { flex: 1; padding: 7px; border: none; background: none; color: var(--ink-muted); font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all .15s; }
+.torneo-ttab.active { background: var(--surface); color: var(--ink); }
+.cancha-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
+.cancha-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--court-bright); margin-bottom: 10px; }
+.match-pareja { font-size: 14px; font-weight: 600; color: var(--ink); }
+.match-vs-sep { display: block; color: var(--ink-dim); font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; margin: 4px 0; }
+.score-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.score-input { width: 52px; height: 42px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; color: var(--ink); font-size: 20px; font-weight: 700; text-align: center; font-family: 'JetBrains Mono', monospace; }
+.score-input:focus { outline: none; border-color: var(--court-bright); }
+.score-dash { color: var(--ink-muted); font-weight: 700; font-size: 18px; }
+.score-label { font-size: 11px; color: var(--ink-muted); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.score-ok { color: var(--court-bright); font-size: 16px; }
+.ranking-tbl { width: 100%; border-collapse: collapse; }
+.ranking-tbl th { text-align: left; padding: 6px 8px; color: var(--ink-muted); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.ranking-tbl td { padding: 10px 8px; border-bottom: 1px solid var(--border); }
+.ranking-tbl tr:last-child td { border-bottom: none; }
+.rank-pos-cell { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink-muted); font-size: 13px; }
+.rank-pos-cell.top { color: var(--court-bright); }
+.rank-name-cell { font-weight: 600; color: var(--ink); font-size: 14px; }
+.rank-num-cell { font-family: 'JetBrains Mono', monospace; color: var(--ink-mid); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+.descansan-row { background: var(--surface-2); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 12px; color: var(--ink-muted); }
+.player-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; min-height: 20px; }
+.player-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 8px 5px 12px; font-size: 13px; color: var(--ink); }
+.player-chip-rm { background: none; border: none; color: var(--ink-muted); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; }
+.add-player-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.torneo-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
+.torneo-formato-btns { display: flex; gap: 8px; margin-bottom: 20px; }
+.torneo-formato-btn { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); color: var(--ink-muted); font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; text-align: center; }
+.torneo-formato-btn.selected { background: rgba(74,222,128,0.12); border-color: rgba(74,222,128,0.45); color: var(--court-bright); }
+.ronda-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.ronda-title { font-size: 16px; font-weight: 700; color: var(--ink); }
+.ronda-nav { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
+.torneo-open-btn { display: flex; align-items: center; gap: 8px; margin: 8px 20px 0; width: calc(100% - 40px); background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--ink-muted); font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; }
+.torneo-open-btn:hover { border-color: var(--court-bright); color: var(--court-bright); }
+.torneo-open-btn svg { width: 18px; height: 18px; stroke: currentColor; }
 </style>
 </head>
 <body>
@@ -567,6 +609,11 @@ body { max-width: 720px; margin: 0 auto; }
   <div id="pozosView" hidden>
   <section class="stats" id="stats"></section>
   <div class="stats-note" id="statsNote" hidden></div>
+
+  <button type="button" class="torneo-open-btn" id="organizarTorneoBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Organizar torneo
+  </button>
 
   <div class="section-title">
     <h2 data-i18n="historial">Historial</h2>
@@ -731,6 +778,52 @@ body { max-width: 720px; margin: 0 auto; }
 
 <div class="toast" id="toast"></div>
 <input type="file" id="fileInput" accept="application/json" style="display:none">
+
+<!-- Torneo overlay -->
+<div id="torneoOverlay" class="torneo-overlay" style="display:none">
+  <div class="torneo-header">
+    <button type="button" class="icon-btn" id="torneoCloseBtn" style="width:32px;height:32px;flex-shrink:0" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <h2 id="torneoHeaderTitle">Organizar torneo</h2>
+    <button type="button" class="btn btn-danger" id="torneoCerrarBtn" style="padding:6px 12px;font-size:12px;display:none">Terminar</button>
+  </div>
+  <div class="torneo-body">
+
+    <!-- Setup -->
+    <div id="torneoSetup">
+      <div class="torneo-section-label">Nombre del torneo (opcional)</div>
+      <input type="text" id="torneoNombreInput" class="field" placeholder="Torneo del sábado" style="margin-bottom:20px">
+
+      <div class="torneo-section-label">Formato</div>
+      <div class="torneo-formato-btns">
+        <button type="button" class="torneo-formato-btn selected" data-fmt="americano">Americano</button>
+        <button type="button" class="torneo-formato-btn" data-fmt="mexicano">Mexicano</button>
+      </div>
+
+      <div class="torneo-section-label">Jugadores (<span id="nJugadores">0</span>)</div>
+      <div class="add-player-row">
+        <input type="text" id="nuevoJugadorInput" class="field" placeholder="Nombre del jugador" autocomplete="off">
+        <button type="button" class="btn btn-secondary" id="addJugadorBtn">Agregar</button>
+      </div>
+      <div class="player-chips" id="jugadoresChips"></div>
+
+      <p id="torneoWarning" style="font-size:12px;color:var(--amber);margin-bottom:12px;display:none"></p>
+      <button type="button" class="btn btn-primary" id="generarFixtureBtn" style="width:100%">Generar fixture →</button>
+    </div>
+
+    <!-- Torneo activo -->
+    <div id="torneoActivo" style="display:none">
+      <div class="torneo-ttabs">
+        <button type="button" class="torneo-ttab active" data-ttab="ronda">Ronda actual</button>
+        <button type="button" class="torneo-ttab" data-ttab="ranking">Ranking</button>
+      </div>
+      <div id="torneoRondaView"></div>
+      <div id="torneoRankingView" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
 
 <!-- Modal de reto -->
 <div class="modal-bg" id="retoModalBg">
@@ -3973,6 +4066,285 @@ initPWA();
   db.enablePersistence().catch(() => {}); // offline cache
   applyLang();
   init();
+
+// ---------- Torneo ----------
+const TORNEO_LS_KEY = 'pluspadel_torneo_v1';
+let torneo = null;
+let torneoJugadoresList = [];
+let torneoFormato = 'americano';
+
+function loadTorneoFromLS() {
+  try {
+    const raw = localStorage.getItem(TORNEO_LS_KEY);
+    if (!raw) return null;
+    const t = JSON.parse(raw);
+    if (Date.now() > t.expira) { localStorage.removeItem(TORNEO_LS_KEY); return null; }
+    return t;
+  } catch { return null; }
+}
+
+function saveTorneoToLS() {
+  if (!torneo) return;
+  torneo.expira = Date.now() + 7 * 24 * 60 * 60 * 1000;
+  localStorage.setItem(TORNEO_LS_KEY, JSON.stringify(torneo));
+}
+
+function abrirTorneoOverlay() {
+  torneo = loadTorneoFromLS();
+  $('#torneoOverlay').style.display = 'flex';
+  if (torneo) {
+    renderTorneoActivo();
+  } else {
+    torneoJugadoresList = [];
+    torneoFormato = 'americano';
+    $('#torneoNombreInput').value = '';
+    $('#torneoWarning').style.display = 'none';
+    document.querySelectorAll('.torneo-formato-btn').forEach(b => b.classList.toggle('selected', b.dataset.fmt === 'americano'));
+    renderTorneoSetup();
+  }
+}
+
+function cerrarTorneoOverlay() {
+  $('#torneoOverlay').style.display = 'none';
+}
+
+function renderTorneoSetup() {
+  $('#torneoSetup').style.display = '';
+  $('#torneoActivo').style.display = 'none';
+  $('#torneoHeaderTitle').textContent = 'Organizar torneo';
+  $('#torneoCerrarBtn').style.display = 'none';
+  renderJugadoresChips();
+  $('#nJugadores').textContent = torneoJugadoresList.length;
+}
+
+function renderJugadoresChips() {
+  const container = $('#jugadoresChips');
+  container.innerHTML = '';
+  torneoJugadoresList.forEach((name, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'player-chip';
+    chip.innerHTML = `${name} <button type="button" class="player-chip-rm" data-idx="${i}" aria-label="Quitar">×</button>`;
+    container.appendChild(chip);
+  });
+  container.querySelectorAll('.player-chip-rm').forEach(btn => {
+    btn.addEventListener('click', () => {
+      torneoJugadoresList.splice(+btn.dataset.idx, 1);
+      renderJugadoresChips();
+      $('#nJugadores').textContent = torneoJugadoresList.length;
+    });
+  });
+}
+
+function generarFixture() {
+  const n = torneoJugadoresList.length;
+  if (n < 4) { mostrarTorneoWarning('Necesitás al menos 4 jugadores.'); return; }
+  if (n % 2 !== 0) { mostrarTorneoWarning('Necesitás un número par de jugadores.'); return; }
+  $('#torneoWarning').style.display = 'none';
+  torneo = {
+    nombre: $('#torneoNombreInput').value.trim() || 'Torneo',
+    formato: torneoFormato,
+    jugadores: [...torneoJugadoresList],
+    rondas: [],
+    expira: Date.now() + 7 * 24 * 60 * 60 * 1000
+  };
+  generarRonda();
+  saveTorneoToLS();
+  renderTorneoActivo();
+}
+
+function mostrarTorneoWarning(msg) {
+  const w = $('#torneoWarning');
+  w.textContent = msg;
+  w.style.display = '';
+}
+
+function generarRonda() {
+  const n = torneo.jugadores.length;
+  const indices = Array.from({length: n}, (_, i) => i);
+  const sittingCounts = new Array(n).fill(0);
+  for (const r of torneo.rondas) for (const idx of r.descansan) sittingCounts[idx]++;
+
+  let ordenado;
+  if (torneo.formato === 'mexicano' && torneo.rondas.length > 0) {
+    const stats = calcularStats();
+    ordenado = [...indices].sort((a, b) => {
+      if (sittingCounts[b] !== sittingCounts[a]) return sittingCounts[b] - sittingCounts[a];
+      return stats[b].gg - stats[a].gg;
+    });
+  } else {
+    // Shuffle con prioridad a quienes más descansaron
+    ordenado = [...indices].sort((a, b) => {
+      if (sittingCounts[b] !== sittingCounts[a]) return sittingCounts[b] - sittingCounts[a];
+      return Math.random() - 0.5;
+    });
+  }
+
+  const nJuegan = Math.floor(n / 4) * 4;
+  const juegan = ordenado.slice(0, nJuegan);
+  const descansan = ordenado.slice(nJuegan);
+  const partidos = [];
+
+  for (let i = 0; i < juegan.length; i += 4) {
+    const g = juegan.slice(i, i + 4);
+    const esMexicanoRnd2 = torneo.formato === 'mexicano' && torneo.rondas.length > 0;
+    partidos.push({
+      cancha: i / 4 + 1,
+      pareja1: esMexicanoRnd2 ? [g[0], g[3]] : [g[0], g[1]],
+      pareja2: esMexicanoRnd2 ? [g[1], g[2]] : [g[2], g[3]],
+      score1: null, score2: null
+    });
+  }
+
+  torneo.rondas.push({ numero: torneo.rondas.length + 1, partidos, descansan });
+}
+
+function calcularStats() {
+  const stats = torneo.jugadores.map((nombre, i) => ({ idx: i, nombre, pj: 0, gg: 0, gp: 0 }));
+  for (const ronda of torneo.rondas) {
+    for (const p of ronda.partidos) {
+      if (p.score1 === null || p.score2 === null) continue;
+      for (const idx of p.pareja1) { stats[idx].pj++; stats[idx].gg += p.score1; stats[idx].gp += p.score2; }
+      for (const idx of p.pareja2) { stats[idx].pj++; stats[idx].gg += p.score2; stats[idx].gp += p.score1; }
+    }
+  }
+  return stats;
+}
+
+function todosScoresCompletos() {
+  if (!torneo?.rondas.length) return false;
+  return torneo.rondas[torneo.rondas.length - 1].partidos.every(p => p.score1 !== null && p.score2 !== null);
+}
+
+function renderTorneoActivo() {
+  $('#torneoSetup').style.display = 'none';
+  $('#torneoActivo').style.display = '';
+  $('#torneoHeaderTitle').textContent = torneo.nombre;
+  $('#torneoCerrarBtn').style.display = '';
+  mostrarTorneoTab('ronda');
+}
+
+function mostrarTorneoTab(tab) {
+  document.querySelectorAll('.torneo-ttab').forEach(b => b.classList.toggle('active', b.dataset.ttab === tab));
+  $('#torneoRondaView').style.display = tab === 'ronda' ? '' : 'none';
+  $('#torneoRankingView').style.display = tab === 'ranking' ? '' : 'none';
+  if (tab === 'ronda') renderRondaActual();
+  if (tab === 'ranking') renderRanking();
+}
+
+function renderRondaActual() {
+  const ronda = torneo.rondas[torneo.rondas.length - 1];
+  const completos = todosScoresCompletos();
+  let html = `<div class="ronda-header">
+    <div class="ronda-title">Ronda ${ronda.numero}</div>
+    <div class="ronda-nav">${torneo.formato.toUpperCase()} · ${torneo.jugadores.length} jugadores</div>
+  </div>`;
+
+  if (ronda.descansan.length) {
+    const nombres = ronda.descansan.map(i => torneo.jugadores[i]).join(', ');
+    html += `<div class="descansan-row">Descansan: <strong>${nombres}</strong></div>`;
+  }
+
+  ronda.partidos.forEach((partido, pi) => {
+    const p1 = partido.pareja1.map(i => torneo.jugadores[i]);
+    const p2 = partido.pareja2.map(i => torneo.jugadores[i]);
+    const s1 = partido.score1 !== null ? partido.score1 : '';
+    const s2 = partido.score2 !== null ? partido.score2 : '';
+    const done = partido.score1 !== null && partido.score2 !== null;
+    const ri = torneo.rondas.length - 1;
+    html += `<div class="cancha-card">
+      <div class="cancha-label">Cancha ${partido.cancha}</div>
+      <div class="match-pareja">${p1[0]} <span>+</span> ${p1[1]}</div>
+      <span class="match-vs-sep">VS</span>
+      <div class="match-pareja">${p2[0]} <span>+</span> ${p2[1]}</div>
+      <div class="score-row">
+        <span class="score-label">${p1[0]}</span>
+        <input class="score-input" type="number" min="0" max="99" value="${s1}" data-ri="${ri}" data-pi="${pi}" data-side="1" placeholder="—">
+        <span class="score-dash">—</span>
+        <input class="score-input" type="number" min="0" max="99" value="${s2}" data-ri="${ri}" data-pi="${pi}" data-side="2" placeholder="—">
+        <span class="score-label" style="text-align:right">${p2[0]}</span>
+        ${done ? '<span class="score-ok">✓</span>' : ''}
+      </div>
+    </div>`;
+  });
+
+  if (completos) {
+    html += `<button type="button" class="btn btn-primary" id="siguienteRondaBtn" style="width:100%;margin-top:8px">Siguiente ronda →</button>`;
+  }
+
+  $('#torneoRondaView').innerHTML = html;
+
+  $('#torneoRondaView').querySelectorAll('.score-input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const val = parseInt(inp.value);
+      const p = torneo.rondas[+inp.dataset.ri].partidos[+inp.dataset.pi];
+      if (+inp.dataset.side === 1) p.score1 = isNaN(val) ? null : val;
+      else p.score2 = isNaN(val) ? null : val;
+      saveTorneoToLS();
+      if (todosScoresCompletos()) renderRondaActual();
+    });
+  });
+
+  const sigBtn = $('#siguienteRondaBtn');
+  if (sigBtn) sigBtn.addEventListener('click', () => { generarRonda(); saveTorneoToLS(); renderRondaActual(); });
+}
+
+function renderRanking() {
+  const stats = calcularStats();
+  const sinDatos = stats.every(s => s.pj === 0);
+  if (sinDatos) {
+    $('#torneoRankingView').innerHTML = `<p style="color:var(--ink-muted);text-align:center;padding:40px 0;font-size:14px">El ranking aparece cuando cargues los primeros resultados.</p>`;
+    return;
+  }
+  stats.sort((a, b) => b.gg - a.gg || (b.gg - b.gp) - (a.gg - a.gp));
+  let html = `<table class="ranking-tbl"><thead><tr>
+    <th>#</th><th>Jugador</th><th style="text-align:right">GG</th><th style="text-align:right">GP</th><th style="text-align:right">Dif</th>
+  </tr></thead><tbody>`;
+  stats.forEach((s, pos) => {
+    const dif = s.gg - s.gp;
+    html += `<tr>
+      <td class="rank-pos-cell ${pos < 3 ? 'top' : ''}">${pos + 1}</td>
+      <td class="rank-name-cell">${s.nombre}</td>
+      <td class="rank-num-cell">${s.gg}</td>
+      <td class="rank-num-cell">${s.gp}</td>
+      <td class="rank-num-cell" style="color:${dif >= 0 ? 'var(--court-bright)' : 'var(--crimson)'}">${dif > 0 ? '+' : ''}${dif}</td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
+  $('#torneoRankingView').innerHTML = html;
+}
+
+// Torneo event wiring
+$('#organizarTorneoBtn').addEventListener('click', abrirTorneoOverlay);
+$('#torneoCloseBtn').addEventListener('click', cerrarTorneoOverlay);
+$('#torneoCerrarBtn').addEventListener('click', () => {
+  if (confirm('¿Terminar el torneo? Se borrarán todos los datos.')) {
+    localStorage.removeItem(TORNEO_LS_KEY);
+    torneo = null;
+    cerrarTorneoOverlay();
+  }
+});
+document.querySelectorAll('.torneo-formato-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    torneoFormato = btn.dataset.fmt;
+    document.querySelectorAll('.torneo-formato-btn').forEach(b => b.classList.toggle('selected', b.dataset.fmt === torneoFormato));
+  });
+});
+$('#addJugadorBtn').addEventListener('click', () => {
+  const val = $('#nuevoJugadorInput').value.trim();
+  if (!val) return;
+  torneoJugadoresList.push(val);
+  $('#nuevoJugadorInput').value = '';
+  $('#nuevoJugadorInput').focus();
+  renderJugadoresChips();
+  $('#nJugadores').textContent = torneoJugadoresList.length;
+});
+$('#nuevoJugadorInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); $('#addJugadorBtn').click(); }
+});
+$('#generarFixtureBtn').addEventListener('click', generarFixture);
+document.querySelectorAll('.torneo-ttab').forEach(btn => {
+  btn.addEventListener('click', () => mostrarTorneoTab(btn.dataset.ttab));
+});
 </script>
 </body>
 </html>
