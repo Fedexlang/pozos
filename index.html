@@ -492,6 +492,8 @@ body { max-width: 720px; margin: 0 auto; }
 .ranking-sort-btn.active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
 .torneo-open-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.42); }
+.torneo-cerrar-btn { display: block; width: fit-content; margin: 24px auto 8px; background: var(--crimson); border: none; border-radius: 999px; padding: 14px 32px; color: #fff; font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(220,38,38,0.3); }
+.torneo-cerrar-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(220,38,38,0.42); }
 </style>
 </head>
 <body>
@@ -790,7 +792,6 @@ body { max-width: 720px; margin: 0 auto; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <h2 id="torneoHeaderTitle">Organizar torneo</h2>
-    <button type="button" class="btn btn-danger" id="torneoCerrarBtn" style="padding:6px 12px;font-size:12px;display:none">Terminar</button>
   </div>
   <div class="torneo-body">
 
@@ -835,6 +836,7 @@ body { max-width: 720px; margin: 0 auto; }
       </div>
       <div id="torneoRondaView"></div>
       <div id="torneoRankingView" style="display:none"></div>
+      <button type="button" class="torneo-cerrar-btn" id="torneoCerrarBtn" style="display:none">Terminar torneo</button>
     </div>
 
   </div>
