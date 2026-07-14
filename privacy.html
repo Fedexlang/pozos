@@ -1,0 +1,280 @@
+<title>Política de Privacidad — PlusPadel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #F5F7F5;
+    --surface:  #FFFFFF;
+    --ink:      #1B211C;
+    --ink-mid:  #4A5750;
+    --ink-muted:#7A8C83;
+    --accent:   #2D6A4F;
+    --accent-lt:#EAF2ED;
+    --border:   #DCE6DF;
+    --serif:    Georgia, 'Times New Roman', serif;
+    --sans:     -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .logo-mark svg { width: 18px; height: 18px; }
+
+  .logo-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .logo-sub {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-left: auto;
+  }
+
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .doc-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(26px, 5vw, 36px);
+    font-weight: normal;
+    line-height: 1.2;
+    color: var(--ink);
+    text-wrap: balance;
+    margin-bottom: 16px;
+  }
+
+  .intro {
+    font-size: 16px;
+    color: var(--ink-mid);
+    border-left: 3px solid var(--accent);
+    padding-left: 16px;
+    margin-bottom: 40px;
+    line-height: 1.65;
+  }
+
+  .updated {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  section {
+    margin-bottom: 40px;
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: normal;
+    color: var(--ink);
+    margin-bottom: 12px;
+    text-wrap: balance;
+  }
+
+  p {
+    color: var(--ink-mid);
+    margin-bottom: 12px;
+    max-width: 62ch;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  ul {
+    list-style: none;
+    margin: 8px 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  ul li {
+    color: var(--ink-mid);
+    padding-left: 18px;
+    position: relative;
+  }
+
+  ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .card {
+    background: var(--accent-lt);
+    border: 1px solid #C5DECE;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-top: 16px;
+  }
+
+  .card p { color: var(--ink); margin-bottom: 0; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  a:hover { text-decoration: underline; }
+
+  footer {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-muted);
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 480px) {
+    main { padding: 32px 16px 64px; }
+    .logo-sub { display: none; }
+  }
+</style>
+
+<header>
+  <div class="logo-mark">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="12" cy="12" rx="4" ry="10" transform="rotate(-30 12 12)"/>
+      <line x1="5" y1="5" x2="19" y2="19"/>
+    </svg>
+  </div>
+  <span class="logo-name">PlusPadel</span>
+  <span class="logo-sub">Política de privacidad</span>
+</header>
+
+<main>
+  <p class="doc-eyebrow">Documento legal</p>
+  <h1>Política de Privacidad</h1>
+
+  <p class="intro">
+    Esta política explica qué datos recopila PlusPadel, cómo los usa y cómo podés controlarlos.
+    Está escrita en lenguaje claro, sin tecnicismos innecesarios.
+  </p>
+
+  <p class="updated">Última actualización: julio de 2026</p>
+
+  <section>
+    <h2>Qué es PlusPadel</h2>
+    <p>PlusPadel es una aplicación para registrar y seguir torneos, retos, clases y metas de pádel. Los datos que guardás son tuyos — nosotros solo proveemos la infraestructura para almacenarlos de forma segura.</p>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <h2>Qué datos recopilamos</h2>
+    <p>Solo recopilamos lo mínimo necesario para que la app funcione:</p>
+    <ul>
+      <li><strong>Dirección de email</strong> — para crear y autenticar tu cuenta.</li>
+      <li><strong>Nombre (opcional)</strong> — si decidís ingresarlo en los ajustes de la app.</li>
+      <li><strong>Datos de la app</strong> — los torneos, retos, clases y metas que vos mismo registrás.</li>
+    </ul>
+    <p>No recopilamos datos de ubicación, contactos, micrófono, cámara ni ningún otro dato del dispositivo.</p>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <h2>Cómo usamos los datos</h2>
+    <p>Los datos se usan exclusivamente para:</p>
+    <ul>
+      <li>Identificarte cuando iniciás sesión.</li>
+      <li>Sincronizar tus registros entre dispositivos.</li>
+      <li>Permitirte exportar o importar tu información.</li>
+    </ul>
+    <p>No usamos tus datos para publicidad, análisis de comportamiento ni ningún otro fin comercial.</p>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <h2>Servicios de terceros</h2>
+    <p>PlusPadel utiliza servicios de Google LLC para su funcionamiento:</p>
+    <ul>
+      <li><strong>Firebase Authentication</strong> — gestiona el inicio de sesión, incluyendo la opción de entrar con Google.</li>
+      <li><strong>Cloud Firestore</strong> — almacena tus datos en la nube de forma segura.</li>
+    </ul>
+    <p>Estos servicios tienen sus propias políticas de privacidad, disponibles en <a href="https://policies.google.com/privacy" target="_blank">policies.google.com/privacy</a>.</p>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <h2>Almacenamiento y seguridad</h2>
+    <p>Tus datos se almacenan en los servidores de Firebase (Google Cloud) con cifrado en tránsito y en reposo. La app también guarda una copia local en tu dispositivo para que funcione sin conexión a internet.</p>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <h2>Tus derechos</h2>
+    <p>Podés en cualquier momento:</p>
+    <ul>
+      <li>Exportar todos tus datos desde la sección Ajustes de la app.</li>
+      <li>Eliminar tu cuenta y todos los datos asociados contactándonos por email.</li>
+    </ul>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <h2>Contacto</h2>
+    <p>Si tenés preguntas sobre esta política o querés solicitar la eliminación de tus datos, escribinos a:</p>
+    <div class="card">
+      <p><a href="mailto:fedexlang@gmail.com">fedexlang@gmail.com</a></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2026 PlusPadel · <a href="mailto:fedexlang@gmail.com">fedexlang@gmail.com</a>
+</footer>
