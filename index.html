@@ -4190,31 +4190,61 @@ function generarRonda() {
   const sittingCounts = new Array(n).fill(0);
   for (const r of torneo.rondas) for (const idx of r.descansan) sittingCounts[idx]++;
 
-  let ordenado;
-  if (torneo.formato === 'mexicano' && torneo.rondas.length > 0) {
-    const stats = calcularStats();
-    ordenado = [...indices].sort((a, b) => {
-      if (sittingCounts[b] !== sittingCounts[a]) return sittingCounts[b] - sittingCounts[a];
-      return stats[b].gg - stats[a].gg;
-    });
-  } else {
-    // Shuffle con prioridad a quienes más descansaron
-    ordenado = [...indices].sort((a, b) => {
-      if (sittingCounts[b] !== sittingCounts[a]) return sittingCounts[b] - sittingCounts[a];
-      return Math.random() - 0.5;
-    });
+  // Matriz de enfrentamientos previos
+  const faced = Array.from({length: n}, () => new Array(n).fill(0));
+  for (const ronda of torneo.rondas) {
+    for (const partido of ronda.partidos) {
+      for (const a of partido.pareja1) for (const b of partido.pareja2) { faced[a][b]++; faced[b][a]++; }
+    }
   }
 
   const esParejas = torneo.tipo === 'parejas';
   const groupSize = esParejas ? 2 : 4;
   const nJuegan = Math.floor(n / groupSize) * groupSize;
-  const juegan = ordenado.slice(0, nJuegan);
-  const descansan = ordenado.slice(nJuegan);
-  const partidos = [];
 
+  // Separar quién juega (prioridad: más descansos) de quién descansa
+  const byPriority = [...indices].sort((a, b) => sittingCounts[b] - sittingCounts[a]);
+  const descansan = byPriority.slice(nJuegan);
+  const candidates = byPriority.slice(0, nJuegan);
+
+  function shuffleArr(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+
+  function scoreOrder(order) {
+    let s = 0;
+    for (let i = 0; i < order.length; i += groupSize) {
+      const g = order.slice(i, i + groupSize);
+      const p1 = esParejas ? [g[0]] : [g[0], g[1]];
+      const p2 = esParejas ? [g[1]] : [g[2], g[3]];
+      for (const a of p1) for (const b of p2) s += faced[a][b];
+    }
+    return s;
+  }
+
+  let juegan;
+  if (torneo.formato === 'mexicano' && torneo.rondas.length > 0) {
+    // Mexicano: orden determinístico por GG
+    const stats = calcularStats();
+    juegan = [...candidates].sort((a, b) => stats[b].gg - stats[a].gg);
+  } else {
+    // Americano: buscar el shuffle con menos rematches
+    let best = shuffleArr(candidates);
+    let bestScore = scoreOrder(best);
+    for (let attempt = 0; attempt < 80 && bestScore > 0; attempt++) {
+      const candidate = shuffleArr(candidates);
+      const s = scoreOrder(candidate);
+      if (s < bestScore) { bestScore = s; best = candidate; }
+    }
+    juegan = best;
+  }
+
+  const partidos = [];
+  const esMexicanoRnd2 = torneo.formato === 'mexicano' && torneo.rondas.length > 0;
   for (let i = 0; i < juegan.length; i += groupSize) {
     const g = juegan.slice(i, i + groupSize);
-    const esMexicanoRnd2 = torneo.formato === 'mexicano' && torneo.rondas.length > 0;
     if (esParejas) {
       partidos.push({
         cancha: i / groupSize + 1,
