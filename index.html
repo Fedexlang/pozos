@@ -484,9 +484,8 @@ body { max-width: 720px; margin: 0 auto; }
 .ronda-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .ronda-title { font-size: 16px; font-weight: 700; color: var(--ink); }
 .ronda-nav { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
-.torneo-open-btn { display: inline-flex; align-items: center; gap: 8px; margin: 12px 20px 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 10px 20px; color: var(--bg); font-size: 14px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.06em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
+.torneo-open-btn { display: block; width: calc(100% - 40px); margin: 12px 20px 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 24px; color: var(--bg); font-size: 17px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); text-align: center; }
 .torneo-open-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.42); }
-.torneo-open-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
 </style>
 </head>
 <body>
@@ -611,7 +610,6 @@ body { max-width: 720px; margin: 0 auto; }
   <div class="stats-note" id="statsNote" hidden></div>
 
   <button type="button" class="torneo-open-btn" id="organizarTorneoBtn">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     Organizar torneo
   </button>
 
