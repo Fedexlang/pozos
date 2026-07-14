@@ -488,6 +488,8 @@ body { max-width: 720px; margin: 0 auto; }
 .ronda-pills::-webkit-scrollbar { display: none; }
 .ronda-pill { flex-shrink: 0; padding: 5px 12px; border-radius: 999px; border: 1.5px solid var(--border); background: none; color: var(--ink-muted); font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; cursor: pointer; transition: all .15s; }
 .ronda-pill.active { background: var(--court-bright); border-color: var(--court-bright); color: var(--bg); }
+.ranking-sort-btn { padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--border); background: none; color: var(--ink-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; }
+.ranking-sort-btn.active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
 .torneo-open-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.42); }
 </style>
@@ -4087,6 +4089,7 @@ let torneoJugadoresList = [];
 let torneoFormato = 'americano';
 let torneoTipo = 'individual';
 let torneoRondaVista = 0;
+let torneoRankingSort = 'games';
 
 function loadTorneoFromLS() {
   try {
@@ -4234,12 +4237,19 @@ function generarRonda() {
 }
 
 function calcularStats() {
-  const stats = torneo.jugadores.map((nombre, i) => ({ idx: i, nombre, pj: 0, gg: 0, gp: 0 }));
+  const stats = torneo.jugadores.map((nombre, i) => ({ idx: i, nombre, pj: 0, gg: 0, gp: 0, g: 0, e: 0, p: 0 }));
   for (const ronda of torneo.rondas) {
-    for (const p of ronda.partidos) {
-      if (p.score1 === null || p.score2 === null) continue;
-      for (const idx of p.pareja1) { stats[idx].pj++; stats[idx].gg += p.score1; stats[idx].gp += p.score2; }
-      for (const idx of p.pareja2) { stats[idx].pj++; stats[idx].gg += p.score2; stats[idx].gp += p.score1; }
+    for (const partido of ronda.partidos) {
+      if (partido.score1 === null || partido.score2 === null) continue;
+      const s1 = partido.score1, s2 = partido.score2;
+      for (const idx of partido.pareja1) {
+        stats[idx].pj++; stats[idx].gg += s1; stats[idx].gp += s2;
+        if (s1 > s2) stats[idx].g++; else if (s1 === s2) stats[idx].e++; else stats[idx].p++;
+      }
+      for (const idx of partido.pareja2) {
+        stats[idx].pj++; stats[idx].gg += s2; stats[idx].gp += s1;
+        if (s2 > s1) stats[idx].g++; else if (s2 === s1) stats[idx].e++; else stats[idx].p++;
+      }
     }
   }
   return stats;
@@ -4350,22 +4360,35 @@ function renderRanking() {
     $('#torneoRankingView').innerHTML = `<p style="color:var(--ink-muted);text-align:center;padding:40px 0;font-size:14px">El ranking aparece cuando cargues los primeros resultados.</p>`;
     return;
   }
-  stats.sort((a, b) => b.gg - a.gg || (b.gg - b.gp) - (a.gg - a.gp));
-  let html = `<table class="ranking-tbl"><thead><tr>
-    <th>#</th><th>Jugador</th><th style="text-align:right">GG</th><th style="text-align:right">GP</th><th style="text-align:right">Dif</th>
+  if (torneoRankingSort === 'wins') {
+    stats.sort((a, b) => b.g - a.g || b.e - a.e || (b.gg - b.gp) - (a.gg - a.gp));
+  } else {
+    stats.sort((a, b) => b.gg - a.gg || (b.gg - b.gp) - (a.gg - a.gp));
+  }
+  let html = `<div style="display:flex;gap:8px;margin-bottom:14px">
+    <button class="ranking-sort-btn${torneoRankingSort === 'games' ? ' active' : ''}" data-sort="games">Por juegos</button>
+    <button class="ranking-sort-btn${torneoRankingSort === 'wins' ? ' active' : ''}" data-sort="wins">Por victorias</button>
+  </div>`;
+  html += `<table class="ranking-tbl"><thead><tr>
+    <th>#</th><th>Jugador</th><th style="text-align:right;color:var(--court-bright)">G</th><th style="text-align:right;color:var(--amber)">E</th><th style="text-align:right;color:var(--crimson)">P</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
   </tr></thead><tbody>`;
   stats.forEach((s, pos) => {
     const dif = s.gg - s.gp;
     html += `<tr>
       <td class="rank-pos-cell ${pos < 3 ? 'top' : ''}">${pos + 1}</td>
       <td class="rank-name-cell">${s.nombre}</td>
+      <td class="rank-num-cell" style="color:var(--court-bright)">${s.g}</td>
+      <td class="rank-num-cell" style="color:var(--amber)">${s.e}</td>
+      <td class="rank-num-cell" style="color:var(--crimson)">${s.p}</td>
       <td class="rank-num-cell">${s.gg}</td>
-      <td class="rank-num-cell">${s.gp}</td>
       <td class="rank-num-cell" style="color:${dif >= 0 ? 'var(--court-bright)' : 'var(--crimson)'}">${dif > 0 ? '+' : ''}${dif}</td>
     </tr>`;
   });
   html += `</tbody></table>`;
   $('#torneoRankingView').innerHTML = html;
+  $('#torneoRankingView').querySelectorAll('.ranking-sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => { torneoRankingSort = btn.dataset.sort; renderRanking(); });
+  });
 }
 
 function aplicarTipoUI() {
