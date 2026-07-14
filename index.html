@@ -4150,12 +4150,17 @@ function renderJugadoresChips() {
 
 function generarFixture() {
   const n = torneoJugadoresList.length;
-  if (n < 4) { mostrarTorneoWarning('Necesitás al menos 4 jugadores.'); return; }
-  if (n % 2 !== 0) { mostrarTorneoWarning('Necesitás un número par de jugadores.'); return; }
+  if (torneoTipo === 'parejas') {
+    if (n < 2) { mostrarTorneoWarning('Necesitás al menos 2 parejas.'); return; }
+  } else {
+    if (n < 4) { mostrarTorneoWarning('Necesitás al menos 4 jugadores.'); return; }
+    if (n % 2 !== 0) { mostrarTorneoWarning('Necesitás un número par de jugadores.'); return; }
+  }
   $('#torneoWarning').style.display = 'none';
   torneo = {
     nombre: $('#torneoNombreInput').value.trim() || 'Torneo',
     formato: torneoFormato,
+    tipo: torneoTipo,
     jugadores: [...torneoJugadoresList],
     rondas: [],
     expira: Date.now() + 7 * 24 * 60 * 60 * 1000
@@ -4192,20 +4197,31 @@ function generarRonda() {
     });
   }
 
-  const nJuegan = Math.floor(n / 4) * 4;
+  const esParejas = torneo.tipo === 'parejas';
+  const groupSize = esParejas ? 2 : 4;
+  const nJuegan = Math.floor(n / groupSize) * groupSize;
   const juegan = ordenado.slice(0, nJuegan);
   const descansan = ordenado.slice(nJuegan);
   const partidos = [];
 
-  for (let i = 0; i < juegan.length; i += 4) {
-    const g = juegan.slice(i, i + 4);
+  for (let i = 0; i < juegan.length; i += groupSize) {
+    const g = juegan.slice(i, i + groupSize);
     const esMexicanoRnd2 = torneo.formato === 'mexicano' && torneo.rondas.length > 0;
-    partidos.push({
-      cancha: i / 4 + 1,
-      pareja1: esMexicanoRnd2 ? [g[0], g[3]] : [g[0], g[1]],
-      pareja2: esMexicanoRnd2 ? [g[1], g[2]] : [g[2], g[3]],
-      score1: null, score2: null
-    });
+    if (esParejas) {
+      partidos.push({
+        cancha: i / groupSize + 1,
+        pareja1: [g[0]],
+        pareja2: [g[1]],
+        score1: null, score2: null
+      });
+    } else {
+      partidos.push({
+        cancha: i / groupSize + 1,
+        pareja1: esMexicanoRnd2 ? [g[0], g[3]] : [g[0], g[1]],
+        pareja2: esMexicanoRnd2 ? [g[1], g[2]] : [g[2], g[3]],
+        score1: null, score2: null
+      });
+    }
   }
 
   torneo.rondas.push({ numero: torneo.rondas.length + 1, partidos, descansan });
@@ -4257,6 +4273,7 @@ function renderRondaActual() {
     html += `<div class="descansan-row">Descansan: <strong>${nombres}</strong></div>`;
   }
 
+  const esParejas = torneo.tipo === 'parejas';
   ronda.partidos.forEach((partido, pi) => {
     const p1 = partido.pareja1.map(i => torneo.jugadores[i]);
     const p2 = partido.pareja2.map(i => torneo.jugadores[i]);
@@ -4264,11 +4281,13 @@ function renderRondaActual() {
     const s2 = partido.score2 !== null ? partido.score2 : '';
     const done = partido.score1 !== null && partido.score2 !== null;
     const ri = torneo.rondas.length - 1;
+    const labelP1 = esParejas ? p1[0] : `${p1[0]} <span>+</span> ${p1[1]}`;
+    const labelP2 = esParejas ? p2[0] : `${p2[0]} <span>+</span> ${p2[1]}`;
     html += `<div class="cancha-card">
       <div class="cancha-label">Cancha ${partido.cancha}</div>
-      <div class="match-pareja">${p1[0]} <span>+</span> ${p1[1]}</div>
+      <div class="match-pareja">${labelP1}</div>
       <span class="match-vs-sep">VS</span>
-      <div class="match-pareja">${p2[0]} <span>+</span> ${p2[1]}</div>
+      <div class="match-pareja">${labelP2}</div>
       <div class="score-row">
         <span class="score-label">${p1[0]}</span>
         <input class="score-input" type="number" min="0" max="99" value="${s1}" data-ri="${ri}" data-pi="${pi}" data-side="1" placeholder="—">
