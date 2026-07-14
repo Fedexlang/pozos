@@ -723,6 +723,7 @@ body { max-width: 720px; margin: 0 auto; }
         <button type="button" class="btn btn-secondary" id="exportBtn" data-i18n="crearBackup">Crear backup</button>
         <button type="button" class="btn btn-secondary" id="importBtn" data-i18n="importarDatos">Importar datos</button>
         <button type="button" class="btn btn-danger" id="disconnectBtn" data-i18n="cerrarSesion">Cerrar sesión</button>
+        <button type="button" class="btn btn-danger" id="deleteAccountBtn" data-i18n="eliminarCuenta">Eliminar cuenta</button>
       </div>
     </form>
   </div>
@@ -970,6 +971,7 @@ const TRANSLATIONS = {
     settingsTitle:'Ajustes', tuNombre:'Tu nombre', nombrePH:'ej: Juan', nombreHint:'Se muestra en los retos como "Juan / compañero vs rival".',
     labelCuenta:'Cuenta', labelOtros:'Otros', crearBackup:'Copia de seguridad', exportPDF:'Exportar PDF', importarDatos:'Importar datos',
     cerrarSesion:'Cerrar sesión', confirmLogout:'¿Cerrar sesión? Los datos quedan guardados en la nube.',
+    eliminarCuenta:'Eliminar cuenta', confirmDeleteAccount:'¿Eliminar tu cuenta? Se borrarán todos tus datos permanentemente. Esta acción no se puede deshacer.', deleteAccountError:'Error al eliminar. Cerrá sesión y volvé a entrar antes de intentarlo.',
     guardar:'Guardar', cancelar:'Cancelar', settingsUpdated:'Ajustes actualizados', backupExported:'Backup exportado',
     importError:'Error al importar: archivo inválido', labelIdioma:'Idioma',
     nuevoPozo:'Nuevo pozo', editarPozo:'Editar pozo', fieldFecha:'Fecha', fieldCategoria:'Categoría', fieldCategoriaPH:'ej: 5ta, B',
@@ -1042,6 +1044,7 @@ const TRANSLATIONS = {
     settingsTitle:'Settings', tuNombre:'Your name', nombrePH:'e.g. John', nombreHint:'Shown in matches as "John / partner vs rival".',
     labelCuenta:'Account', labelOtros:'Other', crearBackup:'Create backup', exportPDF:'Export PDF', importarDatos:'Import data',
     cerrarSesion:'Log out', confirmLogout:'Log out? Your data is saved in the cloud.',
+    eliminarCuenta:'Delete account', confirmDeleteAccount:'Delete your account? All your data will be permanently erased. This cannot be undone.', deleteAccountError:'Error deleting account. Sign out and sign back in before trying again.',
     guardar:'Save', cancelar:'Cancel', settingsUpdated:'Settings updated', backupExported:'Backup exported',
     importError:'Import error: invalid file', labelIdioma:'Language',
     nuevoPozo:'New tournament', editarPozo:'Edit tournament', fieldFecha:'Date', fieldCategoria:'Category', fieldCategoriaPH:'e.g. B, C',
@@ -2144,6 +2147,20 @@ $('#disconnectBtn').addEventListener('click', async () => {
   pozos = []; retos = []; clases = []; metas = []; nombre = '';
   closeSettings();
   await auth.signOut();
+});
+
+$('#deleteAccountBtn').addEventListener('click', async () => {
+  if (!confirm(t('confirmDeleteAccount'))) return;
+  try {
+    const uid = auth.currentUser.uid;
+    await db.collection('users').doc(uid).delete();
+    clearCache();
+    pozos = []; retos = []; clases = []; metas = []; nombre = '';
+    closeSettings();
+    await auth.currentUser.delete();
+  } catch (e) {
+    showToast(t('deleteAccountError'));
+  }
 });
 
 $('#exportPdfBtn').addEventListener('click', () => { closeSettings(); exportPDF(); });

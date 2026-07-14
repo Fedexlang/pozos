@@ -1,0 +1,235 @@
+<title>Eliminar cuenta — PlusPadel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #F5F7F5;
+    --surface:  #FFFFFF;
+    --ink:      #1B211C;
+    --ink-mid:  #4A5750;
+    --ink-muted:#7A8C83;
+    --accent:   #2D6A4F;
+    --accent-lt:#EAF2ED;
+    --danger:   #C0392B;
+    --danger-lt:#FDECEA;
+    --border:   #DCE6DF;
+    --serif:    Georgia, 'Times New Roman', serif;
+    --sans:     -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .logo-mark svg { width: 18px; height: 18px; }
+
+  .logo-name { font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+  .logo-sub  { font-size: 13px; color: var(--ink-muted); margin-left: auto; }
+
+  main {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .doc-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--danger);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(24px, 5vw, 32px);
+    font-weight: normal;
+    line-height: 1.2;
+    color: var(--ink);
+    text-wrap: balance;
+    margin-bottom: 20px;
+  }
+
+  .warning-box {
+    background: var(--danger-lt);
+    border: 1px solid #E8B4B0;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 36px;
+    color: #8B1A10;
+    font-size: 15px;
+  }
+
+  .steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 40px;
+  }
+
+  .steps li {
+    display: flex;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .steps li:last-child { border-bottom: none; }
+
+  .step-num {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-body strong { display: block; color: var(--ink); margin-bottom: 2px; }
+  .step-body span   { color: var(--ink-mid); font-size: 15px; }
+
+  h2 {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: normal;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  p { color: var(--ink-mid); margin-bottom: 12px; max-width: 58ch; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+  .contact-card {
+    background: var(--accent-lt);
+    border: 1px solid #C5DECE;
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+
+  .contact-card p { margin-bottom: 4px; }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  footer {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-muted);
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 480px) {
+    main { padding: 32px 16px 64px; }
+    .logo-sub { display: none; }
+  }
+</style>
+
+<header>
+  <div class="logo-mark">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="12" cy="12" rx="4" ry="10" transform="rotate(-30 12 12)"/>
+      <line x1="5" y1="5" x2="19" y2="19"/>
+    </svg>
+  </div>
+  <span class="logo-name">PlusPadel</span>
+  <span class="logo-sub">Eliminar cuenta</span>
+</header>
+
+<main>
+  <p class="doc-eyebrow">Gestión de cuenta</p>
+  <h1>Solicitar eliminación de cuenta</h1>
+
+  <div class="warning-box">
+    Al eliminar tu cuenta se borran permanentemente todos tus datos: torneos, retos, clases y metas. Esta acción no se puede deshacer.
+  </div>
+
+  <h2>Cómo eliminar tu cuenta desde la app</h2>
+  <ol class="steps">
+    <li>
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Abrí PlusPadel</strong>
+        <span>Iniciá sesión si todavía no lo hiciste.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Ingresá a Ajustes</strong>
+        <span>Tocá el ícono de engranaje en la esquina superior derecha.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Tocá "Eliminar cuenta"</strong>
+        <span>El botón rojo al pie de la pantalla de ajustes.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <strong>Confirmá la eliminación</strong>
+        <span>Aparecerá un mensaje de confirmación. Al aceptar, tu cuenta y todos tus datos quedarán eliminados de forma inmediata e irreversible.</span>
+      </div>
+    </li>
+  </ol>
+
+  <hr class="divider">
+
+  <h2>¿No podés acceder a la app?</h2>
+  <p>Si no podés iniciar sesión o tenés algún problema, escribinos y eliminamos tu cuenta manualmente dentro de las 48 horas.</p>
+
+  <div class="contact-card">
+    <p><strong>Contacto:</strong></p>
+    <p><a href="mailto:fedexlang@gmail.com">fedexlang@gmail.com</a></p>
+    <p style="margin-top:8px; font-size:14px; color:var(--ink-muted)">Indicá el email de tu cuenta de PlusPadel en el mensaje.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Qué datos se eliminan</h2>
+  <p>Al eliminar tu cuenta se borran permanentemente:</p>
+  <ul style="list-style:none; display:flex; flex-direction:column; gap:6px; margin-bottom:12px;">
+    <li style="padding-left:18px; position:relative; color:var(--ink-mid)"><span style="position:absolute;left:0;top:10px;width:6px;height:6px;background:var(--danger);border-radius:50%;display:block"></span>Tu dirección de email y datos de autenticación</li>
+    <li style="padding-left:18px; position:relative; color:var(--ink-mid)"><span style="position:absolute;left:0;top:10px;width:6px;height:6px;background:var(--danger);border-radius:50%;display:block"></span>Todos tus torneos, retos, clases y metas registradas</li>
+    <li style="padding-left:18px; position:relative; color:var(--ink-mid)"><span style="position:absolute;left:0;top:10px;width:6px;height:6px;background:var(--danger);border-radius:50%;display:block"></span>Tu nombre y configuración</li>
+  </ul>
+  <p>No se conserva ningún dato después de la eliminación.</p>
+</main>
+
+<footer>
+  © 2026 PlusPadel · <a href="privacy.html">Política de privacidad</a> · <a href="mailto:fedexlang@gmail.com">fedexlang@gmail.com</a>
+</footer>
