@@ -1171,6 +1171,7 @@ const TRANSLATIONS = {
     torneoConfirmFin:'¿Terminar el torneo? Se guardará en el historial.',
     torneoConfirmDelete:'¿Eliminar este torneo del historial?',
     torneoRondaChip:(n)=>`${n} ronda${n!==1?'s':''}`,
+    torneoW:'G', torneoD:'E', torneoL:'P',
   },
   en: {
     tagline:'Tournaments · Matches · Training', setupIntro:'Create an account or log in to <strong>sync your data</strong> across devices.',
@@ -1264,6 +1265,7 @@ const TRANSLATIONS = {
     torneoConfirmFin:'End the tournament? It will be saved to history.',
     torneoConfirmDelete:'Delete this tournament from history?',
     torneoRondaChip:(n)=>`${n} round${n!==1?'s':''}`,
+    torneoW:'W', torneoD:'D', torneoL:'L',
   }
 };
 
@@ -4229,7 +4231,7 @@ function renderHistorialList() {
     const fecha = new Date(ht.fechaFin).toLocaleDateString(appLang === 'es' ? 'es-AR' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
     const top = ht.stats.slice(0, 3);
     const fullTable = `<table class="ranking-tbl" style="margin-top:12px"><thead><tr>
-      <th>#</th><th>${t('torneoRankingJugador')}</th><th style="text-align:right;color:var(--court-bright)">G</th><th style="text-align:right;color:var(--amber)">E</th><th style="text-align:right;color:var(--crimson)">P</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
+      <th>#</th><th>${t('torneoRankingJugador')}</th><th style="text-align:right;color:var(--court-bright)">${t('torneoW')}</th><th style="text-align:right;color:var(--amber)">${t('torneoD')}</th><th style="text-align:right;color:var(--crimson)">${t('torneoL')}</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
     </tr></thead><tbody>${ht.stats.map((s, pos) => {
       const dif = s.gg - s.gp;
       return `<tr>
@@ -4256,7 +4258,7 @@ function renderHistorialList() {
         ${top.map((s, i) => `<div class="hist-podium-row">
           <span class="hist-podium-pos ${medals[i] || ''}">${i + 1}</span>
           <span class="hist-podium-name">${s.nombre}</span>
-          <span class="hist-podium-stat">${s.g}G ${s.e}E ${s.p}P · ${s.gg}pts</span>
+          <span class="hist-podium-stat">${s.g}${t('torneoW')} ${s.e}${t('torneoD')} ${s.p}${t('torneoL')} · ${s.gg}pts</span>
         </div>`).join('')}
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
