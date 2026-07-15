@@ -508,6 +508,7 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .hist-podium-pos.bronze { color: #C47A3A; }
 .hist-podium-name { flex: 1; color: var(--ink); }
 .hist-podium-stat { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
+.hist-toggle-btn { background: none; border: none; color: var(--court-bright); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
 .torneo-open-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.42); }
 .torneo-cerrar-btn { display: block; width: fit-content; margin: 24px auto 8px; background: var(--crimson); border: none; border-radius: 999px; padding: 14px 32px; color: #fff; font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(220,38,38,0.3); }
@@ -4162,9 +4163,23 @@ function renderHistorialList() {
   if (!hist.length) { el.innerHTML = `<p class="hist-empty">Todavía no hay torneos finalizados.</p>`; return; }
   const medals = ['gold', 'silver', 'bronze'];
   let html = `<div class="hist-section-label">Historial</div>`;
-  hist.forEach(t => {
+  hist.forEach((t, hi) => {
     const fecha = new Date(t.fechaFin).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
     const top = t.stats.slice(0, 3);
+    const fullTable = `<table class="ranking-tbl" style="margin-top:12px"><thead><tr>
+      <th>#</th><th>Jugador</th><th style="text-align:right;color:var(--court-bright)">G</th><th style="text-align:right;color:var(--amber)">E</th><th style="text-align:right;color:var(--crimson)">P</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
+    </tr></thead><tbody>${t.stats.map((s, pos) => {
+      const dif = s.gg - s.gp;
+      return `<tr>
+        <td class="rank-pos-cell ${pos < 3 ? 'top' : ''}">${pos + 1}</td>
+        <td class="rank-name-cell">${s.nombre}</td>
+        <td class="rank-num-cell" style="color:var(--court-bright)">${s.g}</td>
+        <td class="rank-num-cell" style="color:var(--amber)">${s.e}</td>
+        <td class="rank-num-cell" style="color:var(--crimson)">${s.p}</td>
+        <td class="rank-num-cell">${s.gg}</td>
+        <td class="rank-num-cell" style="color:${dif >= 0 ? 'var(--court-bright)' : 'var(--crimson)'}">${dif > 0 ? '+' : ''}${dif}</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
     html += `<div class="hist-card">
       <div class="hist-card-header">
         <div class="hist-card-name">${t.nombre}</div>
@@ -4182,9 +4197,20 @@ function renderHistorialList() {
           <span class="hist-podium-stat">${s.g}G ${s.e}E ${s.p}P · ${s.gg}pts</span>
         </div>`).join('')}
       </div>
+      <button class="hist-toggle-btn" data-hi="${hi}" style="margin-top:10px">Ver ranking completo</button>
+      <div class="hist-full-ranking" data-hi="${hi}" style="display:none">${fullTable}</div>
     </div>`;
   });
   el.innerHTML = html;
+  el.querySelectorAll('.hist-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const hi = btn.dataset.hi;
+      const panel = el.querySelector(`.hist-full-ranking[data-hi="${hi}"]`);
+      const open = panel.style.display !== 'none';
+      panel.style.display = open ? 'none' : '';
+      btn.textContent = open ? 'Ver ranking completo' : 'Ocultar ranking';
+    });
+  });
 }
 
 function renderTorneoHome() {
