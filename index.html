@@ -513,6 +513,8 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .hist-podium-name { flex: 1; color: var(--ink); }
 .hist-podium-stat { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
 .hist-toggle-btn { background: none; border: none; color: var(--court-bright); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
+.jugadores-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; background: var(--court-bright); color: var(--bg); border-radius: 999px; font-size: 12px; font-weight: 700; margin-left: 6px; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
 .torneo-open-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.42); }
 .torneo-cerrar-btn { display: block; width: fit-content; margin: 24px auto 8px; background: var(--crimson); border: none; border-radius: 999px; padding: 14px 32px; color: #fff; font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(220,38,38,0.3); }
@@ -841,7 +843,13 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
         <button type="button" class="torneo-formato-btn" data-tipo="parejas">Parejas fijas</button>
       </div>
 
-      <div class="torneo-section-label">Jugadores (<span id="nJugadores">0</span>)</div>
+      <div class="torneo-section-label">Sistema de puntuación</div>
+      <div class="torneo-formato-btns">
+        <button type="button" class="torneo-formato-btn selected" data-sistema="sets">Sets libres</button>
+        <button type="button" class="torneo-formato-btn" data-sistema="24puntos">A 24 puntos</button>
+      </div>
+
+      <div class="torneo-section-label">Jugadores <span id="nJugadores" class="jugadores-count">0</span></div>
       <div class="add-player-row" id="addIndividualRow">
         <input type="text" id="nuevoJugadorInput" class="field" placeholder="Nombre del jugador" autocomplete="off">
         <button type="button" class="btn btn-secondary" id="addJugadorBtn">Agregar</button>
@@ -4122,6 +4130,7 @@ let torneo = null;
 let torneoJugadoresList = [];
 let torneoFormato = 'americano';
 let torneoTipo = 'individual';
+let torneoSistema = 'sets';
 let torneoRondaVista = 0;
 let torneoRankingSort = 'games';
 
@@ -4283,6 +4292,7 @@ function generarFixture() {
     nombre: $('#torneoNombreInput').value.trim() || 'Torneo',
     formato: torneoFormato,
     tipo: torneoTipo,
+    sistema: torneoSistema,
     jugadores: [...torneoJugadoresList],
     rondas: [],
     expira: Date.now() + 7 * 24 * 60 * 60 * 1000
@@ -4473,8 +4483,8 @@ function renderRondaActual() {
     </div>`;
   });
 
-  if (completos) {
-    html += `<button type="button" class="btn btn-primary" id="siguienteRondaBtn" style="width:100%;margin-top:8px">Siguiente ronda →</button>`;
+  if (esUltimaRonda) {
+    html += `<button type="button" class="btn btn-primary" id="siguienteRondaBtn" style="width:100%;margin-top:8px" ${completos ? '' : 'disabled'}>Siguiente ronda →</button>`;
   }
 
   $('#torneoRondaView').innerHTML = html;
@@ -4489,8 +4499,24 @@ function renderRondaActual() {
       const p = torneo.rondas[+inp.dataset.ri].partidos[+inp.dataset.pi];
       if (+inp.dataset.side === 1) p.score1 = isNaN(val) ? null : val;
       else p.score2 = isNaN(val) ? null : val;
+      // Auto-completar marcador complementario en modo 24 puntos
+      if (torneo.sistema === '24puntos' && !isNaN(val) && val >= 0 && val <= 24) {
+        const otherSide = +inp.dataset.side === 1 ? 2 : 1;
+        const complement = 24 - val;
+        const otherInp = $('#torneoRondaView').querySelector(
+          `.score-input[data-ri="${inp.dataset.ri}"][data-pi="${inp.dataset.pi}"][data-side="${otherSide}"]`
+        );
+        if (otherInp) {
+          otherInp.value = complement;
+          if (otherSide === 1) p.score1 = complement; else p.score2 = complement;
+        }
+      }
       saveTorneoToLS();
-      if (esUltimaRonda && todosScoresCompletos()) renderRondaActual();
+      // Actualizar botón sin re-renderizar (evita perder el foco al escribir)
+      if (esUltimaRonda) {
+        const sigBtn = $('#siguienteRondaBtn');
+        if (sigBtn) sigBtn.disabled = !todosScoresCompletos();
+      }
     });
   });
 
@@ -4552,10 +4578,12 @@ $('#nuevoTorneoBtn').addEventListener('click', () => {
   torneoJugadoresList = [];
   torneoFormato = 'americano';
   torneoTipo = 'individual';
+  torneoSistema = 'sets';
   $('#torneoNombreInput').value = '';
   $('#torneoWarning').style.display = 'none';
-  document.querySelectorAll('.torneo-formato-btn').forEach(b => b.classList.toggle('selected', b.dataset.fmt === 'americano'));
-  document.querySelectorAll('#torneoTipoBtns .torneo-formato-btn').forEach(b => b.classList.toggle('selected', b.dataset.tipo === 'individual'));
+  document.querySelectorAll('[data-fmt]').forEach(b => b.classList.toggle('selected', b.dataset.fmt === 'americano'));
+  document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('selected', b.dataset.tipo === 'individual'));
+  document.querySelectorAll('[data-sistema]').forEach(b => b.classList.toggle('selected', b.dataset.sistema === 'sets'));
   aplicarTipoUI();
   renderTorneoSetup();
 });
@@ -4577,6 +4605,10 @@ document.querySelectorAll('.torneo-formato-btn').forEach(btn => {
       torneoTipo = btn.dataset.tipo;
       document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('selected', b.dataset.tipo === torneoTipo));
       aplicarTipoUI();
+    }
+    if (btn.dataset.sistema) {
+      torneoSistema = btn.dataset.sistema;
+      document.querySelectorAll('[data-sistema]').forEach(b => b.classList.toggle('selected', b.dataset.sistema === torneoSistema));
     }
   });
 });
