@@ -492,6 +492,22 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .ronda-pill.active { background: var(--court-bright); border-color: var(--court-bright); color: var(--bg); }
 .ranking-sort-btn { padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--border); background: none; color: var(--ink-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; }
 .ranking-sort-btn.active { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.hist-empty { text-align: center; color: var(--ink-muted); font-size: 14px; padding: 32px 0; }
+.hist-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 12px; }
+.hist-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; }
+.hist-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.hist-card-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+.hist-card-date { font-size: 11px; color: var(--ink-muted); white-space: nowrap; margin-top: 2px; }
+.hist-card-chips { display: flex; gap: 6px; margin-bottom: 10px; }
+.hist-chip { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-muted); }
+.hist-podium { display: flex; flex-direction: column; gap: 4px; }
+.hist-podium-row { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.hist-podium-pos { width: 18px; font-weight: 700; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
+.hist-podium-pos.gold { color: #F5C842; }
+.hist-podium-pos.silver { color: #A8B8C0; }
+.hist-podium-pos.bronze { color: #C47A3A; }
+.hist-podium-name { flex: 1; color: var(--ink); }
+.hist-podium-stat { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
 .torneo-open-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,222,128,0.42); }
 .torneo-cerrar-btn { display: block; width: fit-content; margin: 24px auto 8px; background: var(--crimson); border: none; border-radius: 999px; padding: 14px 32px; color: #fff; font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(220,38,38,0.3); }
@@ -796,6 +812,12 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
     <h2 id="torneoHeaderTitle">Organizar torneo</h2>
   </div>
   <div class="torneo-body">
+
+    <!-- Home: historial + nuevo -->
+    <div id="torneoHome" style="display:none">
+      <button type="button" class="torneo-open-btn" id="nuevoTorneoBtn">Nuevo torneo</button>
+      <div id="torneoHistorialList" style="margin-top:24px"></div>
+    </div>
 
     <!-- Setup -->
     <div id="torneoSetup">
@@ -4088,6 +4110,7 @@ initPWA();
 
 // ---------- Torneo ----------
 const TORNEO_LS_KEY = 'pluspadel_torneo_v1';
+const TORNEO_HIST_KEY = 'pluspadel_torneos_hist_v1';
 let torneo = null;
 let torneoJugadoresList = [];
 let torneoFormato = 'americano';
@@ -4111,21 +4134,75 @@ function saveTorneoToLS() {
   localStorage.setItem(TORNEO_LS_KEY, JSON.stringify(torneo));
 }
 
+function guardarEnHistorial() {
+  if (!torneo) return;
+  const stats = calcularStats();
+  stats.sort((a, b) => b.gg - a.gg || (b.gg - b.gp) - (a.gg - a.gp));
+  const entry = {
+    nombre: torneo.nombre,
+    formato: torneo.formato,
+    tipo: torneo.tipo || 'individual',
+    fechaFin: Date.now(),
+    rondas: torneo.rondas.length,
+    stats: stats.map(s => ({ nombre: s.nombre, g: s.g, e: s.e, p: s.p, gg: s.gg, gp: s.gp }))
+  };
+  try {
+    const raw = localStorage.getItem(TORNEO_HIST_KEY);
+    const hist = raw ? JSON.parse(raw) : [];
+    hist.unshift(entry);
+    if (hist.length > 30) hist.length = 30;
+    localStorage.setItem(TORNEO_HIST_KEY, JSON.stringify(hist));
+  } catch {}
+}
+
+function renderHistorialList() {
+  let hist = [];
+  try { const r = localStorage.getItem(TORNEO_HIST_KEY); hist = r ? JSON.parse(r) : []; } catch {}
+  const el = $('#torneoHistorialList');
+  if (!hist.length) { el.innerHTML = `<p class="hist-empty">Todavía no hay torneos finalizados.</p>`; return; }
+  const medals = ['gold', 'silver', 'bronze'];
+  let html = `<div class="hist-section-label">Historial</div>`;
+  hist.forEach(t => {
+    const fecha = new Date(t.fechaFin).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
+    const top = t.stats.slice(0, 3);
+    html += `<div class="hist-card">
+      <div class="hist-card-header">
+        <div class="hist-card-name">${t.nombre}</div>
+        <div class="hist-card-date">${fecha}</div>
+      </div>
+      <div class="hist-card-chips">
+        <span class="hist-chip">${t.formato}</span>
+        <span class="hist-chip">${t.tipo === 'parejas' ? 'Parejas fijas' : 'Individual'}</span>
+        <span class="hist-chip">${t.rondas} ronda${t.rondas !== 1 ? 's' : ''}</span>
+      </div>
+      <div class="hist-podium">
+        ${top.map((s, i) => `<div class="hist-podium-row">
+          <span class="hist-podium-pos ${medals[i] || ''}">${i + 1}</span>
+          <span class="hist-podium-name">${s.nombre}</span>
+          <span class="hist-podium-stat">${s.g}G ${s.e}E ${s.p}P · ${s.gg}pts</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderTorneoHome() {
+  $('#torneoHome').style.display = '';
+  $('#torneoSetup').style.display = 'none';
+  $('#torneoActivo').style.display = 'none';
+  $('#torneoCerrarBtn').style.display = 'none';
+  $('#torneoHeaderTitle').textContent = 'Torneos';
+  renderHistorialList();
+}
+
 function abrirTorneoOverlay() {
   torneo = loadTorneoFromLS();
   $('#torneoOverlay').style.display = 'flex';
   if (torneo) {
     renderTorneoActivo();
   } else {
-    torneoJugadoresList = [];
-    torneoFormato = 'americano';
-    torneoTipo = 'individual';
-    $('#torneoNombreInput').value = '';
-    $('#torneoWarning').style.display = 'none';
-    document.querySelectorAll('.torneo-formato-btn').forEach(b => b.classList.toggle('selected', b.dataset.fmt === 'americano'));
-    document.querySelectorAll('#torneoTipoBtns .torneo-formato-btn').forEach(b => b.classList.toggle('selected', b.dataset.tipo === 'individual'));
-    aplicarTipoUI();
-    renderTorneoSetup();
+    renderTorneoHome();
   }
 }
 
@@ -4134,6 +4211,7 @@ function cerrarTorneoOverlay() {
 }
 
 function renderTorneoSetup() {
+  $('#torneoHome').style.display = 'none';
   $('#torneoSetup').style.display = '';
   $('#torneoActivo').style.display = 'none';
   $('#torneoHeaderTitle').textContent = 'Organizar torneo';
@@ -4295,6 +4373,7 @@ function todosScoresCompletos() {
 }
 
 function renderTorneoActivo() {
+  $('#torneoHome').style.display = 'none';
   $('#torneoSetup').style.display = 'none';
   $('#torneoActivo').style.display = '';
   $('#torneoHeaderTitle').textContent = torneo.nombre;
@@ -4437,11 +4516,23 @@ function aplicarTipoUI() {
 // Torneo event wiring
 $('#organizarTorneoBtn').addEventListener('click', abrirTorneoOverlay);
 $('#torneoCloseBtn').addEventListener('click', cerrarTorneoOverlay);
+$('#nuevoTorneoBtn').addEventListener('click', () => {
+  torneoJugadoresList = [];
+  torneoFormato = 'americano';
+  torneoTipo = 'individual';
+  $('#torneoNombreInput').value = '';
+  $('#torneoWarning').style.display = 'none';
+  document.querySelectorAll('.torneo-formato-btn').forEach(b => b.classList.toggle('selected', b.dataset.fmt === 'americano'));
+  document.querySelectorAll('#torneoTipoBtns .torneo-formato-btn').forEach(b => b.classList.toggle('selected', b.dataset.tipo === 'individual'));
+  aplicarTipoUI();
+  renderTorneoSetup();
+});
 $('#torneoCerrarBtn').addEventListener('click', () => {
-  if (confirm('¿Terminar el torneo? Se borrarán todos los datos.')) {
+  if (confirm('¿Terminar el torneo? Se guardará en el historial.')) {
+    guardarEnHistorial();
     localStorage.removeItem(TORNEO_LS_KEY);
     torneo = null;
-    cerrarTorneoOverlay();
+    renderTorneoHome();
   }
 });
 document.querySelectorAll('.torneo-formato-btn').forEach(btn => {
