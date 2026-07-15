@@ -645,7 +645,7 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
   <section class="stats" id="stats"></section>
   <div class="stats-note" id="statsNote" hidden></div>
 
-  <button type="button" class="torneo-open-btn" id="organizarTorneoBtn">
+  <button type="button" class="torneo-open-btn" id="organizarTorneoBtn" data-i18n="torneoOrganizar">
     Organizar torneo
   </button>
 
@@ -819,64 +819,64 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
     <button type="button" class="icon-btn" id="torneoCloseBtn" style="width:32px;height:32px;flex-shrink:0" aria-label="Cerrar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <h2 id="torneoHeaderTitle">Organizar torneo</h2>
+    <h2 id="torneoHeaderTitle" data-i18n="torneoOrganizar">Organizar torneo</h2>
   </div>
   <div class="torneo-body">
 
     <!-- Home: historial + nuevo -->
     <div id="torneoHome" style="display:none">
-      <button type="button" class="torneo-open-btn" id="nuevoTorneoBtn">Nuevo torneo</button>
+      <button type="button" class="torneo-open-btn" id="nuevoTorneoBtn" data-i18n="torneoNuevo">Nuevo torneo</button>
       <div id="torneoHistorialList" style="margin-top:24px"></div>
     </div>
 
     <!-- Setup -->
     <div id="torneoSetup">
-      <div class="torneo-section-label">Nombre del torneo (opcional)</div>
-      <input type="text" id="torneoNombreInput" class="field" placeholder="Torneo del sábado" style="margin-bottom:20px">
+      <div class="torneo-section-label" data-i18n="torneoNombreLabel">Nombre del torneo (opcional)</div>
+      <input type="text" id="torneoNombreInput" class="field" data-i18n-ph="torneoNombrePH" placeholder="Torneo del sábado" style="margin-bottom:20px">
 
-      <div class="torneo-section-label">Formato</div>
+      <div class="torneo-section-label" data-i18n="torneoFormatoLabel">Formato</div>
       <div class="torneo-formato-btns">
-        <button type="button" class="torneo-formato-btn selected" data-fmt="americano">Americano</button>
-        <button type="button" class="torneo-formato-btn" data-fmt="mexicano">Mexicano</button>
+        <button type="button" class="torneo-formato-btn selected" data-fmt="americano" data-i18n="torneoAmericano">Americano</button>
+        <button type="button" class="torneo-formato-btn" data-fmt="mexicano" data-i18n="torneoMexicano">Mexicano</button>
       </div>
 
-      <div class="torneo-section-label">Tipo de participación</div>
+      <div class="torneo-section-label" data-i18n="torneoTipoLabel">Tipo de participación</div>
       <div class="torneo-formato-btns" id="torneoTipoBtns">
-        <button type="button" class="torneo-formato-btn selected" data-tipo="individual">Individual</button>
-        <button type="button" class="torneo-formato-btn" data-tipo="parejas">Parejas fijas</button>
+        <button type="button" class="torneo-formato-btn selected" data-tipo="individual" data-i18n="torneoIndividual">Individual</button>
+        <button type="button" class="torneo-formato-btn" data-tipo="parejas" data-i18n="torneoParejas">Parejas fijas</button>
       </div>
 
-      <div class="torneo-section-label">Sistema de puntuación</div>
+      <div class="torneo-section-label" data-i18n="torneoSistemaLabel">Sistema de puntuación</div>
       <div class="torneo-formato-btns">
-        <button type="button" class="torneo-formato-btn selected" data-sistema="sets">Sets libres</button>
-        <button type="button" class="torneo-formato-btn" data-sistema="24puntos">A 24 puntos</button>
+        <button type="button" class="torneo-formato-btn selected" data-sistema="sets" data-i18n="torneoSets">Sets libres</button>
+        <button type="button" class="torneo-formato-btn" data-sistema="24puntos" data-i18n="torneo24pts">A 24 puntos</button>
       </div>
 
-      <div class="torneo-section-label"><span id="jugadoresLabel">Jugadores</span> <span id="nJugadores" class="jugadores-count">0</span></div>
+      <div class="torneo-section-label"><span id="jugadoresLabel" data-i18n="torneoJugadoresLabel">Jugadores</span> <span id="nJugadores" class="jugadores-count">0</span></div>
       <div class="add-player-row" id="addIndividualRow">
-        <input type="text" id="nuevoJugadorInput" class="field" placeholder="Nombre del jugador" autocomplete="off">
-        <button type="button" class="btn btn-secondary" id="addJugadorBtn">Agregar</button>
+        <input type="text" id="nuevoJugadorInput" class="field" data-i18n-ph="torneoJugadorPH" placeholder="Nombre del jugador" autocomplete="off">
+        <button type="button" class="btn btn-secondary" id="addJugadorBtn" data-i18n="torneoAgregar">Agregar</button>
       </div>
       <div class="add-player-row" id="addParejaRow" style="display:none">
-        <input type="text" id="nuevoParejaJ1" class="field" placeholder="Jugador 1" autocomplete="off">
-        <input type="text" id="nuevoParejaJ2" class="field" placeholder="Jugador 2" autocomplete="off">
-        <button type="button" class="btn btn-secondary" id="addParejaBtn">Agregar</button>
+        <input type="text" id="nuevoParejaJ1" class="field" data-i18n-ph="torneoJ1PH" placeholder="Jugador 1" autocomplete="off">
+        <input type="text" id="nuevoParejaJ2" class="field" data-i18n-ph="torneoJ2PH" placeholder="Jugador 2" autocomplete="off">
+        <button type="button" class="btn btn-secondary" id="addParejaBtn" data-i18n="torneoAgregar">Agregar</button>
       </div>
       <div class="player-chips" id="jugadoresChips"></div>
 
       <p id="torneoWarning" style="font-size:12px;color:var(--amber);margin-bottom:12px;display:none"></p>
-      <button type="button" class="btn btn-primary" id="generarFixtureBtn" style="width:100%">Empezar →</button>
+      <button type="button" class="btn btn-primary" id="generarFixtureBtn" data-i18n="torneoEmpezar" style="width:100%">Empezar →</button>
     </div>
 
     <!-- Torneo activo -->
     <div id="torneoActivo" style="display:none">
       <div class="torneo-ttabs">
-        <button type="button" class="torneo-ttab active" data-ttab="ronda">Ronda actual</button>
-        <button type="button" class="torneo-ttab" data-ttab="ranking">Ranking</button>
+        <button type="button" class="torneo-ttab active" data-ttab="ronda" data-i18n="torneoTabRonda">Ronda actual</button>
+        <button type="button" class="torneo-ttab" data-ttab="ranking" data-i18n="torneoTabRanking">Ranking</button>
       </div>
       <div id="torneoRondaView"></div>
       <div id="torneoRankingView" style="display:none"></div>
-      <button type="button" class="torneo-cerrar-btn" id="torneoCerrarBtn" style="display:none">Terminar torneo</button>
+      <button type="button" class="torneo-cerrar-btn" id="torneoCerrarBtn" data-i18n="torneoTerminar" style="display:none">Terminar torneo</button>
     </div>
 
   </div>
@@ -1151,6 +1151,26 @@ const TRANSLATIONS = {
     syncOffline:'Sin conexión · usando datos locales', syncError:'Error al sincronizar · ', syncOfflineSave:'Sin conexión · cambios guardados localmente', syncErrorSave:'Error al guardar · ',
     importedMsg:(p,r,c)=>`Importado: ${p} pozos, ${r} retos, ${c} clases`,
     ejercicios:['Volea derecha','Volea revés','Bandeja','Víbora','Rulo','Remate x3','Smash','Doble vidrio def.','Saque','Recepción de saque','Defensa con vidrio','Defensa'],
+    torneoOrganizar:'Organizar torneo', torneoTorneos:'Torneos', torneoNuevo:'Nuevo torneo',
+    torneoNombreLabel:'Nombre del torneo (opcional)', torneoNombrePH:'Torneo del sábado',
+    torneoFormatoLabel:'Formato', torneoAmericano:'Americano', torneoMexicano:'Mexicano',
+    torneoTipoLabel:'Tipo de participación', torneoIndividual:'Individual', torneoParejas:'Parejas fijas',
+    torneoSistemaLabel:'Sistema de puntuación', torneoSets:'Sets libres', torneo24pts:'A 24 puntos',
+    torneoJugadoresLabel:'Jugadores', torneoParejasLabel:'Parejas',
+    torneoJugadorPH:'Nombre del jugador', torneoJ1PH:'Jugador 1', torneoJ2PH:'Jugador 2',
+    torneoAgregar:'Agregar', torneoEmpezar:'Empezar →',
+    torneoTabRonda:'Ronda actual', torneoTabRanking:'Ranking', torneoTerminar:'Terminar torneo',
+    torneoHistVacio:'Todavía no hay torneos finalizados.', torneoHistLabel:'Historial',
+    torneoVerRanking:'Ver ranking completo', torneoOcultarRanking:'Ocultar ranking', torneoEliminar:'Eliminar',
+    torneoRondaTitle:(n)=>`Ronda ${n}`, torneoJugadoresSuffix:'jugadores',
+    torneoDescansan:'Descansan:', torneoCanchaLabel:(n)=>`Cancha ${n}`, torneoSiguiente:'Siguiente ronda →',
+    torneoRankingVacio:'El ranking aparece cuando cargues los primeros resultados.',
+    torneoPorJuegos:'Por juegos', torneoPorVictorias:'Por victorias', torneoRankingJugador:'Jugador',
+    torneoWarnMin4:'Necesitás al menos 4 jugadores.', torneoWarnPar:'Necesitás un número par de jugadores.',
+    torneoWarnMin2:'Necesitás al menos 2 parejas.',
+    torneoConfirmFin:'¿Terminar el torneo? Se guardará en el historial.',
+    torneoConfirmDelete:'¿Eliminar este torneo del historial?',
+    torneoRondaChip:(n)=>`${n} ronda${n!==1?'s':''}`,
   },
   en: {
     tagline:'Tournaments · Matches · Training', setupIntro:'Create an account or log in to <strong>sync your data</strong> across devices.',
@@ -1224,6 +1244,26 @@ const TRANSLATIONS = {
     syncOffline:'Offline · using local data', syncError:'Sync error · ', syncOfflineSave:'Offline · changes saved locally', syncErrorSave:'Save error · ',
     importedMsg:(p,r,c)=>`Imported: ${p} tournaments, ${r} matches, ${c} training sessions`,
     ejercicios:['Forehand volley','Backhand volley','Bandeja','Víbora','Rulo','Smash x3','Smash','Glass defense','Serve','Return of serve','Defense with glass','Defense'],
+    torneoOrganizar:'Organize tournament', torneoTorneos:'Tournaments', torneoNuevo:'New tournament',
+    torneoNombreLabel:'Tournament name (optional)', torneoNombrePH:'Saturday tournament',
+    torneoFormatoLabel:'Format', torneoAmericano:'Americano', torneoMexicano:'Mexicano',
+    torneoTipoLabel:'Player format', torneoIndividual:'Individual', torneoParejas:'Fixed pairs',
+    torneoSistemaLabel:'Scoring system', torneoSets:'Free sets', torneo24pts:'To 24 points',
+    torneoJugadoresLabel:'Players', torneoParejasLabel:'Pairs',
+    torneoJugadorPH:'Player name', torneoJ1PH:'Player 1', torneoJ2PH:'Player 2',
+    torneoAgregar:'Add', torneoEmpezar:'Start →',
+    torneoTabRonda:'Current round', torneoTabRanking:'Ranking', torneoTerminar:'End tournament',
+    torneoHistVacio:'No tournaments finished yet.', torneoHistLabel:'History',
+    torneoVerRanking:'View full ranking', torneoOcultarRanking:'Hide ranking', torneoEliminar:'Delete',
+    torneoRondaTitle:(n)=>`Round ${n}`, torneoJugadoresSuffix:'players',
+    torneoDescansan:'Sitting out:', torneoCanchaLabel:(n)=>`Court ${n}`, torneoSiguiente:'Next round →',
+    torneoRankingVacio:'Ranking shows once you enter the first results.',
+    torneoPorJuegos:'By points', torneoPorVictorias:'By wins', torneoRankingJugador:'Player',
+    torneoWarnMin4:'You need at least 4 players.', torneoWarnPar:'You need an even number of players.',
+    torneoWarnMin2:'You need at least 2 pairs.',
+    torneoConfirmFin:'End the tournament? It will be saved to history.',
+    torneoConfirmDelete:'Delete this tournament from history?',
+    torneoRondaChip:(n)=>`${n} round${n!==1?'s':''}`,
   }
 };
 
@@ -4182,15 +4222,15 @@ function renderHistorialList() {
     try { const r = localStorage.getItem(TORNEO_HIST_KEY); return r ? JSON.parse(r) : []; } catch { return []; }
   })();
   const el = $('#torneoHistorialList');
-  if (!hist.length) { el.innerHTML = `<p class="hist-empty">Todavía no hay torneos finalizados.</p>`; return; }
+  if (!hist.length) { el.innerHTML = `<p class="hist-empty">${t('torneoHistVacio')}</p>`; return; }
   const medals = ['gold', 'silver', 'bronze'];
-  let html = `<div class="hist-section-label">Historial</div>`;
-  hist.forEach((t, hi) => {
-    const fecha = new Date(t.fechaFin).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
-    const top = t.stats.slice(0, 3);
+  let html = `<div class="hist-section-label">${t('torneoHistLabel')}</div>`;
+  hist.forEach((ht, hi) => {
+    const fecha = new Date(ht.fechaFin).toLocaleDateString(appLang === 'es' ? 'es-AR' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+    const top = ht.stats.slice(0, 3);
     const fullTable = `<table class="ranking-tbl" style="margin-top:12px"><thead><tr>
-      <th>#</th><th>Jugador</th><th style="text-align:right;color:var(--court-bright)">G</th><th style="text-align:right;color:var(--amber)">E</th><th style="text-align:right;color:var(--crimson)">P</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
-    </tr></thead><tbody>${t.stats.map((s, pos) => {
+      <th>#</th><th>${t('torneoRankingJugador')}</th><th style="text-align:right;color:var(--court-bright)">G</th><th style="text-align:right;color:var(--amber)">E</th><th style="text-align:right;color:var(--crimson)">P</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
+    </tr></thead><tbody>${ht.stats.map((s, pos) => {
       const dif = s.gg - s.gp;
       return `<tr>
         <td class="rank-pos-cell ${pos < 3 ? 'top' : ''}">${pos + 1}</td>
@@ -4204,13 +4244,13 @@ function renderHistorialList() {
     }).join('')}</tbody></table>`;
     html += `<div class="hist-card">
       <div class="hist-card-header">
-        <div class="hist-card-name">${t.nombre}</div>
+        <div class="hist-card-name">${ht.nombre}</div>
         <div class="hist-card-date">${fecha}</div>
       </div>
       <div class="hist-card-chips">
-        <span class="hist-chip">${t.formato}</span>
-        <span class="hist-chip">${t.tipo === 'parejas' ? 'Parejas fijas' : 'Individual'}</span>
-        <span class="hist-chip">${t.rondas} ronda${t.rondas !== 1 ? 's' : ''}</span>
+        <span class="hist-chip">${t(ht.formato === 'americano' ? 'torneoAmericano' : 'torneoMexicano')}</span>
+        <span class="hist-chip">${ht.tipo === 'parejas' ? t('torneoParejas') : t('torneoIndividual')}</span>
+        <span class="hist-chip">${t('torneoRondaChip', ht.rondas)}</span>
       </div>
       <div class="hist-podium">
         ${top.map((s, i) => `<div class="hist-podium-row">
@@ -4220,8 +4260,8 @@ function renderHistorialList() {
         </div>`).join('')}
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
-        <button class="hist-toggle-btn" data-hi="${hi}">Ver ranking completo</button>
-        <button class="hist-delete-btn" data-hi="${hi}">Eliminar</button>
+        <button class="hist-toggle-btn" data-hi="${hi}">${t('torneoVerRanking')}</button>
+        <button class="hist-delete-btn" data-hi="${hi}">${t('torneoEliminar')}</button>
       </div>
       <div class="hist-full-ranking" data-hi="${hi}" style="display:none">${fullTable}</div>
     </div>`;
@@ -4233,12 +4273,12 @@ function renderHistorialList() {
       const panel = el.querySelector(`.hist-full-ranking[data-hi="${hi}"]`);
       const open = panel.style.display !== 'none';
       panel.style.display = open ? 'none' : '';
-      btn.textContent = open ? 'Ver ranking completo' : 'Ocultar ranking';
+      btn.textContent = open ? t('torneoVerRanking') : t('torneoOcultarRanking');
     });
   });
   el.querySelectorAll('.hist-delete-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (!confirm('¿Eliminar este torneo del historial?')) return;
+      if (!confirm(t('torneoConfirmDelete'))) return;
       torneosHist.splice(+btn.dataset.hi, 1);
       try { localStorage.setItem(TORNEO_HIST_KEY, JSON.stringify(torneosHist)); } catch {}
       if (auth.currentUser) syncUp();
@@ -4252,7 +4292,7 @@ function renderTorneoHome() {
   $('#torneoSetup').style.display = 'none';
   $('#torneoActivo').style.display = 'none';
   $('#torneoCerrarBtn').style.display = 'none';
-  $('#torneoHeaderTitle').textContent = 'Torneos';
+  $('#torneoHeaderTitle').textContent = t('torneoTorneos');
   renderHistorialList();
 }
 
@@ -4274,7 +4314,7 @@ function renderTorneoSetup() {
   $('#torneoHome').style.display = 'none';
   $('#torneoSetup').style.display = '';
   $('#torneoActivo').style.display = 'none';
-  $('#torneoHeaderTitle').textContent = 'Organizar torneo';
+  $('#torneoHeaderTitle').textContent = t('torneoOrganizar');
   $('#torneoCerrarBtn').style.display = 'none';
   renderJugadoresChips();
   $('#nJugadores').textContent = torneoJugadoresList.length;
@@ -4301,10 +4341,10 @@ function renderJugadoresChips() {
 function generarFixture() {
   const n = torneoJugadoresList.length;
   if (torneoTipo === 'parejas') {
-    if (n < 2) { mostrarTorneoWarning('Necesitás al menos 2 parejas.'); return; }
+    if (n < 2) { mostrarTorneoWarning(t('torneoWarnMin2')); return; }
   } else {
-    if (n < 4) { mostrarTorneoWarning('Necesitás al menos 4 jugadores.'); return; }
-    if (n % 2 !== 0) { mostrarTorneoWarning('Necesitás un número par de jugadores.'); return; }
+    if (n < 4) { mostrarTorneoWarning(t('torneoWarnMin4')); return; }
+    if (n % 2 !== 0) { mostrarTorneoWarning(t('torneoWarnPar')); return; }
   }
   $('#torneoWarning').style.display = 'none';
   torneo = {
@@ -4467,13 +4507,13 @@ function renderRondaActual() {
   }
 
   html += `<div class="ronda-header">
-    <div class="ronda-title">Ronda ${ronda.numero}</div>
-    <div class="ronda-nav">${torneo.formato.toUpperCase()} · ${torneo.jugadores.length} jugadores</div>
+    <div class="ronda-title">${t('torneoRondaTitle', ronda.numero)}</div>
+    <div class="ronda-nav">${torneo.formato.toUpperCase()} · ${torneo.jugadores.length} ${t('torneoJugadoresSuffix')}</div>
   </div>`;
 
   if (ronda.descansan.length) {
     const nombres = ronda.descansan.map(i => torneo.jugadores[i]).join(', ');
-    html += `<div class="descansan-row">Descansan: <strong>${nombres}</strong></div>`;
+    html += `<div class="descansan-row">${t('torneoDescansan')} <strong>${nombres}</strong></div>`;
   }
 
   const esParejas = torneo.tipo === 'parejas';
@@ -4487,7 +4527,7 @@ function renderRondaActual() {
     const labelP1 = esParejas ? p1[0] : `${p1[0]} <span>+</span> ${p1[1]}`;
     const labelP2 = esParejas ? p2[0] : `${p2[0]} <span>+</span> ${p2[1]}`;
     html += `<div class="cancha-card">
-      <div class="cancha-label">Cancha ${partido.cancha}</div>
+      <div class="cancha-label">${t('torneoCanchaLabel', partido.cancha)}</div>
       <div class="match-pareja">${labelP1}</div>
       <span class="match-vs-sep">VS</span>
       <div class="match-pareja">${labelP2}</div>
@@ -4503,7 +4543,7 @@ function renderRondaActual() {
   });
 
   if (esUltimaRonda) {
-    html += `<button type="button" class="btn btn-primary" id="siguienteRondaBtn" style="width:100%;margin-top:8px" ${completos ? '' : 'disabled'}>Siguiente ronda →</button>`;
+    html += `<button type="button" class="btn btn-primary" id="siguienteRondaBtn" style="width:100%;margin-top:8px" ${completos ? '' : 'disabled'}>${t('torneoSiguiente')}</button>`;
   }
 
   $('#torneoRondaView').innerHTML = html;
@@ -4547,7 +4587,7 @@ function renderRanking() {
   const stats = calcularStats();
   const sinDatos = stats.every(s => s.pj === 0);
   if (sinDatos) {
-    $('#torneoRankingView').innerHTML = `<p style="color:var(--ink-muted);text-align:center;padding:40px 0;font-size:14px">El ranking aparece cuando cargues los primeros resultados.</p>`;
+    $('#torneoRankingView').innerHTML = `<p style="color:var(--ink-muted);text-align:center;padding:40px 0;font-size:14px">${t('torneoRankingVacio')}</p>`;
     return;
   }
   if (torneoRankingSort === 'wins') {
@@ -4556,11 +4596,11 @@ function renderRanking() {
     stats.sort((a, b) => b.gg - a.gg || (b.gg - b.gp) - (a.gg - a.gp));
   }
   let html = `<div style="display:flex;gap:8px;margin-bottom:14px">
-    <button class="ranking-sort-btn${torneoRankingSort === 'games' ? ' active' : ''}" data-sort="games">Por juegos</button>
-    <button class="ranking-sort-btn${torneoRankingSort === 'wins' ? ' active' : ''}" data-sort="wins">Por victorias</button>
+    <button class="ranking-sort-btn${torneoRankingSort === 'games' ? ' active' : ''}" data-sort="games">${t('torneoPorJuegos')}</button>
+    <button class="ranking-sort-btn${torneoRankingSort === 'wins' ? ' active' : ''}" data-sort="wins">${t('torneoPorVictorias')}</button>
   </div>`;
   html += `<table class="ranking-tbl"><thead><tr>
-    <th>#</th><th>Jugador</th><th style="text-align:right;color:var(--court-bright)">G</th><th style="text-align:right;color:var(--amber)">E</th><th style="text-align:right;color:var(--crimson)">P</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
+    <th>#</th><th>${t('torneoRankingJugador')}</th><th style="text-align:right;color:var(--court-bright)">G</th><th style="text-align:right;color:var(--amber)">E</th><th style="text-align:right;color:var(--crimson)">P</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
   </tr></thead><tbody>`;
   stats.forEach((s, pos) => {
     const dif = s.gg - s.gp;
@@ -4585,7 +4625,7 @@ function aplicarTipoUI() {
   const esParejas = torneoTipo === 'parejas';
   $('#addIndividualRow').style.display = esParejas ? 'none' : '';
   $('#addParejaRow').style.display = esParejas ? '' : 'none';
-  $('#jugadoresLabel').textContent = esParejas ? 'Parejas' : 'Jugadores';
+  $('#jugadoresLabel').textContent = esParejas ? t('torneoParejasLabel') : t('torneoJugadoresLabel');
   $('#nJugadores').textContent = torneoJugadoresList.length;
 }
 
@@ -4606,7 +4646,7 @@ $('#nuevoTorneoBtn').addEventListener('click', () => {
   renderTorneoSetup();
 });
 $('#torneoCerrarBtn').addEventListener('click', () => {
-  if (confirm('¿Terminar el torneo? Se guardará en el historial.')) {
+  if (confirm(t('torneoConfirmFin'))) {
     guardarEnHistorial();
     localStorage.removeItem(TORNEO_LS_KEY);
     torneo = null;
