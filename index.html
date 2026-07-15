@@ -851,7 +851,7 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
         <button type="button" class="torneo-formato-btn" data-sistema="24puntos">A 24 puntos</button>
       </div>
 
-      <div class="torneo-section-label">Jugadores <span id="nJugadores" class="jugadores-count">0</span></div>
+      <div class="torneo-section-label"><span id="jugadoresLabel">Jugadores</span> <span id="nJugadores" class="jugadores-count">0</span></div>
       <div class="add-player-row" id="addIndividualRow">
         <input type="text" id="nuevoJugadorInput" class="field" placeholder="Nombre del jugador" autocomplete="off">
         <button type="button" class="btn btn-secondary" id="addJugadorBtn">Agregar</button>
@@ -4572,9 +4572,8 @@ function aplicarTipoUI() {
   const esParejas = torneoTipo === 'parejas';
   $('#addIndividualRow').style.display = esParejas ? 'none' : '';
   $('#addParejaRow').style.display = esParejas ? '' : 'none';
-  const label = document.querySelector('.torneo-section-label + #addIndividualRow')?.previousElementSibling
-    || [...document.querySelectorAll('.torneo-section-label')].find(el => el.textContent.startsWith('Jugadores'));
-  if (label) label.querySelector('span') && ($('#nJugadores').textContent = torneoJugadoresList.length);
+  $('#jugadoresLabel').textContent = esParejas ? 'Parejas' : 'Jugadores';
+  $('#nJugadores').textContent = torneoJugadoresList.length;
 }
 
 // Torneo event wiring
