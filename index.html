@@ -1059,7 +1059,7 @@ let retos = [];
 let clases = [];
 let metas = [];
 let nombre = '';
-let torneosHist = [];
+let torneosHist = (() => { try { const r = localStorage.getItem('pluspadel_torneos_hist_v1'); return r ? JSON.parse(r) : []; } catch { return []; } })();
 let editingId = null;
 let editingRetoId = null;
 let editingClaseId = null;
@@ -4152,6 +4152,10 @@ function saveTorneoToLS() {
 
 function guardarEnHistorial() {
   if (!torneo) return;
+  // Si la memoria está vacía (ej: se recargó la página), recuperar desde localStorage antes de agregar
+  if (!torneosHist.length) {
+    try { const r = localStorage.getItem(TORNEO_HIST_KEY); if (r) torneosHist = JSON.parse(r); } catch {}
+  }
   const stats = calcularStats();
   stats.sort((a, b) => b.gg - a.gg || (b.gg - b.gp) - (a.gg - a.gp));
   const entry = {
