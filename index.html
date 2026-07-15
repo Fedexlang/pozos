@@ -1047,6 +1047,7 @@ let retos = [];
 let clases = [];
 let metas = [];
 let nombre = '';
+let torneosHist = [];
 let editingId = null;
 let editingRetoId = null;
 let editingClaseId = null;
@@ -1658,6 +1659,7 @@ async function syncDown() {
       clases = (data.clases || []).map(migrateClase);
       metas = data.metas || [];
       nombre = data.nombre || '';
+      torneosHist = data.torneos_hist || [];
     }
     saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
@@ -1681,7 +1683,7 @@ async function syncUp() {
   syncing = true;
   setStatus('syncing');
   try {
-    await userDoc().set({ pozos, retos, clases, metas, nombre });
+    await userDoc().set({ pozos, retos, clases, metas, nombre, torneos_hist: torneosHist });
     saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
     lastError = null;
@@ -4147,18 +4149,18 @@ function guardarEnHistorial() {
     rondas: torneo.rondas.length,
     stats: stats.map(s => ({ nombre: s.nombre, g: s.g, e: s.e, p: s.p, gg: s.gg, gp: s.gp }))
   };
-  try {
-    const raw = localStorage.getItem(TORNEO_HIST_KEY);
-    const hist = raw ? JSON.parse(raw) : [];
-    hist.unshift(entry);
-    if (hist.length > 30) hist.length = 30;
-    localStorage.setItem(TORNEO_HIST_KEY, JSON.stringify(hist));
-  } catch {}
+  torneosHist.unshift(entry);
+  if (torneosHist.length > 30) torneosHist.length = 30;
+  // Persistir localmente como respaldo
+  try { localStorage.setItem(TORNEO_HIST_KEY, JSON.stringify(torneosHist)); } catch {}
+  // Sincronizar a Firestore si hay sesión
+  if (auth.currentUser) syncUp();
 }
 
 function renderHistorialList() {
-  let hist = [];
-  try { const r = localStorage.getItem(TORNEO_HIST_KEY); hist = r ? JSON.parse(r) : []; } catch {}
+  const hist = torneosHist.length ? torneosHist : (() => {
+    try { const r = localStorage.getItem(TORNEO_HIST_KEY); return r ? JSON.parse(r) : []; } catch { return []; }
+  })();
   const el = $('#torneoHistorialList');
   if (!hist.length) { el.innerHTML = `<p class="hist-empty">Todavía no hay torneos finalizados.</p>`; return; }
   const medals = ['gold', 'silver', 'bronze'];
