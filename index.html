@@ -515,6 +515,7 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .hist-podium-name { flex: 1; color: var(--ink); }
 .hist-podium-stat { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
 .hist-toggle-btn { background: none; border: none; color: var(--court-bright); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
+.hist-delete-btn { background: none; border: none; color: var(--crimson); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
 .jugadores-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; background: var(--court-bright); color: var(--bg); border-radius: 999px; font-size: 12px; font-weight: 700; margin-left: 6px; }
 .btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
@@ -4169,7 +4170,7 @@ function guardarEnHistorial() {
     stats: stats.map(s => ({ nombre: s.nombre, g: s.g, e: s.e, p: s.p, gg: s.gg, gp: s.gp }))
   };
   torneosHist.unshift(entry);
-  if (torneosHist.length > 30) torneosHist.length = 30;
+  if (torneosHist.length > 10) torneosHist.length = 10;
   // Persistir localmente como respaldo
   try { localStorage.setItem(TORNEO_HIST_KEY, JSON.stringify(torneosHist)); } catch {}
   // Sincronizar a Firestore si hay sesión
@@ -4218,7 +4219,10 @@ function renderHistorialList() {
           <span class="hist-podium-stat">${s.g}G ${s.e}E ${s.p}P · ${s.gg}pts</span>
         </div>`).join('')}
       </div>
-      <button class="hist-toggle-btn" data-hi="${hi}" style="margin-top:10px">Ver ranking completo</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+        <button class="hist-toggle-btn" data-hi="${hi}">Ver ranking completo</button>
+        <button class="hist-delete-btn" data-hi="${hi}">Eliminar</button>
+      </div>
       <div class="hist-full-ranking" data-hi="${hi}" style="display:none">${fullTable}</div>
     </div>`;
   });
@@ -4230,6 +4234,15 @@ function renderHistorialList() {
       const open = panel.style.display !== 'none';
       panel.style.display = open ? 'none' : '';
       btn.textContent = open ? 'Ver ranking completo' : 'Ocultar ranking';
+    });
+  });
+  el.querySelectorAll('.hist-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!confirm('¿Eliminar este torneo del historial?')) return;
+      torneosHist.splice(+btn.dataset.hi, 1);
+      try { localStorage.setItem(TORNEO_HIST_KEY, JSON.stringify(torneosHist)); } catch {}
+      if (auth.currentUser) syncUp();
+      renderHistorialList();
     });
   });
 }
