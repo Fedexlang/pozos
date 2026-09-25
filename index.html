@@ -519,6 +519,37 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .hist-rankg-btn { background: none; border: none; color: var(--ink-muted); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
 .rankg-chip { display:inline-flex; align-items:center; gap:5px; padding:7px 13px; border-radius:999px; border:1.5px solid var(--border); background:none; color:var(--ink-muted); font-size:12px; font-weight:600; cursor:pointer; margin:0 6px 6px 0; transition:all .15s; }
 .rankg-chip.selected { background:var(--court-bright); border-color:var(--court-bright); color:var(--bg); }
+/* Shared tournament */
+.torneo-mode-btns { display: flex; gap: 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; margin-bottom: 20px; }
+.torneo-mode-btn { flex: 1; padding: 8px; border: none; background: none; color: var(--ink-muted); font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all .15s; }
+.torneo-mode-btn.selected { background: var(--surface-3); color: var(--ink); }
+.join-code-display { background: var(--surface-2); border: 1.5px solid var(--court-bright); border-radius: 14px; padding: 16px 20px; text-align: center; margin-bottom: 20px; }
+.join-code-value { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; color: var(--court-bright); letter-spacing: 0.2em; margin: 6px 0; }
+.join-code-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+.join-code-hint { font-size: 11px; color: var(--ink-muted); margin-top: 6px; }
+.btn-copy { display: inline-block; background: var(--surface-3); border: 1px solid var(--border); color: var(--ink); padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all .15s; }
+.btn-copy:active { background: var(--court); border-color: var(--court); color: #fff; }
+.lobby-section { margin-bottom: 20px; }
+.lobby-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+.lobby-section-title span { font-size: 11px; }
+.lobby-player { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; }
+.lobby-player-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--ink); }
+.lobby-badge { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; }
+.lobby-badge.org { background: rgba(74,222,128,0.12); color: var(--court-bright); }
+.lobby-badge.reg { background: rgba(251,191,36,0.12); color: var(--gold); }
+.lobby-player-rm { background: none; border: none; color: var(--ink-dim); cursor: pointer; font-size: 18px; line-height: 1; padding: 0 2px; flex-shrink: 0; }
+.pending-card { padding: 12px 14px; background: var(--surface); border: 1px solid rgba(251,191,36,0.25); border-radius: 10px; margin-bottom: 8px; }
+.pending-card-name { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.pending-card-email { font-size: 11px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 10px; }
+.pending-actions { display: flex; gap: 8px; }
+.btn-aprobar { flex: 1; padding: 8px; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); color: var(--court-bright); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-rechazar { flex: 1; padding: 8px; background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25); color: var(--crimson); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.join-code-input { font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase; letter-spacing: 0.15em !important; font-size: 18px !important; text-align: center; }
+.torneo-join-result { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 16px; }
+.torneo-join-result-name { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.torneo-join-result-meta { font-size: 11px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; margin-bottom: 12px; }
+.torneo-unirse-btn { display: block; width: fit-content; margin: 8px auto 4px; background: none; border: 2px solid var(--border); border-radius: 999px; padding: 12px 28px; color: var(--ink-muted); font-size: 17px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; }
+.torneo-unirse-btn:hover { border-color: var(--border-strong); color: var(--ink); }
 .jugadores-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; background: var(--court-bright); color: var(--bg); border-radius: 999px; font-size: 12px; font-weight: 700; margin-left: 6px; }
 .btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
@@ -829,11 +860,23 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
     <!-- Home: historial + nuevo -->
     <div id="torneoHome" style="display:none">
       <button type="button" class="torneo-open-btn" id="nuevoTorneoBtn" data-i18n="torneoNuevo">Nuevo torneo</button>
+      <button type="button" class="torneo-unirse-btn" id="unirseTorneoBtn" data-i18n="torneoUnirseBtn">Unirse por código</button>
       <div id="torneoHistorialList" style="margin-top:24px"></div>
     </div>
 
     <!-- Setup -->
     <div id="torneoSetup">
+      <div class="torneo-mode-btns" id="torneoModeBtns">
+        <button type="button" class="torneo-mode-btn selected" data-tmode="local" data-i18n="torneoModeLocal">Local</button>
+        <button type="button" class="torneo-mode-btn" data-tmode="shared" data-i18n="torneoModeShared">Compartido</button>
+      </div>
+      <div id="torneoSharedCodeWrap" style="display:none">
+        <div class="join-code-display">
+          <div class="join-code-label" data-i18n="torneoCodigoAcceso">Código de acceso</div>
+          <div class="join-code-value" id="torneoSetupCode">PAD-????</div>
+          <div class="join-code-hint" data-i18n="torneoCodigoHint">Compartí este código para que otros se unan</div>
+        </div>
+      </div>
       <div class="torneo-section-label" data-i18n="torneoNombreLabel">Nombre del torneo (opcional)</div>
       <input type="text" id="torneoNombreInput" class="field" data-i18n-ph="torneoNombrePH" placeholder="Torneo del sábado" style="margin-bottom:20px">
 
@@ -884,6 +927,12 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 
     <!-- Ranking general -->
     <div id="torneoRankingGeneral" style="display:none"></div>
+
+    <!-- Lobby (sala de espera compartido) -->
+    <div id="torneoLobby" style="display:none"></div>
+
+    <!-- Unirse por código -->
+    <div id="torneoJoin" style="display:none"></div>
 
   </div>
 </div>
@@ -1182,6 +1231,25 @@ const TRANSLATIONS = {
     torneoRankingGralSel:'Seleccioná los torneos a incluir', torneoRankingGralPts:'Pts',
     torneoRankingGralJ:'J', torneoRankingGralEmpty:'Seleccioná al menos un torneo para ver el ranking',
     torneoRankingGralTodos:'Todos', torneoRankingGralLimpiar:'Limpiar',
+    torneoModeLocal:'Local', torneoModeShared:'Compartido',
+    torneoCodigoAcceso:'Código de acceso', torneoCodigoHint:'Compartí este código para que otros se unan',
+    torneoCodigoCopiar:'Copiar código', torneoCodigoCopied:'¡Copiado!',
+    torneoIniciarLobby:'Crear sala →', torneoIniciarTorneo:'Iniciar torneo →',
+    torneoLobbyJugadores:'Jugadores', torneoPendientesLabel:'Solicitudes pendientes',
+    torneoAprobar:'Aprobar', torneoRechazar:'Rechazar',
+    torneoUnirseBtn:'Unirse por código', torneoJoinTitle:'Unirse a torneo',
+    torneoJoinCodePH:'PAD-XXXX', torneoBuscarBtn:'Buscar',
+    torneoJoinResultOrg:'Organizador', torneoJoinSolicitar:'Solicitar unirse',
+    torneoJoinPending:'Solicitud enviada — esperando aprobación',
+    torneoJoinApproved:'Ya sos participante de este torneo',
+    torneoJoinError:'No se encontró ningún torneo con ese código',
+    torneoNeedLogin:'Tenés que iniciar sesión para unirte a torneos compartidos',
+    torneoLobbyEmpty:'Sin solicitudes pendientes',
+    torneoVerTorneo:'Ver torneo →',
+    torneoCompartidoLabel:'Compartido',
+    torneoSharedStarted:'El torneo ya empezó',
+    torneoSharedFinished:'Este torneo ya finalizó',
+    torneoBuscando:'Buscando…',
   },
   en: {
     tagline:'Tournaments · Matches · Training', setupIntro:'Create an account or log in to <strong>sync your data</strong> across devices.',
@@ -1280,6 +1348,25 @@ const TRANSLATIONS = {
     torneoRankingGralSel:'Select tournaments to include', torneoRankingGralPts:'Pts',
     torneoRankingGralJ:'T', torneoRankingGralEmpty:'Select at least one tournament to see the ranking',
     torneoRankingGralTodos:'All', torneoRankingGralLimpiar:'Clear',
+    torneoModeLocal:'Local', torneoModeShared:'Shared',
+    torneoCodigoAcceso:'Access code', torneoCodigoHint:'Share this code for others to join',
+    torneoCodigoCopiar:'Copy code', torneoCodigoCopied:'Copied!',
+    torneoIniciarLobby:'Create lobby →', torneoIniciarTorneo:'Start tournament →',
+    torneoLobbyJugadores:'Players', torneoPendientesLabel:'Pending requests',
+    torneoAprobar:'Approve', torneoRechazar:'Reject',
+    torneoUnirseBtn:'Join by code', torneoJoinTitle:'Join tournament',
+    torneoJoinCodePH:'PAD-XXXX', torneoBuscarBtn:'Search',
+    torneoJoinResultOrg:'Organizer', torneoJoinSolicitar:'Request to join',
+    torneoJoinPending:'Request sent — waiting for approval',
+    torneoJoinApproved:'You are already a participant',
+    torneoJoinError:'No tournament found with that code',
+    torneoNeedLogin:'You need to sign in to join shared tournaments',
+    torneoLobbyEmpty:'No pending requests',
+    torneoVerTorneo:'View tournament →',
+    torneoCompartidoLabel:'Shared',
+    torneoSharedStarted:'Tournament already started',
+    torneoSharedFinished:'This tournament has ended',
+    torneoBuscando:'Searching…',
   }
 };
 
@@ -4193,6 +4280,11 @@ let torneoSistema = 'sets';
 let torneoRondaVista = 0;
 let torneoRankingSort = 'games';
 let rankingGralSelected = new Set();
+let torneoModo = 'local'; // 'local' | 'shared'
+let torneoAccesoCode = '';
+let torneoCompartidoId = null;
+let torneoCompartidoData = null;
+let torneoCompartidoListener = null;
 
 function loadTorneoFromLS() {
   try {
@@ -4445,11 +4537,309 @@ function renderRankingGeneral() {
   });
 }
 
+// ---- Shared tournament helpers ----
+
+function hideAllTorneoViews() {
+  $('#torneoHome').style.display = 'none';
+  $('#torneoSetup').style.display = 'none';
+  $('#torneoActivo').style.display = 'none';
+  $('#torneoRankingGeneral').style.display = 'none';
+  $('#torneoLobby').style.display = 'none';
+  $('#torneoJoin').style.display = 'none';
+  $('#torneoCerrarBtn').style.display = 'none';
+}
+
+function generarCodigoAcceso() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'PAD-';
+  for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+async function crearTorneoCompartido() {
+  if (!auth.currentUser) { showToast(t('torneoNeedLogin'), 'error'); return; }
+  const nj = torneoJugadoresList.length;
+  if (torneoTipo === 'parejas') {
+    if (nj < 2) { mostrarTorneoWarning(t('torneoWarnMin2')); return; }
+  } else {
+    if (nj < 4) { mostrarTorneoWarning(t('torneoWarnMin4')); return; }
+    if (nj % 2 !== 0) { mostrarTorneoWarning(t('torneoWarnPar')); return; }
+  }
+  $('#torneoWarning').style.display = 'none';
+  const codigo = torneoAccesoCode || generarCodigoAcceso();
+  const jugadoresData = torneoJugadoresList.map(jn => ({ nombre: jn, uid: null }));
+  const orgNombre = nombre || (auth.currentUser.email ? auth.currentUser.email.split('@')[0] : 'Organizador');
+  const torneoData = {
+    nombre: $('#torneoNombreInput').value.trim() || 'Torneo',
+    formato: torneoFormato,
+    tipo: torneoTipo,
+    sistema: torneoSistema,
+    organizadorUid: auth.currentUser.uid,
+    organizadorNombre: orgNombre,
+    codigoAcceso: codigo,
+    estado: 'esperando',
+    fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
+    fechaInicio: null,
+    fechaFin: null,
+    rondas: [],
+    jugadores: jugadoresData,
+    pendientes: []
+  };
+  const btn = $('#generarFixtureBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+  try {
+    const ref = await db.collection('torneos').add(torneoData);
+    torneoCompartidoId = ref.id;
+    torneoCompartidoData = { ...torneoData, id: ref.id };
+    renderTorneoLobby();
+  } catch (e) {
+    showToast('Error: ' + e.message, 'error');
+    if (btn) { btn.disabled = false; btn.textContent = t('torneoIniciarLobby'); }
+  }
+}
+
+function renderTorneoLobby() {
+  hideAllTorneoViews();
+  $('#torneoLobby').style.display = '';
+  $('#torneoHeaderTitle').textContent = torneoCompartidoData.nombre;
+
+  const data = torneoCompartidoData;
+  const uid = auth.currentUser ? auth.currentUser.uid : null;
+  const isOrg = data.organizadorUid === uid;
+
+  let html = `<div class="join-code-display">
+    <div class="join-code-label">${t('torneoCodigoAcceso')}</div>
+    <div class="join-code-value">${data.codigoAcceso}</div>
+    <div class="join-code-hint">${t('torneoCodigoHint')}</div>
+    <button class="btn-copy" id="copiarCodigoBtn">${t('torneoCodigoCopiar')}</button>
+  </div>`;
+
+  html += `<div class="lobby-section">
+    <div class="lobby-section-title"><span>${t('torneoLobbyJugadores')}</span><span>${data.jugadores.length}</span></div>`;
+  data.jugadores.forEach(j => {
+    const isJ_Org = j.uid === data.organizadorUid || (j.uid === null && j.nombre === data.organizadorNombre);
+    html += `<div class="lobby-player">
+      <div class="lobby-player-name">${j.nombre}</div>
+      ${isJ_Org ? `<span class="lobby-badge org">Org</span>` : ''}
+      ${j.uid && !isJ_Org ? `<span class="lobby-badge reg">✓</span>` : ''}
+      ${isOrg && !isJ_Org ? `<button class="lobby-player-rm" data-nombre="${j.nombre.replace(/"/g,'&quot;')}" aria-label="Quitar">×</button>` : ''}
+    </div>`;
+  });
+  html += `</div>`;
+
+  if (isOrg) {
+    const pendientes = data.pendientes || [];
+    html += `<div class="lobby-section">
+      <div class="lobby-section-title"><span>${t('torneoPendientesLabel')}</span><span>${pendientes.length}</span></div>`;
+    if (pendientes.length === 0) {
+      html += `<p style="font-size:13px;color:var(--ink-muted)">${t('torneoLobbyEmpty')}</p>`;
+    } else {
+      pendientes.forEach(p => {
+        html += `<div class="pending-card">
+          <div class="pending-card-name">${p.nombre}</div>
+          <div class="pending-card-email">${p.email}</div>
+          <div class="pending-actions">
+            <button class="btn-aprobar" data-uid="${p.uid}" data-nombre="${p.nombre.replace(/"/g,'&quot;')}">${t('torneoAprobar')}</button>
+            <button class="btn-rechazar" data-uid="${p.uid}">${t('torneoRechazar')}</button>
+          </div>
+        </div>`;
+      });
+    }
+    html += `</div>`;
+    const canStart = data.jugadores.length >= (data.tipo === 'parejas' ? 2 : 4) &&
+                     (data.tipo !== 'individual' || data.jugadores.length % 2 === 0);
+    html += `<button type="button" class="btn btn-primary" id="iniciarTorneoBtn" style="width:100%;margin-top:4px" ${canStart ? '' : 'disabled'}>${t('torneoIniciarTorneo')}</button>`;
+  } else {
+    html += `<p style="color:var(--ink-muted);font-size:13px;text-align:center;padding:16px 0">${t('torneoJoinPending')}</p>`;
+  }
+
+  const panel = $('#torneoLobby');
+  panel.innerHTML = html;
+
+  panel.querySelector('#copiarCodigoBtn').addEventListener('click', () => {
+    const btn = panel.querySelector('#copiarCodigoBtn');
+    navigator.clipboard.writeText(data.codigoAcceso).then(() => {
+      btn.textContent = t('torneoCodigoCopied');
+      setTimeout(() => { if (btn) btn.textContent = t('torneoCodigoCopiar'); }, 2000);
+    }).catch(() => showToast(data.codigoAcceso, '', 3500));
+  });
+
+  panel.querySelectorAll('.btn-aprobar').forEach(b => {
+    b.addEventListener('click', () => aprobarSolicitud(b.dataset.uid, b.dataset.nombre));
+  });
+  panel.querySelectorAll('.btn-rechazar').forEach(b => {
+    b.addEventListener('click', () => rechazarSolicitud(b.dataset.uid));
+  });
+  panel.querySelectorAll('.lobby-player-rm').forEach(b => {
+    b.addEventListener('click', () => quitarJugadorLobby(b.dataset.nombre));
+  });
+  const iniciarBtn = panel.querySelector('#iniciarTorneoBtn');
+  if (iniciarBtn) iniciarBtn.addEventListener('click', iniciarTorneoCompartido);
+
+  suscribirseTorneo(torneoCompartidoId);
+}
+
+function suscribirseTorneo(tid) {
+  if (torneoCompartidoListener) { torneoCompartidoListener(); torneoCompartidoListener = null; }
+  torneoCompartidoListener = db.collection('torneos').doc(tid).onSnapshot(snap => {
+    if (!snap.exists) return;
+    torneoCompartidoData = { ...snap.data(), id: snap.id };
+    if ($('#torneoLobby').style.display !== 'none') renderTorneoLobby();
+  });
+}
+
+async function aprobarSolicitud(uid, nombreJugador) {
+  if (!torneoCompartidoId) return;
+  const data = torneoCompartidoData;
+  const nuevosJugadores = [...data.jugadores, { nombre: nombreJugador, uid }];
+  const nuevosPendientes = (data.pendientes || []).filter(p => p.uid !== uid);
+  try {
+    await db.collection('torneos').doc(torneoCompartidoId).update({ jugadores: nuevosJugadores, pendientes: nuevosPendientes });
+    showToast(nombreJugador + ' agregado');
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function rechazarSolicitud(uid) {
+  if (!torneoCompartidoId) return;
+  const nuevosPendientes = (torneoCompartidoData.pendientes || []).filter(p => p.uid !== uid);
+  try {
+    await db.collection('torneos').doc(torneoCompartidoId).update({ pendientes: nuevosPendientes });
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function quitarJugadorLobby(nombreJugador) {
+  if (!torneoCompartidoId) return;
+  const nuevosJugadores = torneoCompartidoData.jugadores.filter(j => j.nombre !== nombreJugador);
+  try {
+    await db.collection('torneos').doc(torneoCompartidoId).update({ jugadores: nuevosJugadores });
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function iniciarTorneoCompartido() {
+  if (!torneoCompartidoId || !torneoCompartidoData) return;
+  const data = torneoCompartidoData;
+  torneoJugadoresList = data.jugadores.map(j => j.nombre);
+  torneoFormato = data.formato;
+  torneoTipo = data.tipo;
+  torneoSistema = data.sistema;
+  torneo = {
+    nombre: data.nombre,
+    formato: data.formato,
+    tipo: data.tipo,
+    sistema: data.sistema,
+    jugadores: data.jugadores.map(j => j.nombre),
+    rondas: [],
+    expira: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    compartidoId: torneoCompartidoId
+  };
+  generarRonda();
+  saveTorneoToLS();
+  try {
+    await db.collection('torneos').doc(torneoCompartidoId).update({
+      estado: 'activo',
+      fechaInicio: firebase.firestore.FieldValue.serverTimestamp(),
+      rondas: torneo.rondas
+    });
+  } catch (e) { /* non-critical */ }
+  renderTorneoActivo();
+}
+
+function renderTorneoJoin() {
+  hideAllTorneoViews();
+  $('#torneoJoin').style.display = '';
+  $('#torneoHeaderTitle').textContent = t('torneoJoinTitle');
+
+  const joinEl = $('#torneoJoin');
+  joinEl.innerHTML = `<div class="field">
+    <label>${t('torneoCodigoAcceso')}</label>
+    <input type="text" id="joinCodeInput" class="field join-code-input" placeholder="${t('torneoJoinCodePH')}" maxlength="8" autocomplete="off" spellcheck="false">
+  </div>
+  <button type="button" class="btn btn-secondary" id="buscarTorneoBtn" style="width:100%">${t('torneoBuscarBtn')}</button>
+  <div id="joinResult"></div>`;
+
+  const input = joinEl.querySelector('#joinCodeInput');
+  input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
+  input.addEventListener('keydown', async e => { if (e.key === 'Enter') { e.preventDefault(); await buscarTorneoPorCodigo(input.value.trim()); } });
+  joinEl.querySelector('#buscarTorneoBtn').addEventListener('click', async () => buscarTorneoPorCodigo(input.value.trim()));
+}
+
+async function buscarTorneoPorCodigo(codigo) {
+  codigo = codigo.toUpperCase();
+  if (!codigo || codigo.length < 4) return;
+  if (!auth.currentUser) {
+    $('#joinResult').innerHTML = `<p style="color:var(--amber);font-size:13px;margin-top:12px">${t('torneoNeedLogin')}</p>`;
+    return;
+  }
+  $('#joinResult').innerHTML = `<p style="color:var(--ink-muted);font-size:13px;margin-top:12px">${t('torneoBuscando')}</p>`;
+  try {
+    const snap = await db.collection('torneos').where('codigoAcceso', '==', codigo).limit(1).get();
+    if (snap.empty) {
+      $('#joinResult').innerHTML = `<p style="color:var(--crimson);font-size:13px;margin-top:12px">${t('torneoJoinError')}</p>`;
+      return;
+    }
+    const doc = snap.docs[0];
+    const data = { ...doc.data(), id: doc.id };
+    mostrarResultadoBusqueda(data);
+  } catch (e) {
+    $('#joinResult').innerHTML = `<p style="color:var(--crimson);font-size:13px;margin-top:12px">Error: ${e.message}</p>`;
+  }
+}
+
+function mostrarResultadoBusqueda(data) {
+  const uid = auth.currentUser ? auth.currentUser.uid : null;
+  const yaJugador = (data.jugadores || []).some(j => j.uid === uid);
+  const yaPendiente = (data.pendientes || []).some(p => p.uid === uid);
+
+  let statusHtml = '';
+  if (data.estado === 'finalizado') {
+    statusHtml = `<p style="color:var(--ink-muted);font-size:13px">${t('torneoSharedFinished')}</p>`;
+  } else if (yaJugador && data.estado === 'activo') {
+    statusHtml = `<p style="color:var(--court-bright);font-size:13px;font-weight:600;margin-bottom:10px">${t('torneoJoinApproved')}</p>
+      <p style="color:var(--ink-muted);font-size:12px">${t('torneoSharedStarted')}</p>`;
+  } else if (yaJugador) {
+    statusHtml = `<p style="color:var(--court-bright);font-size:13px;font-weight:600">${t('torneoJoinApproved')}</p>`;
+  } else if (yaPendiente) {
+    statusHtml = `<p style="color:var(--amber);font-size:13px">${t('torneoJoinPending')}</p>`;
+  } else if (data.estado === 'activo') {
+    statusHtml = `<p style="color:var(--ink-muted);font-size:13px">${t('torneoSharedStarted')}</p>`;
+  } else {
+    statusHtml = `<button class="btn btn-primary" id="solicitarUnirseBtn" style="width:100%;margin-top:10px">${t('torneoJoinSolicitar')}</button>`;
+  }
+
+  $('#joinResult').innerHTML = `<div class="torneo-join-result">
+    <div class="torneo-join-result-name">${data.nombre}</div>
+    <div class="torneo-join-result-meta">${t(data.formato === 'americano' ? 'torneoAmericano' : 'torneoMexicano')} · ${t(data.tipo === 'parejas' ? 'torneoParejas' : 'torneoIndividual')} · ${(data.jugadores || []).length} ${t('torneoJugadoresSuffix')}</div>
+    ${statusHtml}
+  </div>`;
+
+  const solBtn = $('#joinResult').querySelector('#solicitarUnirseBtn');
+  if (solBtn) solBtn.addEventListener('click', () => solicitarUnirse(data));
+}
+
+async function solicitarUnirse(data) {
+  if (!auth.currentUser) return;
+  const uid = auth.currentUser.uid;
+  const email = auth.currentUser.email || '';
+  const nombreUsuario = nombre || email.split('@')[0] || 'Jugador';
+  const nuevoPendiente = { uid, nombre: nombreUsuario, email };
+  try {
+    await db.collection('torneos').doc(data.id).update({
+      pendientes: firebase.firestore.FieldValue.arrayUnion(nuevoPendiente)
+    });
+    mostrarResultadoBusqueda({ ...data, pendientes: [...(data.pendientes || []), nuevoPendiente] });
+    showToast(t('torneoJoinPending'), '', 3000);
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+// ---- End shared tournament helpers ----
+
 function renderTorneoHome() {
   $('#torneoHome').style.display = '';
   $('#torneoSetup').style.display = 'none';
   $('#torneoActivo').style.display = 'none';
   $('#torneoRankingGeneral').style.display = 'none';
+  $('#torneoLobby').style.display = 'none';
+  $('#torneoJoin').style.display = 'none';
   $('#torneoCerrarBtn').style.display = 'none';
   $('#torneoHeaderTitle').textContent = t('torneoTorneos');
   renderHistorialList();
@@ -4473,8 +4863,11 @@ function renderTorneoSetup() {
   $('#torneoHome').style.display = 'none';
   $('#torneoSetup').style.display = '';
   $('#torneoActivo').style.display = 'none';
-  $('#torneoHeaderTitle').textContent = t('torneoOrganizar');
+  $('#torneoRankingGeneral').style.display = 'none';
+  $('#torneoLobby').style.display = 'none';
+  $('#torneoJoin').style.display = 'none';
   $('#torneoCerrarBtn').style.display = 'none';
+  $('#torneoHeaderTitle').textContent = t('torneoOrganizar');
   renderJugadoresChips();
   $('#nJugadores').textContent = torneoJugadoresList.length;
 }
@@ -4635,6 +5028,9 @@ function todosScoresCompletos() {
 function renderTorneoActivo() {
   $('#torneoHome').style.display = 'none';
   $('#torneoSetup').style.display = 'none';
+  $('#torneoRankingGeneral').style.display = 'none';
+  $('#torneoLobby').style.display = 'none';
+  $('#torneoJoin').style.display = 'none';
   $('#torneoActivo').style.display = '';
   $('#torneoHeaderTitle').textContent = torneo.nombre;
   $('#torneoCerrarBtn').style.display = '';
@@ -4794,19 +5190,35 @@ function aplicarTipoUI() {
 // Torneo event wiring
 $('#organizarTorneoBtn').addEventListener('click', abrirTorneoOverlay);
 $('#torneoCloseBtn').addEventListener('click', () => {
-  if ($('#torneoRankingGeneral').style.display !== 'none') renderTorneoHome();
-  else cerrarTorneoOverlay();
+  const rankingVisible = $('#torneoRankingGeneral').style.display !== 'none';
+  const lobbyVisible = $('#torneoLobby').style.display !== 'none';
+  const joinVisible = $('#torneoJoin').style.display !== 'none';
+  if (rankingVisible || lobbyVisible || joinVisible) {
+    if (torneoCompartidoListener && lobbyVisible) { torneoCompartidoListener(); torneoCompartidoListener = null; }
+    renderTorneoHome();
+  } else {
+    cerrarTorneoOverlay();
+  }
 });
 $('#nuevoTorneoBtn').addEventListener('click', () => {
   torneoJugadoresList = [];
   torneoFormato = 'americano';
   torneoTipo = 'individual';
   torneoSistema = 'sets';
+  torneoModo = 'local';
+  torneoAccesoCode = '';
+  torneoCompartidoId = null;
+  torneoCompartidoData = null;
+  if (torneoCompartidoListener) { torneoCompartidoListener(); torneoCompartidoListener = null; }
   $('#torneoNombreInput').value = '';
   $('#torneoWarning').style.display = 'none';
+  $('#torneoSharedCodeWrap').style.display = 'none';
+  document.querySelectorAll('#torneoModeBtns .torneo-mode-btn').forEach(b => b.classList.toggle('selected', b.dataset.tmode === 'local'));
   document.querySelectorAll('[data-fmt]').forEach(b => b.classList.toggle('selected', b.dataset.fmt === 'americano'));
   document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('selected', b.dataset.tipo === 'individual'));
   document.querySelectorAll('[data-sistema]').forEach(b => b.classList.toggle('selected', b.dataset.sistema === 'sets'));
+  const fixBtn = $('#generarFixtureBtn');
+  if (fixBtn) { fixBtn.disabled = false; fixBtn.textContent = t('torneoEmpezar'); }
   aplicarTipoUI();
   renderTorneoSetup();
 });
@@ -4859,7 +5271,28 @@ $('#addJugadorBtn').addEventListener('click', () => {
 $('#nuevoJugadorInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); $('#addJugadorBtn').click(); }
 });
-$('#generarFixtureBtn').addEventListener('click', generarFixture);
+$('#generarFixtureBtn').addEventListener('click', () => {
+  if (torneoModo === 'shared') crearTorneoCompartido();
+  else generarFixture();
+});
+$('#unirseTorneoBtn').addEventListener('click', renderTorneoJoin);
+document.querySelectorAll('#torneoModeBtns .torneo-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    torneoModo = btn.dataset.tmode;
+    document.querySelectorAll('#torneoModeBtns .torneo-mode-btn').forEach(b => b.classList.toggle('selected', b.dataset.tmode === torneoModo));
+    const sharedWrap = $('#torneoSharedCodeWrap');
+    const fixBtn = $('#generarFixtureBtn');
+    if (torneoModo === 'shared') {
+      if (!torneoAccesoCode) torneoAccesoCode = generarCodigoAcceso();
+      $('#torneoSetupCode').textContent = torneoAccesoCode;
+      sharedWrap.style.display = '';
+      if (fixBtn) fixBtn.textContent = t('torneoIniciarLobby');
+    } else {
+      sharedWrap.style.display = 'none';
+      if (fixBtn) fixBtn.textContent = t('torneoEmpezar');
+    }
+  });
+});
 document.querySelectorAll('.torneo-ttab').forEach(btn => {
   btn.addEventListener('click', () => mostrarTorneoTab(btn.dataset.ttab));
 });
