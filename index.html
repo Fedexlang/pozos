@@ -4219,6 +4219,51 @@ function guardarEnHistorial() {
   if (auth.currentUser) syncUp();
 }
 
+function renderHistFullTable(stats, sort) {
+  const sorted = [...stats];
+  if (sort === 'wins') {
+    sorted.sort((a, b) => b.g - a.g || b.e - a.e || (b.gg - b.gp) - (a.gg - a.gp));
+  } else if (sort === 'diff') {
+    sorted.sort((a, b) => (b.gg - b.gp) - (a.gg - a.gp) || b.gg - a.gg);
+  } else {
+    sorted.sort((a, b) => b.gg - a.gg || (b.gg - b.gp) - (a.gg - a.gp));
+  }
+  let h = `<div style="display:flex;gap:6px;margin:10px 0 8px;flex-wrap:wrap">
+    <button class="hist-sort-btn ranking-sort-btn${sort === 'games' ? ' active' : ''}" data-hsort="games">${t('torneoPorJuegos')}</button>
+    <button class="hist-sort-btn ranking-sort-btn${sort === 'wins' ? ' active' : ''}" data-hsort="wins">${t('torneoPorVictorias')}</button>
+    <button class="hist-sort-btn ranking-sort-btn${sort === 'diff' ? ' active' : ''}" data-hsort="diff">${t('torneoPorDif')}</button>
+  </div>`;
+  h += `<table class="ranking-tbl"><thead><tr>
+    <th>#</th><th>${t('torneoRankingJugador')}</th>
+    <th style="text-align:right;color:var(--court-bright)">${t('torneoW')}</th>
+    <th style="text-align:right;color:var(--amber)">${t('torneoD')}</th>
+    <th style="text-align:right;color:var(--crimson)">${t('torneoL')}</th>
+    <th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
+  </tr></thead><tbody>${sorted.map((s, pos) => {
+    const dif = s.gg - s.gp;
+    return `<tr>
+      <td class="rank-pos-cell ${pos < 3 ? 'top' : ''}">${pos + 1}</td>
+      <td class="rank-name-cell">${s.nombre}</td>
+      <td class="rank-num-cell" style="color:var(--court-bright)">${s.g}</td>
+      <td class="rank-num-cell" style="color:var(--amber)">${s.e}</td>
+      <td class="rank-num-cell" style="color:var(--crimson)">${s.p}</td>
+      <td class="rank-num-cell">${s.gg}</td>
+      <td class="rank-num-cell" style="color:${dif >= 0 ? 'var(--court-bright)' : 'var(--crimson)'}">${dif > 0 ? '+' : ''}${dif}</td>
+    </tr>`;
+  }).join('')}</tbody></table>`;
+  return h;
+}
+
+function wireHistPanel(panel, hi) {
+  panel.querySelectorAll('.hist-sort-btn').forEach(sb => {
+    sb.addEventListener('click', () => {
+      panel.dataset.sort = sb.dataset.hsort;
+      panel.innerHTML = renderHistFullTable(torneosHist[hi].stats, sb.dataset.hsort);
+      wireHistPanel(panel, hi);
+    });
+  });
+}
+
 function renderHistorialList() {
   const hist = torneosHist.length ? torneosHist : (() => {
     try { const r = localStorage.getItem(TORNEO_HIST_KEY); return r ? JSON.parse(r) : []; } catch { return []; }
@@ -4230,20 +4275,6 @@ function renderHistorialList() {
   hist.forEach((ht, hi) => {
     const fecha = new Date(ht.fechaFin).toLocaleDateString(appLang === 'es' ? 'es-AR' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
     const top = ht.stats.slice(0, 3);
-    const fullTable = `<table class="ranking-tbl" style="margin-top:12px"><thead><tr>
-      <th>#</th><th>${t('torneoRankingJugador')}</th><th style="text-align:right;color:var(--court-bright)">${t('torneoW')}</th><th style="text-align:right;color:var(--amber)">${t('torneoD')}</th><th style="text-align:right;color:var(--crimson)">${t('torneoL')}</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
-    </tr></thead><tbody>${ht.stats.map((s, pos) => {
-      const dif = s.gg - s.gp;
-      return `<tr>
-        <td class="rank-pos-cell ${pos < 3 ? 'top' : ''}">${pos + 1}</td>
-        <td class="rank-name-cell">${s.nombre}</td>
-        <td class="rank-num-cell" style="color:var(--court-bright)">${s.g}</td>
-        <td class="rank-num-cell" style="color:var(--amber)">${s.e}</td>
-        <td class="rank-num-cell" style="color:var(--crimson)">${s.p}</td>
-        <td class="rank-num-cell">${s.gg}</td>
-        <td class="rank-num-cell" style="color:${dif >= 0 ? 'var(--court-bright)' : 'var(--crimson)'}">${dif > 0 ? '+' : ''}${dif}</td>
-      </tr>`;
-    }).join('')}</tbody></table>`;
     html += `<div class="hist-card">
       <div class="hist-card-header">
         <div class="hist-card-name">${ht.nombre}</div>
@@ -4265,15 +4296,19 @@ function renderHistorialList() {
         <button class="hist-toggle-btn" data-hi="${hi}">${t('torneoVerRanking')}</button>
         <button class="hist-delete-btn" data-hi="${hi}">${t('torneoEliminar')}</button>
       </div>
-      <div class="hist-full-ranking" data-hi="${hi}" style="display:none">${fullTable}</div>
+      <div class="hist-full-ranking" data-hi="${hi}" data-sort="games" style="display:none"></div>
     </div>`;
   });
   el.innerHTML = html;
   el.querySelectorAll('.hist-toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const hi = btn.dataset.hi;
+      const hi = +btn.dataset.hi;
       const panel = el.querySelector(`.hist-full-ranking[data-hi="${hi}"]`);
       const open = panel.style.display !== 'none';
+      if (!open) {
+        panel.innerHTML = renderHistFullTable(torneosHist[hi].stats, panel.dataset.sort || 'games');
+        wireHistPanel(panel, hi);
+      }
       panel.style.display = open ? 'none' : '';
       btn.textContent = open ? t('torneoVerRanking') : t('torneoOcultarRanking');
     });
