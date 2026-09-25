@@ -4350,17 +4350,21 @@ function calcularRankingGral() {
   rankingGralSelected.forEach(hi => {
     const ht = torneosHist[hi];
     if (!ht) return;
-    // stats ya están ordenados: stats[0] = 1°, stats[n-1] = último
     const n = ht.stats.length;
     ht.stats.forEach((s, i) => {
-      if (!acum[s.nombre]) acum[s.nombre] = { pts: 0, torneos: 0 };
-      acum[s.nombre].pts += (n - i); // 1° → n pts, último → 1 pt
+      if (!acum[s.nombre]) acum[s.nombre] = { pts: 0, torneos: 0, g: 0, e: 0, p: 0, gg: 0, gp: 0 };
+      acum[s.nombre].pts += (n - i);
       acum[s.nombre].torneos++;
+      acum[s.nombre].g += s.g || 0;
+      acum[s.nombre].e += s.e || 0;
+      acum[s.nombre].p += s.p || 0;
+      acum[s.nombre].gg += s.gg || 0;
+      acum[s.nombre].gp += s.gp || 0;
     });
   });
   return Object.entries(acum)
-    .map(([nombre, d]) => ({ nombre, pts: d.pts, torneos: d.torneos }))
-    .sort((a, b) => b.pts - a.pts || b.torneos - a.torneos);
+    .map(([nombre, d]) => ({ nombre, ...d }))
+    .sort((a, b) => b.pts - a.pts || (b.gg - b.gp) - (a.gg - a.gp));
 }
 
 function renderRankingGeneral() {
@@ -4397,14 +4401,23 @@ function renderRankingGeneral() {
     const ranking = calcularRankingGral();
     html += `<table class="ranking-tbl"><thead><tr>
       <th>#</th><th>${t('torneoRankingJugador')}</th>
-      <th style="text-align:right">${t('torneoRankingGralPts')}</th>
+      <th style="text-align:right;font-weight:700">${t('torneoRankingGralPts')}</th>
+      <th style="text-align:right;color:var(--court-bright)">${t('torneoW')}</th>
+      <th style="text-align:right;color:var(--amber)">${t('torneoD')}</th>
+      <th style="text-align:right;color:var(--crimson)">${t('torneoL')}</th>
+      <th style="text-align:right">Dif</th>
       <th style="text-align:right;color:var(--ink-muted)">${t('torneoRankingGralJ')}</th>
     </tr></thead><tbody>`;
     ranking.forEach((r, pos) => {
+      const dif = r.gg - r.gp;
       html += `<tr>
         <td class="rank-pos-cell ${pos < 3 ? 'top' : ''}">${pos + 1}</td>
         <td class="rank-name-cell">${r.nombre}</td>
         <td class="rank-num-cell" style="font-weight:700">${r.pts}</td>
+        <td class="rank-num-cell" style="color:var(--court-bright)">${r.g}</td>
+        <td class="rank-num-cell" style="color:var(--amber)">${r.e}</td>
+        <td class="rank-num-cell" style="color:var(--crimson)">${r.p}</td>
+        <td class="rank-num-cell" style="color:${dif >= 0 ? 'var(--court-bright)' : 'var(--crimson)'}">${dif > 0 ? '+' : ''}${dif}</td>
         <td class="rank-num-cell" style="color:var(--ink-muted)">${r.torneos}</td>
       </tr>`;
     });
