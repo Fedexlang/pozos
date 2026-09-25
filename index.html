@@ -516,6 +516,9 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .hist-podium-stat { font-size: 12px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; }
 .hist-toggle-btn { background: none; border: none; color: var(--court-bright); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
 .hist-delete-btn { background: none; border: none; color: var(--crimson); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
+.hist-rankg-btn { background: none; border: none; color: var(--ink-muted); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
+.rankg-chip { display:inline-flex; align-items:center; gap:5px; padding:7px 13px; border-radius:999px; border:1.5px solid var(--border); background:none; color:var(--ink-muted); font-size:12px; font-weight:600; cursor:pointer; margin:0 6px 6px 0; transition:all .15s; }
+.rankg-chip.selected { background:var(--court-bright); border-color:var(--court-bright); color:var(--bg); }
 .jugadores-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; background: var(--court-bright); color: var(--bg); border-radius: 999px; font-size: 12px; font-weight: 700; margin-left: 6px; }
 .btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .torneo-open-btn { display: block; width: fit-content; margin: 12px auto 4px; background: var(--court-bright); border: none; border-radius: 999px; padding: 14px 32px; color: var(--bg); font-size: 19px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(74,222,128,0.3); }
@@ -879,6 +882,9 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
       <button type="button" class="torneo-cerrar-btn" id="torneoCerrarBtn" data-i18n="torneoTerminar" style="display:none">Terminar torneo</button>
     </div>
 
+    <!-- Ranking general -->
+    <div id="torneoRankingGeneral" style="display:none"></div>
+
   </div>
 </div>
 
@@ -1172,6 +1178,10 @@ const TRANSLATIONS = {
     torneoConfirmDelete:'¿Eliminar este torneo del historial?',
     torneoRondaChip:(n)=>`${n} ronda${n!==1?'s':''}`,
     torneoW:'G', torneoD:'E', torneoL:'P',
+    torneoRankingGral:'Ranking general', torneoRankingGralBtn:'Ranking general →',
+    torneoRankingGralSel:'Seleccioná los torneos a incluir', torneoRankingGralPts:'Pts',
+    torneoRankingGralJ:'J', torneoRankingGralEmpty:'Seleccioná al menos un torneo para ver el ranking',
+    torneoRankingGralTodos:'Todos', torneoRankingGralLimpiar:'Limpiar',
   },
   en: {
     tagline:'Tournaments · Matches · Training', setupIntro:'Create an account or log in to <strong>sync your data</strong> across devices.',
@@ -1266,6 +1276,10 @@ const TRANSLATIONS = {
     torneoConfirmDelete:'Delete this tournament from history?',
     torneoRondaChip:(n)=>`${n} round${n!==1?'s':''}`,
     torneoW:'W', torneoD:'D', torneoL:'L',
+    torneoRankingGral:'Overall ranking', torneoRankingGralBtn:'Overall ranking →',
+    torneoRankingGralSel:'Select tournaments to include', torneoRankingGralPts:'Pts',
+    torneoRankingGralJ:'T', torneoRankingGralEmpty:'Select at least one tournament to see the ranking',
+    torneoRankingGralTodos:'All', torneoRankingGralLimpiar:'Clear',
   }
 };
 
@@ -4178,6 +4192,7 @@ let torneoTipo = 'individual';
 let torneoSistema = 'sets';
 let torneoRondaVista = 0;
 let torneoRankingSort = 'games';
+let rankingGralSelected = new Set();
 
 function loadTorneoFromLS() {
   try {
@@ -4271,7 +4286,10 @@ function renderHistorialList() {
   const el = $('#torneoHistorialList');
   if (!hist.length) { el.innerHTML = `<p class="hist-empty">${t('torneoHistVacio')}</p>`; return; }
   const medals = ['gold', 'silver', 'bronze'];
-  let html = `<div class="hist-section-label">${t('torneoHistLabel')}</div>`;
+  let html = `<div class="hist-section-label" style="display:flex;align-items:center;justify-content:space-between">
+    <span>${t('torneoHistLabel')}</span>
+    ${hist.length >= 2 ? `<button class="hist-rankg-btn" id="rankingGralBtn">${t('torneoRankingGralBtn')}</button>` : ''}
+  </div>`;
   hist.forEach((ht, hi) => {
     const fecha = new Date(ht.fechaFin).toLocaleDateString(appLang === 'es' ? 'es-AR' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
     const top = ht.stats.slice(0, 3);
@@ -4317,10 +4335,100 @@ function renderHistorialList() {
     btn.addEventListener('click', () => {
       if (!confirm(t('torneoConfirmDelete'))) return;
       torneosHist.splice(+btn.dataset.hi, 1);
+      rankingGralSelected.clear();
       try { localStorage.setItem(TORNEO_HIST_KEY, JSON.stringify(torneosHist)); } catch {}
       if (auth.currentUser) syncUp();
       renderHistorialList();
     });
+  });
+  const rBtn = el.querySelector('#rankingGralBtn');
+  if (rBtn) rBtn.addEventListener('click', renderRankingGeneral);
+}
+
+function calcularRankingGral() {
+  const acum = {};
+  rankingGralSelected.forEach(hi => {
+    const ht = torneosHist[hi];
+    if (!ht) return;
+    // stats ya están ordenados: stats[0] = 1°, stats[n-1] = último
+    const n = ht.stats.length;
+    ht.stats.forEach((s, i) => {
+      if (!acum[s.nombre]) acum[s.nombre] = { pts: 0, torneos: 0 };
+      acum[s.nombre].pts += (n - i); // 1° → n pts, último → 1 pt
+      acum[s.nombre].torneos++;
+    });
+  });
+  return Object.entries(acum)
+    .map(([nombre, d]) => ({ nombre, pts: d.pts, torneos: d.torneos }))
+    .sort((a, b) => b.pts - a.pts || b.torneos - a.torneos);
+}
+
+function renderRankingGeneral() {
+  $('#torneoHome').style.display = 'none';
+  $('#torneoSetup').style.display = 'none';
+  $('#torneoActivo').style.display = 'none';
+  $('#torneoCerrarBtn').style.display = 'none';
+  $('#torneoRankingGeneral').style.display = '';
+  $('#torneoHeaderTitle').textContent = t('torneoRankingGral');
+
+  const hist = torneosHist;
+  const n = rankingGralSelected.size;
+  const allSelected = hist.length > 0 && n === hist.length;
+
+  let html = `<div class="torneo-section-label" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <span>${t('torneoRankingGralSel')}</span>
+    <span>
+      <button class="hist-rankg-btn" id="rankGralAll">${t('torneoRankingGralTodos')}</button>
+      &nbsp;·&nbsp;
+      <button class="hist-rankg-btn" id="rankGralClear">${t('torneoRankingGralLimpiar')}</button>
+    </span>
+  </div>`;
+  html += `<div style="margin-bottom:20px">`;
+  hist.forEach((ht, hi) => {
+    const sel = rankingGralSelected.has(hi);
+    const fecha = new Date(ht.fechaFin).toLocaleDateString(appLang === 'es' ? 'es-AR' : 'en-US', { day: 'numeric', month: 'short' });
+    html += `<button class="rankg-chip${sel ? ' selected' : ''}" data-rhi="${hi}">${ht.nombre} <span style="opacity:0.65">${fecha}</span></button>`;
+  });
+  html += `</div>`;
+
+  if (n === 0) {
+    html += `<p style="color:var(--ink-muted);text-align:center;padding:32px 0;font-size:14px">${t('torneoRankingGralEmpty')}</p>`;
+  } else {
+    const ranking = calcularRankingGral();
+    html += `<table class="ranking-tbl"><thead><tr>
+      <th>#</th><th>${t('torneoRankingJugador')}</th>
+      <th style="text-align:right">${t('torneoRankingGralPts')}</th>
+      <th style="text-align:right;color:var(--ink-muted)">${t('torneoRankingGralJ')}</th>
+    </tr></thead><tbody>`;
+    ranking.forEach((r, pos) => {
+      html += `<tr>
+        <td class="rank-pos-cell ${pos < 3 ? 'top' : ''}">${pos + 1}</td>
+        <td class="rank-name-cell">${r.nombre}</td>
+        <td class="rank-num-cell" style="font-weight:700">${r.pts}</td>
+        <td class="rank-num-cell" style="color:var(--ink-muted)">${r.torneos}</td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+
+  const panel = $('#torneoRankingGeneral');
+  panel.innerHTML = html;
+
+  panel.querySelectorAll('.rankg-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const hi = +chip.dataset.rhi;
+      if (rankingGralSelected.has(hi)) rankingGralSelected.delete(hi);
+      else rankingGralSelected.add(hi);
+      renderRankingGeneral();
+    });
+  });
+  panel.querySelector('#rankGralAll').addEventListener('click', () => {
+    hist.forEach((_, hi) => rankingGralSelected.add(hi));
+    renderRankingGeneral();
+  });
+  panel.querySelector('#rankGralClear').addEventListener('click', () => {
+    rankingGralSelected.clear();
+    renderRankingGeneral();
   });
 }
 
@@ -4671,7 +4779,10 @@ function aplicarTipoUI() {
 
 // Torneo event wiring
 $('#organizarTorneoBtn').addEventListener('click', abrirTorneoOverlay);
-$('#torneoCloseBtn').addEventListener('click', cerrarTorneoOverlay);
+$('#torneoCloseBtn').addEventListener('click', () => {
+  if ($('#torneoRankingGeneral').style.display !== 'none') renderTorneoHome();
+  else cerrarTorneoOverlay();
+});
 $('#nuevoTorneoBtn').addEventListener('click', () => {
   torneoJugadoresList = [];
   torneoFormato = 'americano';
