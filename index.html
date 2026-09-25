@@ -52,7 +52,7 @@ body { max-width: 720px; margin: 0 auto; }
 .setup-error { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 12px 14px; border-radius: 10px; font-size: 13px; margin-top: 14px; line-height: 1.5; }
 
 /* App bar */
-.app-bar { padding: 24px 20px 14px; display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); position: relative; overflow: hidden; }
+.app-bar { padding: 24px 20px 14px; padding-top: calc(24px + env(safe-area-inset-top, 0px)); display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); position: relative; overflow: hidden; }
 .app-bar::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(74,222,128,0.08) 0%, transparent 70%); pointer-events: none; }
 .app-bar h1 { font-family: 'Bebas Neue', sans-serif; font-size: 42px; letter-spacing: 0.02em; line-height: 0.9; }
 .app-bar h1 .accent { color: var(--court-bright); }
