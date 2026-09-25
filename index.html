@@ -1165,7 +1165,7 @@ const TRANSLATIONS = {
     torneoRondaTitle:(n)=>`Ronda ${n}`, torneoJugadoresSuffix:'jugadores',
     torneoDescansan:'Descansan:', torneoCanchaLabel:(n)=>`Cancha ${n}`, torneoSiguiente:'Siguiente ronda →',
     torneoRankingVacio:'El ranking aparece cuando cargues los primeros resultados.',
-    torneoPorJuegos:'Por juegos', torneoPorVictorias:'Por victorias', torneoRankingJugador:'Jugador',
+    torneoPorJuegos:'Por juegos', torneoPorVictorias:'Por victorias', torneoPorDif:'Por diferencia', torneoRankingJugador:'Jugador',
     torneoWarnMin4:'Necesitás al menos 4 jugadores.', torneoWarnPar:'Necesitás un número par de jugadores.',
     torneoWarnMin2:'Necesitás al menos 2 parejas.',
     torneoConfirmFin:'¿Terminar el torneo? Se guardará en el historial.',
@@ -1259,7 +1259,7 @@ const TRANSLATIONS = {
     torneoRondaTitle:(n)=>`Round ${n}`, torneoJugadoresSuffix:'players',
     torneoDescansan:'Sitting out:', torneoCanchaLabel:(n)=>`Court ${n}`, torneoSiguiente:'Next round →',
     torneoRankingVacio:'Ranking shows once you enter the first results.',
-    torneoPorJuegos:'By points', torneoPorVictorias:'By wins', torneoRankingJugador:'Player',
+    torneoPorJuegos:'By points', torneoPorVictorias:'By wins', torneoPorDif:'By difference', torneoRankingJugador:'Player',
     torneoWarnMin4:'You need at least 4 players.', torneoWarnPar:'You need an even number of players.',
     torneoWarnMin2:'You need at least 2 pairs.',
     torneoConfirmFin:'End the tournament? It will be saved to history.',
@@ -4594,12 +4594,15 @@ function renderRanking() {
   }
   if (torneoRankingSort === 'wins') {
     stats.sort((a, b) => b.g - a.g || b.e - a.e || (b.gg - b.gp) - (a.gg - a.gp));
+  } else if (torneoRankingSort === 'diff') {
+    stats.sort((a, b) => (b.gg - b.gp) - (a.gg - a.gp) || b.gg - a.gg);
   } else {
     stats.sort((a, b) => b.gg - a.gg || (b.gg - b.gp) - (a.gg - a.gp));
   }
-  let html = `<div style="display:flex;gap:8px;margin-bottom:14px">
+  let html = `<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
     <button class="ranking-sort-btn${torneoRankingSort === 'games' ? ' active' : ''}" data-sort="games">${t('torneoPorJuegos')}</button>
     <button class="ranking-sort-btn${torneoRankingSort === 'wins' ? ' active' : ''}" data-sort="wins">${t('torneoPorVictorias')}</button>
+    <button class="ranking-sort-btn${torneoRankingSort === 'diff' ? ' active' : ''}" data-sort="diff">${t('torneoPorDif')}</button>
   </div>`;
   html += `<table class="ranking-tbl"><thead><tr>
     <th>#</th><th>${t('torneoRankingJugador')}</th><th style="text-align:right;color:var(--court-bright)">G</th><th style="text-align:right;color:var(--amber)">E</th><th style="text-align:right;color:var(--crimson)">P</th><th style="text-align:right">GG</th><th style="text-align:right">Dif</th>
