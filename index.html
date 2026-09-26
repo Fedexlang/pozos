@@ -4376,35 +4376,54 @@ function wireHistPanel(panel, hi) {
 }
 
 async function checkSalaActiva() {
+  if (!auth.currentUser) return;
+  const uid = auth.currentUser.uid;
+  let data = null;
+
+  // Primero intentar con localStorage (mismo dispositivo, sin costo de red)
   const savedId = (() => { try { return localStorage.getItem(TORNEO_COMP_LS_KEY); } catch { return null; } })();
-  if (!savedId || !auth.currentUser) return;
-  try {
-    const snap = await db.collection('torneos').doc(savedId).get();
-    if (!snap.exists) { try { localStorage.removeItem(TORNEO_COMP_LS_KEY); } catch {} return; }
-    const data = { ...snap.data(), id: snap.id };
-    if (data.estado !== 'esperando' || data.organizadorUid !== auth.currentUser.uid) {
-      try { localStorage.removeItem(TORNEO_COMP_LS_KEY); } catch {}
-      return;
-    }
-    const el = $('#salaActivaWrap');
-    if (!el) return;
-    el.innerHTML = `<div class="hist-card" style="border-color:rgba(74,222,128,0.35);margin-bottom:16px">
-      <div class="hist-card-header">
-        <div>
-          <div class="hist-card-name">${data.nombre}</div>
-          <div class="hist-card-date" style="color:var(--court-bright)">Sala abierta · ${data.codigoAcceso}</div>
-        </div>
-        <span style="font-size:11px;color:var(--ink-muted)">${data.jugadores.length} ${t('torneoJugadoresSuffix')}</span>
+  if (savedId) {
+    try {
+      const snap = await db.collection('torneos').doc(savedId).get();
+      if (snap.exists && snap.data().estado === 'esperando' && snap.data().organizadorUid === uid) {
+        data = { ...snap.data(), id: snap.id };
+      } else {
+        try { localStorage.removeItem(TORNEO_COMP_LS_KEY); } catch {}
+      }
+    } catch {}
+  }
+
+  // Si no se encontró, buscar en Firestore por organizadorUid
+  if (!data) {
+    try {
+      const snap = await db.collection('torneos').where('organizadorUid', '==', uid).get();
+      const doc = snap.docs.find(d => d.data().estado === 'esperando');
+      if (doc) {
+        data = { ...doc.data(), id: doc.id };
+        try { localStorage.setItem(TORNEO_COMP_LS_KEY, doc.id); } catch {}
+      }
+    } catch {}
+  }
+
+  if (!data) return;
+  const el = $('#salaActivaWrap');
+  if (!el) return;
+  el.innerHTML = `<div class="hist-card" style="border-color:rgba(74,222,128,0.35);margin-bottom:16px">
+    <div class="hist-card-header">
+      <div>
+        <div class="hist-card-name">${data.nombre}</div>
+        <div class="hist-card-date" style="color:var(--court-bright)">Sala abierta · ${data.codigoAcceso}</div>
       </div>
-      <button class="btn btn-primary" id="reentrarLobbyBtn" style="width:100%;margin-top:4px">${t('torneoVerTorneo')}</button>
-    </div>`;
-    el.querySelector('#reentrarLobbyBtn').addEventListener('click', () => {
-      torneoCompartidoId = data.id;
-      torneoCompartidoData = data;
-      renderTorneoLobby();
-      suscribirseTorneo(data.id);
-    });
-  } catch {}
+      <span style="font-size:11px;color:var(--ink-muted)">${data.jugadores.length} ${t('torneoJugadoresSuffix')}</span>
+    </div>
+    <button class="btn btn-primary" id="reentrarLobbyBtn" style="width:100%;margin-top:4px">${t('torneoVerTorneo')}</button>
+  </div>`;
+  el.querySelector('#reentrarLobbyBtn').addEventListener('click', () => {
+    torneoCompartidoId = data.id;
+    torneoCompartidoData = data;
+    renderTorneoLobby();
+    suscribirseTorneo(data.id);
+  });
 }
 
 function renderHistorialList() {
