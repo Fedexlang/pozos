@@ -1838,6 +1838,10 @@ async function syncDown() {
       metas = data.metas || [];
       nombre = data.nombre || '';
       torneosHist = data.torneos_hist || [];
+      // Migrar email al doc si falta (necesario para búsqueda en lobby)
+      if (!data.email && auth.currentUser.email) {
+        userDoc().update({ email: auth.currentUser.email }).catch(() => {});
+      }
     }
     saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
