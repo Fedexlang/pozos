@@ -1232,6 +1232,7 @@ const TRANSLATIONS = {
     torneoRankingGralSel:'Seleccioná los torneos a incluir', torneoRankingGralPts:'Pts',
     torneoRankingGralJ:'J', torneoRankingGralEmpty:'Seleccioná al menos un torneo para ver el ranking',
     torneoRankingGralTodos:'Todos', torneoRankingGralLimpiar:'Limpiar',
+    torneoAgregarme:'+ Agregarme como jugador',
     torneoModeLocal:'Local', torneoModeShared:'Compartido',
     torneoCodigoAcceso:'Código de acceso', torneoCodigoHint:'Compartí este código para que otros se unan',
     torneoCodigoCopiar:'Copiar código', torneoCodigoCopied:'¡Copiado!',
@@ -1349,6 +1350,7 @@ const TRANSLATIONS = {
     torneoRankingGralSel:'Select tournaments to include', torneoRankingGralPts:'Pts',
     torneoRankingGralJ:'T', torneoRankingGralEmpty:'Select at least one tournament to see the ranking',
     torneoRankingGralTodos:'All', torneoRankingGralLimpiar:'Clear',
+    torneoAgregarme:'+ Add myself as player',
     torneoModeLocal:'Local', torneoModeShared:'Shared',
     torneoCodigoAcceso:'Access code', torneoCodigoHint:'Share this code for others to join',
     torneoCodigoCopiar:'Copy code', torneoCodigoCopied:'Copied!',
@@ -4643,6 +4645,7 @@ function renderTorneoLobby() {
     <button class="btn-copy" id="copiarCodigoBtn">${t('torneoCodigoCopiar')}</button>
   </div>`;
 
+  const orgYaJugador = uid && data.jugadores.some(j => j.uid === uid);
   html += `<div class="lobby-section">
     <div class="lobby-section-title"><span>${t('torneoLobbyJugadores')}</span><span>${data.jugadores.length}</span></div>`;
   data.jugadores.forEach(j => {
@@ -4654,6 +4657,9 @@ function renderTorneoLobby() {
       ${isOrg && !isJ_Org ? `<button class="lobby-player-rm" data-nombre="${j.nombre.replace(/"/g,'&quot;')}" aria-label="Quitar">×</button>` : ''}
     </div>`;
   });
+  if (isOrg && !orgYaJugador) {
+    html += `<button class="btn btn-secondary" id="agregarmeBtn" style="width:100%;margin-top:8px">${t('torneoAgregarme')}</button>`;
+  }
   html += `</div>`;
 
   if (isOrg) {
@@ -4691,6 +4697,8 @@ function renderTorneoLobby() {
     }).catch(() => showToast(data.codigoAcceso, '', 3500));
   });
 
+  const agregarmeBtn = panel.querySelector('#agregarmeBtn');
+  if (agregarmeBtn) agregarmeBtn.addEventListener('click', agregarmeComoJugador);
   panel.querySelectorAll('.btn-aprobar').forEach(b => {
     b.addEventListener('click', () => aprobarSolicitud(b.dataset.uid, b.dataset.nombre));
   });
@@ -4729,6 +4737,18 @@ async function rechazarSolicitud(uid) {
   const nuevosPendientes = (torneoCompartidoData.pendientes || []).filter(p => p.uid !== uid);
   try {
     await db.collection('torneos').doc(torneoCompartidoId).update({ pendientes: nuevosPendientes });
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function agregarmeComoJugador() {
+  if (!torneoCompartidoId || !auth.currentUser) return;
+  const uid = auth.currentUser.uid;
+  const orgNombre = nombre || (auth.currentUser.email ? auth.currentUser.email.split('@')[0] : 'Organizador');
+  const nuevosJugadores = [...torneoCompartidoData.jugadores, { nombre: orgNombre, uid }];
+  try {
+    await db.collection('torneos').doc(torneoCompartidoId).update({ jugadores: nuevosJugadores });
+    torneoCompartidoData = { ...torneoCompartidoData, jugadores: nuevosJugadores };
+    renderTorneoLobby();
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
 }
 
