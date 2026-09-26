@@ -581,6 +581,24 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
   <span data-i18n="loading">Cargando…</span>
 </div>
 
+<!-- Pantalla de elección de nombre de usuario (obligatoria) -->
+<div class="setup" id="usernameScreen" hidden>
+  <div class="setup-card">
+    <div class="brand-row" style="text-align:center;margin-bottom:24px">
+      <h1>PLUS<span class="accent">PADEL</span></h1>
+    </div>
+    <h2 style="font-size:18px;font-weight:700;margin-bottom:8px;text-align:center">Elegí tu nombre de usuario</h2>
+    <p style="font-size:13px;color:var(--ink-muted);text-align:center;margin-bottom:20px">
+      Este nombre te identifica en torneos compartidos. Debe tener al menos 10 caracteres para evitar confusiones.
+    </p>
+    <div class="field" style="margin-bottom:8px">
+      <input type="text" id="usernameInput" class="field" placeholder="Ej: JavierGomez2024" maxlength="40" autocomplete="off" style="font-size:16px;text-align:center">
+    </div>
+    <div id="usernameCounter" style="font-size:12px;color:var(--ink-muted);text-align:center;margin-bottom:16px">0 / 10 mínimo</div>
+    <button class="btn btn-primary" id="usernameBtn" style="width:100%" disabled>Guardar y continuar</button>
+  </div>
+</div>
+
 <!-- Pantalla de setup (primera vez) -->
 <div class="setup" id="setupScreen" hidden>
   <div class="setup-card">
@@ -1838,6 +1856,7 @@ async function syncDown() {
       metas = data.metas || [];
       nombre = data.nombre || '';
       torneosHist = data.torneos_hist || [];
+      if (nombre) localStorage.setItem('pluspadel_nombre_' + auth.currentUser.uid, nombre);
       // Migrar email al doc si falta (necesario para búsqueda en lobby)
       if (!data.email && auth.currentUser.email) {
         userDoc().update({ email: auth.currentUser.email }).catch(() => {});
@@ -2284,18 +2303,30 @@ function init() {
     if (user) {
       $('#loadingOverlay').hidden = true;
       $('#setupScreen').hidden = true;
-      $('#app').hidden = false;
+      $('#usernameScreen').hidden = true;
+      // Garantiza que el email esté en Firestore para que sea buscable en el lobby
+      if (user.email) {
+        db.collection('users').doc(user.uid).set({ email: user.email }, { merge: true }).catch(() => {});
+      }
+      // Cargar nombre cacheado para no bloquear en caso de fallo de red
+      nombre = localStorage.getItem('pluspadel_nombre_' + user.uid) || '';
       const cached = loadCache();
       pozos = cached.pozos.map(migrate);
       retos = cached.retos.map(migrateReto);
       clases = (cached.clases || []).map(migrateClase);
       metas = cached.metas || [];
-      render();
-      // Garantiza que el email esté en Firestore para que sea buscable en el lobby
-      if (user.email) {
-        db.collection('users').doc(user.uid).set({ email: user.email }, { merge: true }).catch(() => {});
-      }
       await syncDown();
+      // syncDown actualiza nombre; persistir en cache local
+      if (nombre) localStorage.setItem('pluspadel_nombre_' + user.uid, nombre);
+      // Si el nombre tiene menos de 10 caracteres, pedir antes de mostrar la app
+      if (!nombre || nombre.length < 10) {
+        $('#app').hidden = true;
+        $('#usernameScreen').hidden = false;
+        return;
+      }
+      $('#usernameScreen').hidden = true;
+      $('#app').hidden = false;
+      render();
     } else {
       $('#loadingOverlay').hidden = true;
       $('#setupScreen').hidden = false;
@@ -2540,6 +2571,40 @@ $('#fileInput').addEventListener('change', async (e) => {
 });
 
 window.addEventListener('online', () => { if (auth.currentUser) syncDown(); });
+
+// ---------- Pantalla de nombre de usuario ----------
+$('#usernameInput').addEventListener('input', () => {
+  const val = $('#usernameInput').value.trim();
+  const len = val.length;
+  const counter = $('#usernameCounter');
+  counter.textContent = `${len} / 10 mínimo`;
+  counter.style.color = len >= 10 ? 'var(--court-bright)' : 'var(--ink-muted)';
+  $('#usernameBtn').disabled = len < 10;
+});
+$('#usernameBtn').addEventListener('click', async () => {
+  const val = $('#usernameInput').value.trim();
+  if (val.length < 10) return;
+  $('#usernameBtn').disabled = true;
+  $('#usernameBtn').textContent = 'Guardando…';
+  try {
+    nombre = val;
+    await userDoc().set({ nombre }, { merge: true });
+    localStorage.setItem('pluspadel_nombre_' + auth.currentUser.uid, nombre);
+    $('#usernameScreen').hidden = true;
+    $('#app').hidden = false;
+    const cached = loadCache();
+    pozos = cached.pozos.map(migrate);
+    retos = cached.retos.map(migrateReto);
+    clases = (cached.clases || []).map(migrateClase);
+    metas = cached.metas || [];
+    render();
+  } catch (e) {
+    $('#usernameBtn').disabled = false;
+    $('#usernameBtn').textContent = 'Guardar y continuar';
+    $('#usernameCounter').textContent = 'Error al guardar: ' + e.message;
+    $('#usernameCounter').style.color = 'var(--crimson)';
+  }
+});
 
 // ---------- Sort event handlers ----------
 $('#sortToggle').addEventListener('click', () => {
@@ -4732,7 +4797,7 @@ function renderTorneoLobby() {
       ${isJ_Org ? `<span class="lobby-badge org">Org</span>` : ''}
       ${j.uid && !isJ_Org ? `<span class="lobby-badge reg">✓</span>` : sinCuentaBadge}
       ${vincularBtn}
-      ${isOrg && !isJ_Org ? `<button class="lobby-player-rm" data-nombre="${j.nombre.replace(/"/g,'&quot;')}" aria-label="Quitar">×</button>` : ''}
+      ${isOrg ? `<button class="lobby-player-rm" data-nombre="${j.nombre.replace(/"/g,'&quot;')}" aria-label="Quitar">×</button>` : ''}
     </div>
     <div class="lobby-vincular-panel" id="vincularPanel_${j.nombre.replace(/[^a-zA-Z0-9]/g,'_')}" style="display:none">
       <div class="lobby-search-wrap" style="margin-bottom:6px">
@@ -5106,9 +5171,14 @@ async function agregarmeComoJugador() {
 
 async function quitarJugadorLobby(nombreJugador) {
   if (!torneoCompartidoId) return;
+  const jugadorQuitado = torneoCompartidoData.jugadores.find(j => j.nombre === nombreJugador);
   const nuevosJugadores = torneoCompartidoData.jugadores.filter(j => j.nombre !== nombreJugador);
+  const update = { jugadores: nuevosJugadores };
+  if (jugadorQuitado?.uid) {
+    update.participantesUids = firebase.firestore.FieldValue.arrayRemove(jugadorQuitado.uid);
+  }
   try {
-    await db.collection('torneos').doc(torneoCompartidoId).update({ jugadores: nuevosJugadores });
+    await db.collection('torneos').doc(torneoCompartidoId).update(update);
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
 }
 
