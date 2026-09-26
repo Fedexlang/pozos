@@ -4742,16 +4742,27 @@ function renderTorneoLobby() {
 
   if (isOrg) {
     const pendientes = data.pendientes || [];
+    const sinCuenta = (data.jugadores || []).filter(j => j.uid === null);
     html += `<div class="lobby-section">
       <div class="lobby-section-title"><span>${t('torneoPendientesLabel')}</span><span>${pendientes.length}</span></div>`;
     if (pendientes.length === 0) {
       html += `<p style="font-size:13px;color:var(--ink-muted)">${t('torneoLobbyEmpty')}</p>`;
     } else {
       pendientes.forEach(p => {
+        const vincularOpts = sinCuenta.length > 0
+          ? `<div style="margin-top:8px">
+              <label style="font-size:11px;color:var(--ink-muted);display:block;margin-bottom:3px">Vincular a nombre sin cuenta:</label>
+              <select class="pending-vincular-sel" data-uid="${p.uid}" style="width:100%;padding:7px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;color:var(--ink);font-size:13px">
+                <option value="">— Agregar como nuevo (${p.nombre}) —</option>
+                ${sinCuenta.map(j => `<option value="${j.nombre.replace(/"/g,'&quot;')}">${j.nombre}</option>`).join('')}
+              </select>
+            </div>`
+          : '';
         html += `<div class="pending-card">
           <div class="pending-card-name">${p.nombre}</div>
           <div class="pending-card-email">${p.email}</div>
-          <div class="pending-actions">
+          ${vincularOpts}
+          <div class="pending-actions" style="margin-top:8px">
             <button class="btn-aprobar" data-uid="${p.uid}" data-nombre="${p.nombre.replace(/"/g,'&quot;')}">${t('torneoAprobar')}</button>
             <button class="btn-rechazar" data-uid="${p.uid}">${t('torneoRechazar')}</button>
           </div>
@@ -4851,7 +4862,12 @@ function renderTorneoLobby() {
     lobbyUsuarioInput.addEventListener('blur', () => setTimeout(hideResultados, 150));
   }
   panel.querySelectorAll('.btn-aprobar').forEach(b => {
-    b.addEventListener('click', () => aprobarSolicitud(b.dataset.uid, b.dataset.nombre));
+    b.addEventListener('click', () => {
+      const sel = panel.querySelector(`.pending-vincular-sel[data-uid="${b.dataset.uid}"]`);
+      const nombreVincular = sel ? sel.value : '';
+      // If organizer chose a nameless entry to link to, use that name; otherwise use the user's own display name
+      aprobarSolicitud(b.dataset.uid, nombreVincular || b.dataset.nombre);
+    });
   });
   panel.querySelectorAll('.btn-rechazar').forEach(b => {
     b.addEventListener('click', () => rechazarSolicitud(b.dataset.uid));
