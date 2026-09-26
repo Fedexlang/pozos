@@ -1861,7 +1861,8 @@ async function syncUp() {
   syncing = true;
   setStatus('syncing');
   try {
-    await userDoc().set({ pozos, retos, clases, metas, nombre, torneos_hist: torneosHist });
+    const email = auth.currentUser.email || '';
+    await userDoc().set({ pozos, retos, clases, metas, nombre, email, torneos_hist: torneosHist });
     saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
     lastError = null;
@@ -4851,6 +4852,12 @@ function renderTorneoLobby() {
       if (q.length < 2) { hideResultados(); return; }
       searchTimer = setTimeout(async () => {
         const resultados = await buscarUsuariosLobby(q);
+        const errorEntry = resultados.find(r => r._error);
+        if (errorEntry) {
+          lobbySearchResults.innerHTML = `<div style="padding:12px 14px;font-size:13px;color:var(--crimson)">Error: ${errorEntry._error}</div>`;
+          lobbySearchResults.style.display = '';
+          return;
+        }
         const yaAgregados = new Set((torneoCompartidoData.jugadores || []).map(j => j.uid).filter(Boolean));
         const filtrados = resultados.filter(r => !yaAgregados.has(r.uid));
         if (!filtrados.length) {
@@ -4920,6 +4927,12 @@ function renderTorneoLobby() {
       if (q.length < 2) { resultsDiv.style.display = 'none'; return; }
       vTimer = setTimeout(async () => {
         const resultados = await buscarUsuariosLobby(q);
+        const errorEntry = resultados.find(r => r._error);
+        if (errorEntry) {
+          resultsDiv.innerHTML = `<div style="padding:10px 14px;font-size:13px;color:var(--crimson)">Error: ${errorEntry._error}</div>`;
+          resultsDiv.style.display = '';
+          return;
+        }
         const yaAgregados = new Set((torneoCompartidoData.jugadores || []).map(j => j.uid).filter(Boolean));
         const filtrados = resultados.filter(r => !yaAgregados.has(r.uid));
         if (!filtrados.length) {
@@ -5042,7 +5055,7 @@ async function buscarUsuariosLobby(query) {
       });
     }
     return resultados.slice(0, 6);
-  } catch (e) { return []; }
+  } catch (e) { console.warn('buscarUsuarios error:', e.message); return [{ uid: null, nombre: '', email: '', _error: e.message }]; }
 }
 
 async function agregarUsuarioRegistradoLobby(uid, nombreJugador) {
