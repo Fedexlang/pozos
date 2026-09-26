@@ -1233,6 +1233,7 @@ const TRANSLATIONS = {
     torneoRankingGralJ:'J', torneoRankingGralEmpty:'Seleccioná al menos un torneo para ver el ranking',
     torneoRankingGralTodos:'Todos', torneoRankingGralLimpiar:'Limpiar',
     torneoAgregarme:'+ Agregarme como jugador',
+    torneoConfirmEliminarLobby:'¿Eliminar esta sala? Se cancelará el torneo para todos los participantes.',
     torneoModeLocal:'Local', torneoModeShared:'Compartido',
     torneoCodigoAcceso:'Código de acceso', torneoCodigoHint:'Compartí este código para que otros se unan',
     torneoCodigoCopiar:'Copiar código', torneoCodigoCopied:'¡Copiado!',
@@ -1351,6 +1352,7 @@ const TRANSLATIONS = {
     torneoRankingGralJ:'T', torneoRankingGralEmpty:'Select at least one tournament to see the ranking',
     torneoRankingGralTodos:'All', torneoRankingGralLimpiar:'Clear',
     torneoAgregarme:'+ Add myself as player',
+    torneoConfirmEliminarLobby:'Delete this lobby? The tournament will be cancelled for all participants.',
     torneoModeLocal:'Local', torneoModeShared:'Shared',
     torneoCodigoAcceso:'Access code', torneoCodigoHint:'Share this code for others to join',
     torneoCodigoCopiar:'Copy code', torneoCodigoCopied:'Copied!',
@@ -4731,7 +4733,10 @@ function renderTorneoLobby() {
       });
     }
     html += `</div>`;
-    html += `<button type="button" class="btn btn-primary" id="iniciarTorneoBtn" style="width:100%;margin-top:4px">${t('torneoIniciarTorneo')}</button>`;
+    html += `<div style="display:flex;gap:8px;margin-top:4px">
+      <button type="button" class="btn btn-primary" id="iniciarTorneoBtn" style="flex:1">${t('torneoIniciarTorneo')}</button>
+      <button type="button" class="btn btn-danger" id="eliminarLobbyBtn" style="flex:0 0 auto;padding:14px 16px">${t('torneoEliminar')}</button>
+    </div>`;
   } else {
     html += `<p style="color:var(--ink-muted);font-size:13px;text-align:center;padding:16px 0">${t('torneoJoinPending')}</p>`;
   }
@@ -4773,6 +4778,8 @@ function renderTorneoLobby() {
   });
   const iniciarBtn = panel.querySelector('#iniciarTorneoBtn');
   if (iniciarBtn) iniciarBtn.addEventListener('click', iniciarTorneoCompartido);
+  const eliminarLobbyBtn = panel.querySelector('#eliminarLobbyBtn');
+  if (eliminarLobbyBtn) eliminarLobbyBtn.addEventListener('click', eliminarLobby);
 }
 
 function suscribirseTorneo(tid) {
@@ -4808,6 +4815,19 @@ async function rechazarSolicitud(uid) {
       pendientes: nuevosPendientes,
       pendientesUids: firebase.firestore.FieldValue.arrayRemove(uid)
     });
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function eliminarLobby() {
+  if (!torneoCompartidoId) return;
+  if (!confirm(t('torneoConfirmEliminarLobby'))) return;
+  try {
+    await db.collection('torneos').doc(torneoCompartidoId).delete();
+    try { localStorage.removeItem(TORNEO_COMP_LS_KEY); } catch {}
+    if (torneoCompartidoListener) { torneoCompartidoListener(); torneoCompartidoListener = null; }
+    torneoCompartidoId = null;
+    torneoCompartidoData = null;
+    renderTorneoHome();
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
 }
 
