@@ -544,6 +544,17 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .pending-actions { display: flex; gap: 8px; }
 .btn-aprobar { flex: 1; padding: 8px; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); color: var(--court-bright); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
 .btn-rechazar { flex: 1; padding: 8px; background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25); color: var(--crimson); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.lobby-add-toggle { display: flex; gap: 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 2px; margin-top: 10px; margin-bottom: 8px; }
+.lobby-add-tab { flex: 1; padding: 6px 8px; border: none; background: none; color: var(--ink-muted); font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all .15s; }
+.lobby-add-tab.active { background: var(--surface-3); color: var(--ink); }
+.lobby-search-wrap { position: relative; }
+.lobby-search-results { position: absolute; top: 100%; left: 0; right: 0; z-index: 50; background: var(--surface-3); border: 1px solid var(--border); border-radius: 10px; margin-top: 4px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.35); max-height: 220px; overflow-y: auto; }
+.lobby-search-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; transition: background .1s; }
+.lobby-search-item:hover { background: var(--surface-2); }
+.lobby-search-item-info { flex: 1; min-width: 0; }
+.lobby-search-item-name { font-weight: 600; font-size: 14px; }
+.lobby-search-item-email { font-size: 11px; color: var(--ink-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lobby-search-badge-reg { font-size: 9px; background: rgba(74,222,128,0.12); color: var(--court-bright); border: 1px solid rgba(74,222,128,0.3); border-radius: 999px; padding: 2px 8px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
 .join-code-input { font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase; letter-spacing: 0.15em !important; font-size: 18px !important; text-align: center; }
 .torneo-join-result { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 16px; }
 .torneo-join-result-name { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
@@ -4708,9 +4719,23 @@ function renderTorneoLobby() {
     html += `<button class="btn btn-secondary" id="agregarmeBtn" style="width:100%;margin-top:8px">${t('torneoAgregarme')}</button>`;
   }
   if (isOrg) {
-    html += `<div class="add-player-row" style="margin-top:10px;margin-bottom:0">
-      <input type="text" id="lobbyNombreInput" class="field" placeholder="${t('torneoJugadorPH')}" autocomplete="off" style="margin-bottom:0">
-      <button type="button" class="btn btn-secondary" id="lobbyAgregarBtn" style="flex-shrink:0">${t('torneoAgregar')}</button>
+    html += `<div class="lobby-add-toggle">
+      <button type="button" class="lobby-add-tab active" data-addmode="nombre">Por nombre</button>
+      <button type="button" class="lobby-add-tab" data-addmode="usuario">Buscar usuario</button>
+    </div>
+    <div id="lobbyAddNombre">
+      <div class="add-player-row" style="margin-top:0;margin-bottom:0">
+        <input type="text" id="lobbyNombreInput" class="field" placeholder="Nombre sin cuenta..." autocomplete="off" style="margin-bottom:0">
+        <button type="button" class="btn btn-secondary" id="lobbyAgregarBtn" style="flex-shrink:0">${t('torneoAgregar')}</button>
+      </div>
+    </div>
+    <div id="lobbyAddUsuario" style="display:none">
+      <div class="lobby-search-wrap">
+        <div class="add-player-row" style="margin-top:0;margin-bottom:0">
+          <input type="text" id="lobbyUsuarioInput" class="field" placeholder="Buscar por nombre de usuario..." autocomplete="off" style="margin-bottom:0">
+        </div>
+        <div id="lobbySearchResults" class="lobby-search-results" style="display:none"></div>
+      </div>
     </div>`;
   }
   html += `</div>`;
@@ -4755,6 +4780,22 @@ function renderTorneoLobby() {
 
   const agregarmeBtn = panel.querySelector('#agregarmeBtn');
   if (agregarmeBtn) agregarmeBtn.addEventListener('click', agregarmeComoJugador);
+  // Toggle por nombre / buscar usuario
+  panel.querySelectorAll('.lobby-add-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      panel.querySelectorAll('.lobby-add-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      if (tab.dataset.addmode === 'nombre') {
+        panel.querySelector('#lobbyAddNombre').style.display = '';
+        panel.querySelector('#lobbyAddUsuario').style.display = 'none';
+      } else {
+        panel.querySelector('#lobbyAddNombre').style.display = 'none';
+        panel.querySelector('#lobbyAddUsuario').style.display = '';
+        panel.querySelector('#lobbyUsuarioInput').focus();
+      }
+    });
+  });
+  // Modo nombre (sin cuenta)
   const lobbyAgregarBtn = panel.querySelector('#lobbyAgregarBtn');
   const lobbyNombreInput = panel.querySelector('#lobbyNombreInput');
   if (lobbyAgregarBtn && lobbyNombreInput) {
@@ -4767,6 +4808,47 @@ function renderTorneoLobby() {
     };
     lobbyAgregarBtn.addEventListener('click', doAgregar);
     lobbyNombreInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAgregar(); } });
+  }
+  // Modo buscar usuario registrado
+  const lobbyUsuarioInput = panel.querySelector('#lobbyUsuarioInput');
+  const lobbySearchResults = panel.querySelector('#lobbySearchResults');
+  if (lobbyUsuarioInput && lobbySearchResults) {
+    let searchTimer = null;
+    const hideResultados = () => { lobbySearchResults.style.display = 'none'; };
+    lobbyUsuarioInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      const q = lobbyUsuarioInput.value.trim();
+      if (q.length < 2) { hideResultados(); return; }
+      searchTimer = setTimeout(async () => {
+        const resultados = await buscarUsuariosLobby(q);
+        const yaAgregados = new Set((torneoCompartidoData.jugadores || []).map(j => j.uid).filter(Boolean));
+        const filtrados = resultados.filter(r => !yaAgregados.has(r.uid));
+        if (!filtrados.length) {
+          lobbySearchResults.innerHTML = `<div style="padding:12px 14px;font-size:13px;color:var(--ink-muted)">Sin resultados para "${q}"</div>`;
+          lobbySearchResults.style.display = '';
+          return;
+        }
+        lobbySearchResults.innerHTML = filtrados.map(r =>
+          `<div class="lobby-search-item" tabindex="0" data-uid="${r.uid}" data-nombre="${(r.nombre||'').replace(/"/g,'&quot;')}">
+            <div class="lobby-search-item-info">
+              <div class="lobby-search-item-name">${r.nombre || '—'}</div>
+              ${r.email ? `<div class="lobby-search-item-email">${r.email}</div>` : ''}
+            </div>
+            <span class="lobby-search-badge-reg">Registrado</span>
+          </div>`
+        ).join('');
+        lobbySearchResults.style.display = '';
+        lobbySearchResults.querySelectorAll('.lobby-search-item').forEach(item => {
+          item.addEventListener('mousedown', async e => {
+            e.preventDefault();
+            hideResultados();
+            lobbyUsuarioInput.value = '';
+            await agregarUsuarioRegistradoLobby(item.dataset.uid, item.dataset.nombre);
+          });
+        });
+      }, 300);
+    });
+    lobbyUsuarioInput.addEventListener('blur', () => setTimeout(hideResultados, 150));
   }
   panel.querySelectorAll('.btn-aprobar').forEach(b => {
     b.addEventListener('click', () => aprobarSolicitud(b.dataset.uid, b.dataset.nombre));
@@ -4795,7 +4877,15 @@ function suscribirseTorneo(tid) {
 async function aprobarSolicitud(uid, nombreJugador) {
   if (!torneoCompartidoId) return;
   const data = torneoCompartidoData;
-  const nuevosJugadores = [...data.jugadores, { nombre: nombreJugador, uid }];
+  // Si ya existe ese nombre sin cuenta, reemplazar en lugar de duplicar
+  const existingIdx = data.jugadores.findIndex(j => j.nombre === nombreJugador && j.uid === null);
+  let nuevosJugadores;
+  if (existingIdx >= 0) {
+    nuevosJugadores = [...data.jugadores];
+    nuevosJugadores[existingIdx] = { nombre: nombreJugador, uid };
+  } else {
+    nuevosJugadores = [...data.jugadores, { nombre: nombreJugador, uid }];
+  }
   const nuevosPendientes = (data.pendientes || []).filter(p => p.uid !== uid);
   try {
     await db.collection('torneos').doc(torneoCompartidoId).update({
@@ -4839,6 +4929,37 @@ async function agregarJugadorSinCuenta(nombreJugador) {
     await db.collection('torneos').doc(torneoCompartidoId).update({ jugadores: nuevosJugadores });
     torneoCompartidoData = { ...torneoCompartidoData, jugadores: nuevosJugadores };
     renderTorneoLobby();
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function buscarUsuariosLobby(query) {
+  if (!query || query.length < 2) return [];
+  try {
+    const snap = await db.collection('users')
+      .where('nombre', '>=', query)
+      .where('nombre', '<=', query + '')
+      .limit(6)
+      .get();
+    return snap.docs.map(d => ({ uid: d.id, nombre: d.data().nombre || '', email: d.data().email || '' }));
+  } catch (e) { return []; }
+}
+
+async function agregarUsuarioRegistradoLobby(uid, nombreJugador) {
+  if (!torneoCompartidoId) return;
+  // Si ya existe ese nombre sin cuenta, reemplaza la entrada; si no, agrega nuevo
+  const existingIdx = torneoCompartidoData.jugadores.findIndex(j => j.nombre === nombreJugador && j.uid === null);
+  let nuevosJugadores;
+  if (existingIdx >= 0) {
+    nuevosJugadores = [...torneoCompartidoData.jugadores];
+    nuevosJugadores[existingIdx] = { nombre: nombreJugador, uid };
+  } else {
+    nuevosJugadores = [...torneoCompartidoData.jugadores, { nombre: nombreJugador, uid }];
+  }
+  try {
+    await db.collection('torneos').doc(torneoCompartidoId).update({
+      jugadores: nuevosJugadores,
+      participantesUids: firebase.firestore.FieldValue.arrayUnion(uid)
+    });
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
 }
 
