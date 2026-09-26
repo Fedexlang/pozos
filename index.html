@@ -4964,7 +4964,9 @@ function renderTorneoLobby() {
             resultsDiv.style.display = 'none';
             input.closest('.lobby-vincular-panel').style.display = 'none';
             input.value = '';
-            await agregarUsuarioRegistradoLobby(item.dataset.uid, input.dataset.for);
+            // Usa el nombre del usuario registrado, no el nombre libre que tenía la entrada
+            const nombreRegistrado = item.dataset.nombre || input.dataset.for;
+            await agregarUsuarioRegistradoLobby(item.dataset.uid, nombreRegistrado, input.dataset.for);
           });
         });
       }, 300);
@@ -5066,16 +5068,18 @@ async function buscarUsuariosLobby(query) {
   } catch (e) { console.warn('buscarUsuarios error:', e.message); return [{ uid: null, nombre: '', email: '', _error: e.message }]; }
 }
 
-async function agregarUsuarioRegistradoLobby(uid, nombreJugador) {
+// nombreJugador: nombre del usuario registrado a usar
+// nombreLibreOriginal: nombre sin cuenta a reemplazar (solo al vincular con 🔗)
+async function agregarUsuarioRegistradoLobby(uid, nombreJugador, nombreLibreOriginal) {
   if (!torneoCompartidoId) return;
-  // Si ya existe ese nombre sin cuenta, reemplaza la entrada; si no, agrega nuevo
-  const existingIdx = torneoCompartidoData.jugadores.findIndex(j => j.nombre === nombreJugador && j.uid === null);
-  let nuevosJugadores;
+  let nuevosJugadores = [...torneoCompartidoData.jugadores];
+  // Si se pasa un nombre libre original (modo vincular 🔗), buscar y reemplazar esa entrada
+  const replaceNombre = nombreLibreOriginal || nombreJugador;
+  const existingIdx = nuevosJugadores.findIndex(j => j.nombre === replaceNombre && j.uid === null);
   if (existingIdx >= 0) {
-    nuevosJugadores = [...torneoCompartidoData.jugadores];
     nuevosJugadores[existingIdx] = { nombre: nombreJugador, uid };
   } else {
-    nuevosJugadores = [...torneoCompartidoData.jugadores, { nombre: nombreJugador, uid }];
+    nuevosJugadores.push({ nombre: nombreJugador, uid });
   }
   try {
     await db.collection('torneos').doc(torneoCompartidoId).update({
@@ -5219,10 +5223,14 @@ function mostrarResultadoBusqueda(data) {
 
 async function solicitarUnirse(data) {
   if (!auth.currentUser) return;
+  // Si el usuario no tiene nombre configurado, pedirlo antes de continuar
+  if (!nombre) {
+    mostrarPromptNombre(() => solicitarUnirse(data));
+    return;
+  }
   const uid = auth.currentUser.uid;
   const email = auth.currentUser.email || '';
-  const nombreUsuario = nombre || email.split('@')[0] || 'Jugador';
-  const nuevoPendiente = { uid, nombre: nombreUsuario, email };
+  const nuevoPendiente = { uid, nombre, email };
   try {
     await db.collection('torneos').doc(data.id).update({
       pendientes: firebase.firestore.FieldValue.arrayUnion(nuevoPendiente),
@@ -5231,6 +5239,34 @@ async function solicitarUnirse(data) {
     mostrarResultadoBusqueda({ ...data, pendientes: [...(data.pendientes || []), nuevoPendiente] });
     showToast(t('torneoJoinPending'), '', 3000);
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+function mostrarPromptNombre(callback) {
+  const joinPanel = $('#torneoJoin');
+  const prompt = document.createElement('div');
+  prompt.style.cssText = 'position:absolute;inset:0;background:var(--surface-overlay,rgba(10,20,15,0.92));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;z-index:10;border-radius:inherit';
+  prompt.innerHTML = `
+    <div style="font-size:20px;font-weight:700;text-align:center">Elegí tu nombre de usuario</div>
+    <div style="font-size:13px;color:var(--ink-muted);text-align:center">Otros jugadores te verán con este nombre en los torneos</div>
+    <input type="text" id="promptNombreInput" class="field" placeholder="Tu nombre..." maxlength="30" style="width:100%;text-align:center;font-size:16px">
+    <button class="btn btn-primary" id="promptNombreBtn" style="width:100%">Guardar y continuar</button>
+    <button class="btn btn-secondary" id="promptNombreCancelar" style="width:100%">Cancelar</button>
+  `;
+  joinPanel.style.position = 'relative';
+  joinPanel.appendChild(prompt);
+  prompt.querySelector('#promptNombreInput').focus();
+  prompt.querySelector('#promptNombreBtn').addEventListener('click', async () => {
+    const val = prompt.querySelector('#promptNombreInput').value.trim();
+    if (!val) { prompt.querySelector('#promptNombreInput').focus(); return; }
+    nombre = val;
+    try { await userDoc().update({ nombre }); } catch (e) { await userDoc().set({ nombre }, { merge: true }); }
+    prompt.remove();
+    if (callback) callback();
+  });
+  prompt.querySelector('#promptNombreInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') prompt.querySelector('#promptNombreBtn').click();
+  });
+  prompt.querySelector('#promptNombreCancelar').addEventListener('click', () => prompt.remove());
 }
 
 // ---- End shared tournament helpers ----
