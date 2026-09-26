@@ -4398,18 +4398,20 @@ async function checkSalaActiva() {
   // Si no se encontró, buscar en Firestore como organizador o como participante
   if (!data) {
     try {
-      // Como organizador
       const snapOrg = await db.collection('torneos').where('organizadorUid', '==', uid).get();
       const docOrg = snapOrg.docs.find(d => d.data().estado === 'esperando');
       if (docOrg) {
         data = { ...docOrg.data(), id: docOrg.id };
         try { localStorage.setItem(TORNEO_COMP_LS_KEY, docOrg.id); } catch {}
       }
-    } catch {}
+    } catch (e) {
+      const el = $('#salaActivaWrap');
+      if (el) el.innerHTML = `<p style="font-size:11px;color:var(--crimson);padding:4px 0">Error al buscar sala: ${e.message}</p>`;
+      return;
+    }
   }
   if (!data) {
     try {
-      // Como participante aprobado
       const snapPart = await db.collection('torneos').where('participantesUids', 'array-contains', uid).get();
       const docPart = snapPart.docs.find(d => d.data().estado === 'esperando');
       if (docPart) {
@@ -4420,7 +4422,6 @@ async function checkSalaActiva() {
   }
   if (!data) {
     try {
-      // Como pendiente (solicitud enviada, esperando aprobación)
       const snapPend = await db.collection('torneos').where('pendientesUids', 'array-contains', uid).get();
       const docPend = snapPend.docs.find(d => d.data().estado === 'esperando');
       if (docPend) {
@@ -5000,9 +5001,17 @@ function renderTorneoHome() {
   $('#torneoJoin').style.display = 'none';
   $('#torneoCerrarBtn').style.display = 'none';
   $('#torneoHeaderTitle').textContent = t('torneoTorneos');
-  $('#salaActivaWrap').innerHTML = '';
   renderHistorialList();
-  checkSalaActiva();
+  const saw = $('#salaActivaWrap');
+  saw.innerHTML = '';
+  if (auth.currentUser) {
+    saw.innerHTML = `<p style="font-size:11px;color:var(--ink-dim);text-align:center;padding:8px 0">Buscando sala…</p>`;
+    checkSalaActiva().then(() => {
+      if (saw.querySelector('p') && saw.querySelector('p').textContent === 'Buscando sala…') {
+        saw.innerHTML = '';
+      }
+    });
+  }
 }
 
 function abrirTorneoOverlay() {
