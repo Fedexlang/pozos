@@ -589,7 +589,7 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
     </div>
     <h2 style="font-size:18px;font-weight:700;margin-bottom:8px;text-align:center">Elegí tu nombre de usuario</h2>
     <p style="font-size:13px;color:var(--ink-muted);text-align:center;margin-bottom:20px">
-      Este nombre te identifica en torneos compartidos. Debe tener al menos 10 caracteres para evitar confusiones.
+      Este nombre te identifica en torneos compartidos. Debe tener al menos 10 caracteres.
     </p>
     <div class="field" style="margin-bottom:8px">
       <input type="text" id="usernameInput" class="field" placeholder="Ej: JavierGomez2024" maxlength="40" autocomplete="off" style="font-size:16px;text-align:center">
@@ -1857,10 +1857,11 @@ async function syncDown() {
       nombre = data.nombre || '';
       torneosHist = data.torneos_hist || [];
       if (nombre) localStorage.setItem('pluspadel_nombre_' + auth.currentUser.uid, nombre);
-      // Migrar email al doc si falta (necesario para búsqueda en lobby)
-      if (!data.email && auth.currentUser.email) {
-        userDoc().update({ email: auth.currentUser.email }).catch(() => {});
-      }
+      // Migrar campos de búsqueda si faltan
+      const migrar = {};
+      if (!data.email && auth.currentUser.email) migrar.email = auth.currentUser.email;
+      if (nombre && !data.nombre_lower) migrar.nombre_lower = nombre.toLowerCase();
+      if (Object.keys(migrar).length) userDoc().update(migrar).catch(() => {});
     }
     saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
@@ -1885,7 +1886,7 @@ async function syncUp() {
   setStatus('syncing');
   try {
     const email = auth.currentUser.email || '';
-    await userDoc().set({ pozos, retos, clases, metas, nombre, email, torneos_hist: torneosHist });
+    await userDoc().set({ pozos, retos, clases, metas, nombre, nombre_lower: nombre.toLowerCase(), email, torneos_hist: torneosHist });
     saveCache(pozos, retos, clases, metas);
     lastSyncedAt = new Date();
     lastError = null;
@@ -2588,7 +2589,7 @@ $('#usernameBtn').addEventListener('click', async () => {
   $('#usernameBtn').textContent = 'Guardando…';
   try {
     nombre = val;
-    await userDoc().set({ nombre }, { merge: true });
+    await userDoc().set({ nombre, nombre_lower: nombre.toLowerCase() }, { merge: true });
     localStorage.setItem('pluspadel_nombre_' + auth.currentUser.uid, nombre);
     $('#usernameScreen').hidden = true;
     $('#app').hidden = false;
@@ -5113,11 +5114,12 @@ async function agregarJugadorSinCuenta(nombreJugador) {
 
 async function buscarUsuariosLobby(query) {
   if (!query || query.length < 2) return [];
-  const sentinel = query + '';
+  const q = query.toLowerCase();
+  const sentinel = q + '';
   try {
     const [snapNombre, snapEmail] = await Promise.all([
-      db.collection('users').where('nombre', '>=', query).where('nombre', '<=', sentinel).limit(6).get(),
-      db.collection('users').where('email', '>=', query).where('email', '<=', sentinel).limit(6).get()
+      db.collection('users').where('nombre_lower', '>=', q).where('nombre_lower', '<=', sentinel).limit(6).get(),
+      db.collection('users').where('email', '>=', q).where('email', '<=', sentinel).limit(6).get()
     ]);
     const vistos = new Set();
     const resultados = [];
@@ -5329,7 +5331,7 @@ function mostrarPromptNombre(callback) {
     const val = prompt.querySelector('#promptNombreInput').value.trim();
     if (!val) { prompt.querySelector('#promptNombreInput').focus(); return; }
     nombre = val;
-    try { await userDoc().update({ nombre }); } catch (e) { await userDoc().set({ nombre }, { merge: true }); }
+    try { await userDoc().update({ nombre, nombre_lower: nombre.toLowerCase() }); } catch (e) { await userDoc().set({ nombre, nombre_lower: nombre.toLowerCase() }, { merge: true }); }
     prompt.remove();
     if (callback) callback();
   });
