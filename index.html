@@ -4400,6 +4400,7 @@ async function checkSalaActiva() {
       torneoCompartidoId = data.id;
       torneoCompartidoData = data;
       renderTorneoLobby();
+      suscribirseTorneo(data.id);
     });
   } catch {}
 }
@@ -4619,6 +4620,7 @@ async function crearTorneoCompartido() {
     torneoCompartidoData = { ...torneoData, id: ref.id };
     try { localStorage.setItem(TORNEO_COMP_LS_KEY, ref.id); } catch {}
     renderTorneoLobby();
+    suscribirseTorneo(ref.id);
   } catch (e) {
     showToast('Error: ' + e.message, 'error');
     if (btn) { btn.disabled = false; btn.textContent = t('torneoIniciarLobby'); }
@@ -4700,8 +4702,6 @@ function renderTorneoLobby() {
   });
   const iniciarBtn = panel.querySelector('#iniciarTorneoBtn');
   if (iniciarBtn) iniciarBtn.addEventListener('click', iniciarTorneoCompartido);
-
-  suscribirseTorneo(torneoCompartidoId);
 }
 
 function suscribirseTorneo(tid) {
