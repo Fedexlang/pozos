@@ -555,6 +555,10 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .lobby-search-item-name { font-weight: 600; font-size: 14px; }
 .lobby-search-item-email { font-size: 11px; color: var(--ink-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lobby-search-badge-reg { font-size: 9px; background: rgba(74,222,128,0.12); color: var(--court-bright); border: 1px solid rgba(74,222,128,0.3); border-radius: 999px; padding: 2px 8px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+.lobby-badge.no-acc { background: rgba(156,163,175,0.15); color: var(--ink-muted); border: 1px solid rgba(156,163,175,0.3); font-size: 11px; padding: 1px 6px; }
+.lobby-player-vincular { background: none; border: none; cursor: pointer; font-size: 15px; line-height: 1; padding: 0 2px; opacity: 0.6; flex-shrink: 0; transition: opacity .15s; }
+.lobby-player-vincular:hover { opacity: 1; }
+.lobby-vincular-panel { padding: 6px 0 2px; }
 .join-code-input { font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase; letter-spacing: 0.15em !important; font-size: 18px !important; text-align: center; }
 .torneo-join-result { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 16px; }
 .torneo-join-result-name { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
@@ -4708,11 +4712,26 @@ function renderTorneoLobby() {
     <div class="lobby-section-title"><span>${t('torneoLobbyJugadores')}</span><span>${data.jugadores.length}</span></div>`;
   data.jugadores.forEach(j => {
     const isJ_Org = j.uid === data.organizadorUid || (j.uid === null && j.nombre === data.organizadorNombre);
-    html += `<div class="lobby-player">
+    const sinCuentaBadge = !j.uid && !isJ_Org
+      ? `<span class="lobby-badge no-acc" title="Sin cuenta">?</span>`
+      : '';
+    const vincularBtn = isOrg && !j.uid && !isJ_Org
+      ? `<button class="lobby-player-vincular" data-nombre="${j.nombre.replace(/"/g,'&quot;')}" title="Vincular usuario">🔗</button>`
+      : '';
+    html += `<div class="lobby-player" data-nombre-entry="${j.nombre.replace(/"/g,'&quot;')}">
       <div class="lobby-player-name">${j.nombre}</div>
       ${isJ_Org ? `<span class="lobby-badge org">Org</span>` : ''}
-      ${j.uid && !isJ_Org ? `<span class="lobby-badge reg">✓</span>` : ''}
+      ${j.uid && !isJ_Org ? `<span class="lobby-badge reg">✓</span>` : sinCuentaBadge}
+      ${vincularBtn}
       ${isOrg && !isJ_Org ? `<button class="lobby-player-rm" data-nombre="${j.nombre.replace(/"/g,'&quot;')}" aria-label="Quitar">×</button>` : ''}
+    </div>
+    <div class="lobby-vincular-panel" id="vincularPanel_${j.nombre.replace(/[^a-zA-Z0-9]/g,'_')}" style="display:none">
+      <div class="lobby-search-wrap" style="margin-bottom:6px">
+        <div class="add-player-row" style="margin:0">
+          <input type="text" class="field lobby-vincular-input" placeholder="Buscar usuario por nombre o email..." autocomplete="off" style="margin-bottom:0" data-for="${j.nombre.replace(/"/g,'&quot;')}">
+        </div>
+        <div class="lobby-search-results" style="display:none"></div>
+      </div>
     </div>`;
   });
   if (isOrg && !orgYaJugador) {
@@ -4875,6 +4894,62 @@ function renderTorneoLobby() {
   panel.querySelectorAll('.lobby-player-rm').forEach(b => {
     b.addEventListener('click', () => quitarJugadorLobby(b.dataset.nombre));
   });
+  // Botón vincular usuario a nombre sin cuenta
+  panel.querySelectorAll('.lobby-player-vincular').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nombreEntry = btn.dataset.nombre;
+      const panelId = 'vincularPanel_' + nombreEntry.replace(/[^a-zA-Z0-9]/g, '_');
+      const vPanel = panel.querySelector('#' + panelId);
+      if (!vPanel) return;
+      const isOpen = vPanel.style.display !== 'none';
+      // Cerrar todos los paneles de vinculación abiertos
+      panel.querySelectorAll('.lobby-vincular-panel').forEach(p => { p.style.display = 'none'; });
+      if (!isOpen) {
+        vPanel.style.display = '';
+        vPanel.querySelector('.lobby-vincular-input').focus();
+      }
+    });
+  });
+  // Búsqueda en paneles de vinculación individuales
+  panel.querySelectorAll('.lobby-vincular-input').forEach(input => {
+    const resultsDiv = input.closest('.lobby-search-wrap').querySelector('.lobby-search-results');
+    let vTimer = null;
+    input.addEventListener('input', () => {
+      clearTimeout(vTimer);
+      const q = input.value.trim();
+      if (q.length < 2) { resultsDiv.style.display = 'none'; return; }
+      vTimer = setTimeout(async () => {
+        const resultados = await buscarUsuariosLobby(q);
+        const yaAgregados = new Set((torneoCompartidoData.jugadores || []).map(j => j.uid).filter(Boolean));
+        const filtrados = resultados.filter(r => !yaAgregados.has(r.uid));
+        if (!filtrados.length) {
+          resultsDiv.innerHTML = `<div style="padding:10px 14px;font-size:13px;color:var(--ink-muted)">Sin resultados para "${q}"</div>`;
+          resultsDiv.style.display = '';
+          return;
+        }
+        resultsDiv.innerHTML = filtrados.map(r =>
+          `<div class="lobby-search-item" tabindex="0" data-uid="${r.uid}" data-nombre="${(r.nombre||'').replace(/"/g,'&quot;')}">
+            <div class="lobby-search-item-info">
+              <div class="lobby-search-item-name">${r.nombre || '—'}</div>
+              ${r.email ? `<div class="lobby-search-item-email">${r.email}</div>` : ''}
+            </div>
+            <span class="lobby-search-badge-reg">Registrado</span>
+          </div>`
+        ).join('');
+        resultsDiv.style.display = '';
+        resultsDiv.querySelectorAll('.lobby-search-item').forEach(item => {
+          item.addEventListener('mousedown', async e => {
+            e.preventDefault();
+            resultsDiv.style.display = 'none';
+            input.closest('.lobby-vincular-panel').style.display = 'none';
+            input.value = '';
+            await agregarUsuarioRegistradoLobby(item.dataset.uid, input.dataset.for);
+          });
+        });
+      }, 300);
+    });
+    input.addEventListener('blur', () => setTimeout(() => { resultsDiv.style.display = 'none'; }, 150));
+  });
   const iniciarBtn = panel.querySelector('#iniciarTorneoBtn');
   if (iniciarBtn) iniciarBtn.addEventListener('click', iniciarTorneoCompartido);
   const eliminarLobbyBtn = panel.querySelector('#eliminarLobbyBtn');
@@ -4950,13 +5025,23 @@ async function agregarJugadorSinCuenta(nombreJugador) {
 
 async function buscarUsuariosLobby(query) {
   if (!query || query.length < 2) return [];
+  const sentinel = query + '';
   try {
-    const snap = await db.collection('users')
-      .where('nombre', '>=', query)
-      .where('nombre', '<=', query + '')
-      .limit(6)
-      .get();
-    return snap.docs.map(d => ({ uid: d.id, nombre: d.data().nombre || '', email: d.data().email || '' }));
+    const [snapNombre, snapEmail] = await Promise.all([
+      db.collection('users').where('nombre', '>=', query).where('nombre', '<=', sentinel).limit(6).get(),
+      db.collection('users').where('email', '>=', query).where('email', '<=', sentinel).limit(6).get()
+    ]);
+    const vistos = new Set();
+    const resultados = [];
+    for (const snap of [snapNombre, snapEmail]) {
+      snap.docs.forEach(d => {
+        if (!vistos.has(d.id)) {
+          vistos.add(d.id);
+          resultados.push({ uid: d.id, nombre: d.data().nombre || '', email: d.data().email || '' });
+        }
+      });
+    }
+    return resultados.slice(0, 6);
   } catch (e) { return []; }
 }
 
