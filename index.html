@@ -4416,6 +4416,17 @@ async function checkSalaActiva() {
       }
     } catch {}
   }
+  if (!data) {
+    try {
+      // Como pendiente (solicitud enviada, esperando aprobación)
+      const snapPend = await db.collection('torneos').where('pendientesUids', 'array-contains', uid).get();
+      const docPend = snapPend.docs.find(d => d.data().estado === 'esperando');
+      if (docPend) {
+        data = { ...docPend.data(), id: docPend.id };
+        try { localStorage.setItem(TORNEO_COMP_LS_KEY, docPend.id); } catch {}
+      }
+    } catch {}
+  }
 
   if (!data) return;
   const el = $('#salaActivaWrap');
@@ -4644,7 +4655,8 @@ async function crearTorneoCompartido() {
     rondas: [],
     jugadores: jugadoresData,
     pendientes: [],
-    participantesUids: []
+    participantesUids: [],
+    pendientesUids: []
   };
   const btn = $('#generarFixtureBtn');
   if (btn) { btn.disabled = true; btn.textContent = '…'; }
@@ -4781,7 +4793,8 @@ async function aprobarSolicitud(uid, nombreJugador) {
     await db.collection('torneos').doc(torneoCompartidoId).update({
       jugadores: nuevosJugadores,
       pendientes: nuevosPendientes,
-      participantesUids: firebase.firestore.FieldValue.arrayUnion(uid)
+      participantesUids: firebase.firestore.FieldValue.arrayUnion(uid),
+      pendientesUids: firebase.firestore.FieldValue.arrayRemove(uid)
     });
     showToast(nombreJugador + ' agregado');
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
@@ -4791,7 +4804,10 @@ async function rechazarSolicitud(uid) {
   if (!torneoCompartidoId) return;
   const nuevosPendientes = (torneoCompartidoData.pendientes || []).filter(p => p.uid !== uid);
   try {
-    await db.collection('torneos').doc(torneoCompartidoId).update({ pendientes: nuevosPendientes });
+    await db.collection('torneos').doc(torneoCompartidoId).update({
+      pendientes: nuevosPendientes,
+      pendientesUids: firebase.firestore.FieldValue.arrayRemove(uid)
+    });
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
 }
 
@@ -4945,7 +4961,8 @@ async function solicitarUnirse(data) {
   const nuevoPendiente = { uid, nombre: nombreUsuario, email };
   try {
     await db.collection('torneos').doc(data.id).update({
-      pendientes: firebase.firestore.FieldValue.arrayUnion(nuevoPendiente)
+      pendientes: firebase.firestore.FieldValue.arrayUnion(nuevoPendiente),
+      pendientesUids: firebase.firestore.FieldValue.arrayUnion(uid)
     });
     mostrarResultadoBusqueda({ ...data, pendientes: [...(data.pendientes || []), nuevoPendiente] });
     showToast(t('torneoJoinPending'), '', 3000);
