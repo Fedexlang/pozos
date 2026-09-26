@@ -2585,9 +2585,23 @@ $('#usernameInput').addEventListener('input', () => {
 $('#usernameBtn').addEventListener('click', async () => {
   const val = $('#usernameInput').value.trim();
   if (val.length < 10) return;
+  const counter = $('#usernameCounter');
   $('#usernameBtn').disabled = true;
-  $('#usernameBtn').textContent = 'Guardando…';
+  $('#usernameBtn').textContent = 'Verificando…';
   try {
+    // Verificar que el nombre no esté en uso por otro usuario
+    const snap = await db.collection('users')
+      .where('nombre_lower', '==', val.toLowerCase())
+      .limit(2)
+      .get();
+    const ocupado = snap.docs.some(d => d.id !== auth.currentUser.uid);
+    if (ocupado) {
+      counter.textContent = 'Ese nombre ya está en uso, elegí otro.';
+      counter.style.color = 'var(--crimson)';
+      $('#usernameBtn').disabled = false;
+      $('#usernameBtn').textContent = 'Guardar y continuar';
+      return;
+    }
     nombre = val;
     await userDoc().set({ nombre, nombre_lower: nombre.toLowerCase() }, { merge: true });
     localStorage.setItem('pluspadel_nombre_' + auth.currentUser.uid, nombre);
@@ -2602,8 +2616,8 @@ $('#usernameBtn').addEventListener('click', async () => {
   } catch (e) {
     $('#usernameBtn').disabled = false;
     $('#usernameBtn').textContent = 'Guardar y continuar';
-    $('#usernameCounter').textContent = 'Error al guardar: ' + e.message;
-    $('#usernameCounter').style.color = 'var(--crimson)';
+    counter.textContent = 'Error al guardar: ' + e.message;
+    counter.style.color = 'var(--crimson)';
   }
 });
 
