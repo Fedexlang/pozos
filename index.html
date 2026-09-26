@@ -4393,14 +4393,26 @@ async function checkSalaActiva() {
     } catch {}
   }
 
-  // Si no se encontró, buscar en Firestore por organizadorUid
+  // Si no se encontró, buscar en Firestore como organizador o como participante
   if (!data) {
     try {
-      const snap = await db.collection('torneos').where('organizadorUid', '==', uid).get();
-      const doc = snap.docs.find(d => d.data().estado === 'esperando');
-      if (doc) {
-        data = { ...doc.data(), id: doc.id };
-        try { localStorage.setItem(TORNEO_COMP_LS_KEY, doc.id); } catch {}
+      // Como organizador
+      const snapOrg = await db.collection('torneos').where('organizadorUid', '==', uid).get();
+      const docOrg = snapOrg.docs.find(d => d.data().estado === 'esperando');
+      if (docOrg) {
+        data = { ...docOrg.data(), id: docOrg.id };
+        try { localStorage.setItem(TORNEO_COMP_LS_KEY, docOrg.id); } catch {}
+      }
+    } catch {}
+  }
+  if (!data) {
+    try {
+      // Como participante aprobado
+      const snapPart = await db.collection('torneos').where('participantesUids', 'array-contains', uid).get();
+      const docPart = snapPart.docs.find(d => d.data().estado === 'esperando');
+      if (docPart) {
+        data = { ...docPart.data(), id: docPart.id };
+        try { localStorage.setItem(TORNEO_COMP_LS_KEY, docPart.id); } catch {}
       }
     } catch {}
   }
@@ -4631,7 +4643,8 @@ async function crearTorneoCompartido() {
     fechaFin: null,
     rondas: [],
     jugadores: jugadoresData,
-    pendientes: []
+    pendientes: [],
+    participantesUids: []
   };
   const btn = $('#generarFixtureBtn');
   if (btn) { btn.disabled = true; btn.textContent = '…'; }
@@ -4765,7 +4778,11 @@ async function aprobarSolicitud(uid, nombreJugador) {
   const nuevosJugadores = [...data.jugadores, { nombre: nombreJugador, uid }];
   const nuevosPendientes = (data.pendientes || []).filter(p => p.uid !== uid);
   try {
-    await db.collection('torneos').doc(torneoCompartidoId).update({ jugadores: nuevosJugadores, pendientes: nuevosPendientes });
+    await db.collection('torneos').doc(torneoCompartidoId).update({
+      jugadores: nuevosJugadores,
+      pendientes: nuevosPendientes,
+      participantesUids: firebase.firestore.FieldValue.arrayUnion(uid)
+    });
     showToast(nombreJugador + ' agregado');
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
 }
@@ -4794,7 +4811,10 @@ async function agregarmeComoJugador() {
   const orgNombre = nombre || (auth.currentUser.email ? auth.currentUser.email.split('@')[0] : 'Organizador');
   const nuevosJugadores = [...torneoCompartidoData.jugadores, { nombre: orgNombre, uid }];
   try {
-    await db.collection('torneos').doc(torneoCompartidoId).update({ jugadores: nuevosJugadores });
+    await db.collection('torneos').doc(torneoCompartidoId).update({
+      jugadores: nuevosJugadores,
+      participantesUids: firebase.firestore.FieldValue.arrayUnion(uid)
+    });
     torneoCompartidoData = { ...torneoCompartidoData, jugadores: nuevosJugadores };
     renderTorneoLobby();
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
