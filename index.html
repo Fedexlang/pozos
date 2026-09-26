@@ -4660,6 +4660,12 @@ function renderTorneoLobby() {
   if (isOrg && !orgYaJugador) {
     html += `<button class="btn btn-secondary" id="agregarmeBtn" style="width:100%;margin-top:8px">${t('torneoAgregarme')}</button>`;
   }
+  if (isOrg) {
+    html += `<div class="add-player-row" style="margin-top:10px;margin-bottom:0">
+      <input type="text" id="lobbyNombreInput" class="field" placeholder="${t('torneoJugadorPH')}" autocomplete="off" style="margin-bottom:0">
+      <button type="button" class="btn btn-secondary" id="lobbyAgregarBtn" style="flex-shrink:0">${t('torneoAgregar')}</button>
+    </div>`;
+  }
   html += `</div>`;
 
   if (isOrg) {
@@ -4699,6 +4705,19 @@ function renderTorneoLobby() {
 
   const agregarmeBtn = panel.querySelector('#agregarmeBtn');
   if (agregarmeBtn) agregarmeBtn.addEventListener('click', agregarmeComoJugador);
+  const lobbyAgregarBtn = panel.querySelector('#lobbyAgregarBtn');
+  const lobbyNombreInput = panel.querySelector('#lobbyNombreInput');
+  if (lobbyAgregarBtn && lobbyNombreInput) {
+    const doAgregar = async () => {
+      const nombre = lobbyNombreInput.value.trim();
+      if (!nombre) return;
+      await agregarJugadorSinCuenta(nombre);
+      lobbyNombreInput.value = '';
+      lobbyNombreInput.focus();
+    };
+    lobbyAgregarBtn.addEventListener('click', doAgregar);
+    lobbyNombreInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAgregar(); } });
+  }
   panel.querySelectorAll('.btn-aprobar').forEach(b => {
     b.addEventListener('click', () => aprobarSolicitud(b.dataset.uid, b.dataset.nombre));
   });
@@ -4737,6 +4756,16 @@ async function rechazarSolicitud(uid) {
   const nuevosPendientes = (torneoCompartidoData.pendientes || []).filter(p => p.uid !== uid);
   try {
     await db.collection('torneos').doc(torneoCompartidoId).update({ pendientes: nuevosPendientes });
+  } catch (e) { showToast('Error: ' + e.message, 'error'); }
+}
+
+async function agregarJugadorSinCuenta(nombreJugador) {
+  if (!torneoCompartidoId) return;
+  const nuevosJugadores = [...torneoCompartidoData.jugadores, { nombre: nombreJugador, uid: null }];
+  try {
+    await db.collection('torneos').doc(torneoCompartidoId).update({ jugadores: nuevosJugadores });
+    torneoCompartidoData = { ...torneoCompartidoData, jugadores: nuevosJugadores };
+    renderTorneoLobby();
   } catch (e) { showToast('Error: ' + e.message, 'error'); }
 }
 
