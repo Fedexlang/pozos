@@ -2291,6 +2291,10 @@ function init() {
       clases = (cached.clases || []).map(migrateClase);
       metas = cached.metas || [];
       render();
+      // Garantiza que el email esté en Firestore para que sea buscable en el lobby
+      if (user.email) {
+        db.collection('users').doc(user.uid).set({ email: user.email }, { merge: true }).catch(() => {});
+      }
       await syncDown();
     } else {
       $('#loadingOverlay').hidden = true;
