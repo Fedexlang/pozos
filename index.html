@@ -4558,13 +4558,6 @@ function generarCodigoAcceso() {
 
 async function crearTorneoCompartido() {
   if (!auth.currentUser) { showToast(t('torneoNeedLogin'), 'error'); return; }
-  const nj = torneoJugadoresList.length;
-  if (torneoTipo === 'parejas') {
-    if (nj < 2) { mostrarTorneoWarning(t('torneoWarnMin2')); return; }
-  } else {
-    if (nj < 4) { mostrarTorneoWarning(t('torneoWarnMin4')); return; }
-    if (nj % 2 !== 0) { mostrarTorneoWarning(t('torneoWarnPar')); return; }
-  }
   $('#torneoWarning').style.display = 'none';
   const codigo = torneoAccesoCode || generarCodigoAcceso();
   const jugadoresData = torneoJugadoresList.map(jn => ({ nombre: jn, uid: null }));
@@ -4646,9 +4639,7 @@ function renderTorneoLobby() {
       });
     }
     html += `</div>`;
-    const canStart = data.jugadores.length >= (data.tipo === 'parejas' ? 2 : 4) &&
-                     (data.tipo !== 'individual' || data.jugadores.length % 2 === 0);
-    html += `<button type="button" class="btn btn-primary" id="iniciarTorneoBtn" style="width:100%;margin-top:4px" ${canStart ? '' : 'disabled'}>${t('torneoIniciarTorneo')}</button>`;
+    html += `<button type="button" class="btn btn-primary" id="iniciarTorneoBtn" style="width:100%;margin-top:4px">${t('torneoIniciarTorneo')}</button>`;
   } else {
     html += `<p style="color:var(--ink-muted);font-size:13px;text-align:center;padding:16px 0">${t('torneoJoinPending')}</p>`;
   }
@@ -4718,6 +4709,13 @@ async function quitarJugadorLobby(nombreJugador) {
 async function iniciarTorneoCompartido() {
   if (!torneoCompartidoId || !torneoCompartidoData) return;
   const data = torneoCompartidoData;
+  const nj = data.jugadores.length;
+  if (data.tipo === 'parejas') {
+    if (nj < 2) { showToast(t('torneoWarnMin2'), 'error'); return; }
+  } else {
+    if (nj < 4) { showToast(t('torneoWarnMin4'), 'error'); return; }
+    if (nj % 2 !== 0) { showToast(t('torneoWarnPar'), 'error'); return; }
+  }
   torneoJugadoresList = data.jugadores.map(j => j.nombre);
   torneoFormato = data.formato;
   torneoTipo = data.tipo;
