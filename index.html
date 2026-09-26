@@ -861,7 +861,8 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
     <div id="torneoHome" style="display:none">
       <button type="button" class="torneo-open-btn" id="nuevoTorneoBtn" data-i18n="torneoNuevo">Nuevo torneo</button>
       <button type="button" class="torneo-unirse-btn" id="unirseTorneoBtn" data-i18n="torneoUnirseBtn">Unirse por código</button>
-      <div id="torneoHistorialList" style="margin-top:24px"></div>
+      <div id="salaActivaWrap" style="margin-top:20px"></div>
+      <div id="torneoHistorialList"></div>
     </div>
 
     <!-- Setup -->
@@ -4285,6 +4286,7 @@ let torneoAccesoCode = '';
 let torneoCompartidoId = null;
 let torneoCompartidoData = null;
 let torneoCompartidoListener = null;
+const TORNEO_COMP_LS_KEY = 'pluspadel_torneo_comp_id';
 
 function loadTorneoFromLS() {
   try {
@@ -4369,6 +4371,37 @@ function wireHistPanel(panel, hi) {
       wireHistPanel(panel, hi);
     });
   });
+}
+
+async function checkSalaActiva() {
+  const savedId = (() => { try { return localStorage.getItem(TORNEO_COMP_LS_KEY); } catch { return null; } })();
+  if (!savedId || !auth.currentUser) return;
+  try {
+    const snap = await db.collection('torneos').doc(savedId).get();
+    if (!snap.exists) { try { localStorage.removeItem(TORNEO_COMP_LS_KEY); } catch {} return; }
+    const data = { ...snap.data(), id: snap.id };
+    if (data.estado !== 'esperando' || data.organizadorUid !== auth.currentUser.uid) {
+      try { localStorage.removeItem(TORNEO_COMP_LS_KEY); } catch {}
+      return;
+    }
+    const el = $('#salaActivaWrap');
+    if (!el) return;
+    el.innerHTML = `<div class="hist-card" style="border-color:rgba(74,222,128,0.35);margin-bottom:16px">
+      <div class="hist-card-header">
+        <div>
+          <div class="hist-card-name">${data.nombre}</div>
+          <div class="hist-card-date" style="color:var(--court-bright)">Sala abierta · ${data.codigoAcceso}</div>
+        </div>
+        <span style="font-size:11px;color:var(--ink-muted)">${data.jugadores.length} ${t('torneoJugadoresSuffix')}</span>
+      </div>
+      <button class="btn btn-primary" id="reentrarLobbyBtn" style="width:100%;margin-top:4px">${t('torneoVerTorneo')}</button>
+    </div>`;
+    el.querySelector('#reentrarLobbyBtn').addEventListener('click', () => {
+      torneoCompartidoId = data.id;
+      torneoCompartidoData = data;
+      renderTorneoLobby();
+    });
+  } catch {}
 }
 
 function renderHistorialList() {
@@ -4584,6 +4617,7 @@ async function crearTorneoCompartido() {
     const ref = await db.collection('torneos').add(torneoData);
     torneoCompartidoId = ref.id;
     torneoCompartidoData = { ...torneoData, id: ref.id };
+    try { localStorage.setItem(TORNEO_COMP_LS_KEY, ref.id); } catch {}
     renderTorneoLobby();
   } catch (e) {
     showToast('Error: ' + e.message, 'error');
@@ -4739,6 +4773,7 @@ async function iniciarTorneoCompartido() {
       rondas: torneo.rondas
     });
   } catch (e) { /* non-critical */ }
+  try { localStorage.removeItem(TORNEO_COMP_LS_KEY); } catch {}
   renderTorneoActivo();
 }
 
@@ -4840,7 +4875,9 @@ function renderTorneoHome() {
   $('#torneoJoin').style.display = 'none';
   $('#torneoCerrarBtn').style.display = 'none';
   $('#torneoHeaderTitle').textContent = t('torneoTorneos');
+  $('#salaActivaWrap').innerHTML = '';
   renderHistorialList();
+  checkSalaActiva();
 }
 
 function abrirTorneoOverlay() {
