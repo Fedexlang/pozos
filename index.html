@@ -562,7 +562,11 @@ input.field:focus { outline: none; border-color: var(--court-bright); background
 .join-code-input { font-family: 'JetBrains Mono', monospace !important; text-transform: uppercase; letter-spacing: 0.15em !important; font-size: 18px !important; text-align: center; }
 .torneo-join-result { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 16px; }
 .torneo-join-result-name { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-.torneo-join-result-meta { font-size: 11px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; margin-bottom: 12px; }
+.torneo-join-result-meta { font-size: 11px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; margin-bottom: 10px; }
+.join-players-section { margin-bottom: 12px; }
+.join-players-title { font-size: 11px; color: var(--ink-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+.join-players-list { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto; }
+.join-player-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--ink); padding: 5px 8px; background: var(--surface-2); border-radius: 7px; }
 .torneo-unirse-btn { display: block; width: fit-content; margin: 8px auto 4px; background: none; border: 2px solid var(--border); border-radius: 999px; padding: 12px 28px; color: var(--ink-muted); font-size: 17px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.08em; cursor: pointer; transition: all .2s; }
 .torneo-unirse-btn:hover { border-color: var(--border-strong); color: var(--ink); }
 .jugadores-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px; background: var(--court-bright); color: var(--bg); border-radius: 999px; font-size: 12px; font-weight: 700; margin-left: 6px; }
@@ -5297,9 +5301,28 @@ function mostrarResultadoBusqueda(data) {
     statusHtml = `<button class="btn btn-primary" id="solicitarUnirseBtn" style="width:100%;margin-top:10px">${t('torneoJoinSolicitar')}</button>`;
   }
 
+  const jugadores = data.jugadores || [];
+  const jugadoresHtml = jugadores.length > 0
+    ? `<div class="join-players-section">
+        <div class="join-players-title">${t('torneoJugadoresSuffix') === 'jugadores' ? 'Jugadores' : 'Players'} (${jugadores.length})</div>
+        <div class="join-players-list">
+          ${jugadores.map(j => {
+            const esOrg = j.uid === data.organizadorUid || (!j.uid && j.nombre === data.organizadorNombre);
+            const badge = esOrg
+              ? `<span class="lobby-badge org">Org</span>`
+              : j.uid
+                ? `<span class="lobby-badge reg">✓</span>`
+                : `<span class="lobby-badge no-acc">?</span>`;
+            return `<div class="join-player-row">${j.nombre}${badge}</div>`;
+          }).join('')}
+        </div>
+      </div>`
+    : '';
+
   $('#joinResult').innerHTML = `<div class="torneo-join-result">
     <div class="torneo-join-result-name">${data.nombre}</div>
-    <div class="torneo-join-result-meta">${t(data.formato === 'americano' ? 'torneoAmericano' : 'torneoMexicano')} · ${t(data.tipo === 'parejas' ? 'torneoParejas' : 'torneoIndividual')} · ${(data.jugadores || []).length} ${t('torneoJugadoresSuffix')}</div>
+    <div class="torneo-join-result-meta">${t(data.formato === 'americano' ? 'torneoAmericano' : 'torneoMexicano')} · ${t(data.tipo === 'parejas' ? 'torneoParejas' : 'torneoIndividual')} · ${jugadores.length} ${t('torneoJugadoresSuffix')}</div>
+    ${jugadoresHtml}
     ${statusHtml}
   </div>`;
 
